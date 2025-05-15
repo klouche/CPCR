@@ -76,6 +76,52 @@ app.get('/services', async (req, res) => {
   }
 });
 
+app.post('/update-service', async (req, res) => {
+  try {
+    const { id, description, service_name } = req.body;
+
+    if (!id || !description || !service_name) {
+      return res.status(400).json({
+        error: "Missing 'id', 'description', or 'service_name'"
+      });
+    }
+
+    if (!serviceIds.includes(id)) {
+      return res.status(404).json({
+        error: `Service ID '${id}' not recognized.`
+      });
+    }
+
+    // Generate new embedding
+    const embeddingResponse = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: description
+    });
+
+    const newEmbedding = embeddingResponse.data[0].embedding;
+
+    // Upsert vector
+    await index.upsert([
+      {
+        id,
+        values: newEmbedding,
+        metadata: {
+          id,
+          service_name,
+          description
+        }
+      }
+    ]);
+
+    console.log(`✅ Updated service ${id}`);
+    res.json({ success: true, message: `Service ${id} updated.` });
+
+  } catch (err) {
+    console.error("🔥 Failed to update service:", err);
+    res.status(500).json({ error: "Could not update service", detail: err.message });
+  }
+});
+
 app.listen(3000, () => {
     console.log('🚀 Server running at http://localhost:3000');
 });
