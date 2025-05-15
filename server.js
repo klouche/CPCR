@@ -17,21 +17,19 @@ app.post('/search', async (req, res) => {
     const query = req.body.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
 
-    // Get OpenAI embedding
-    const embeddingResponse = await openai.embeddings.create({
+    const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
-      input: query,
+      input: [query]
     });
-    const embedding = embeddingResponse.data[0].embedding;
 
-    // Query Pinecone
+    const embedding = response.data[0].embedding;
+
     const result = await index.query({
       vector: embedding,
       topK: 10,
-      includeMetadata: true,
+      includeMetadata: true
     });
 
-    // Format results
     const matches = result.matches.map(match => ({
       id: match.id,
       score: match.score,
@@ -40,8 +38,9 @@ app.post('/search', async (req, res) => {
     }));
 
     res.json({ results: matches });
+
   } catch (err) {
-    console.error(err);
+    console.error("🔥 Internal server error:", err);  // 🔍 See this in the logs
     res.status(500).json({ error: 'Internal server error' });
   }
 });
