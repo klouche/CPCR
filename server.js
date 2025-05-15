@@ -8,7 +8,9 @@ const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://swissbiobanking.ch'
+}));
 app.use(express.json());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
