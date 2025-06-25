@@ -8,9 +8,7 @@ const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
 
 const app = express();
-app.use(cors({
-  origin: 'https://swissbiobanking.ch'
-}));
+app.use(cors());
 app.use(express.json());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -32,7 +30,7 @@ app.post('/search', async (req, res) => {
 
     const result = await index.query({
       vector: embedding,
-      topK: 10,
+      topK: 5,
       includeMetadata: true
     });
 
@@ -125,6 +123,52 @@ app.post('/update-service', async (req, res) => {
   } catch (err) {
     console.error("🔥 Failed to update service:", err);
     res.status(500).json({ error: "Could not update service", detail: err.message });
+  }
+});
+
+
+// Route to generate GPT-4 explanations for match relevance
+app.post('/explain-matches', async (req, res) => {
+  const { query, matches } = req.body;
+
+  if (!query || !matches || !Array.isArray(matches)) {
+    return res.status(400).json({ error: "Missing or invalid 'query' or 'matches' in request body." });
+  }
+
+  const explanationPrompt = `
+You are helping a researcher understand why certain services match their query.
+
+Researcher query:
+"${query}"
+
+Matched services:
+${matches.map((m, i) => `${i + 1}. ${m.service_name || 'Unnamed service'} — ${m.description || 'No description available.'}`).join('\n')}
+
+For each service, provide a short, helpful explanation of why it is relevant to the query.
+Respond with a JSON array of strings, one explanation per service, in order.
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant for researchers.' },
+        { role: 'user', content: explanationPrompt }
+      ],
+      temperature: 0.7
+    });
+
+    const text = response.choices[0].message.content;
+    const explanations = JSON.parse(text);
+
+    if (!Array.isArray(explanations)) {
+      throw new Error("Unexpected GPT response format. Expected JSON array.");
+    }
+
+    res.json({ explanations });
+  } catch (err) {
+    console.error("🔥 Failed to generate explanations:", err.message);
+    res.status(500).json({ error: "Could not generate explanations", detail: err.message });
   }
 });
 
