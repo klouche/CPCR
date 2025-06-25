@@ -19,36 +19,40 @@ const index = pinecone.Index(process.env.PINECONE_INDEX);
 console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
 app.post('/search', async (req, res) => {
-    try {
-        const query = req.body.query;
-        if (!query) return res.status(400).json({ error: 'Query required' });
+  try {
+    const query = req.body.query;
+    if (!query) return res.status(400).json({ error: 'Query required' });
 
-        const response = await openai.embeddings.create({
-            model: 'text-embedding-3-small',
-            input: [query]
-        });
+    const response = await openai.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: [query]
+    });
 
-        const embedding = response.data[0].embedding;
+    const embedding = response.data[0].embedding;
 
-        const result = await index.query({
-            vector: embedding,
-            topK: 10,
-            includeMetadata: true
-        });
+    const result = await index.query({
+      vector: embedding,
+      topK: 10,
+      includeMetadata: true
+    });
 
-        const matches = result.matches.map(match => ({
-            id: match.id,
-            score: match.score,
-            service_name: match.metadata?.service_name,
-            description: match.metadata?.description,
-        }));
+    const matches = result.matches.map(match => ({
+      id: match.id,
+      score: match.score,
+      service_name: match.metadata?.service_name,
+      description: match.metadata?.description,
+      contact: match.metadata?.Contact,
+      output: match.metadata?.Output,
+      url: match.metadata?.URL,
+      "regional infrastructure": match.metadata?.["regional infrastructure"]
+    }));
 
-        res.json({ results: matches });
+    res.json({ results: matches });
 
-    } catch (err) {
-        console.error("🔥 Internal server error:", err);  // 🔍 See this in the logs
-        res.status(500).json({ error: 'Internal server error' });
-    }
+  } catch (err) {
+    console.error("🔥 Internal server error:", err);  // 🔍 See this in the logs
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.get('/services', async (req, res) => {
@@ -125,5 +129,5 @@ app.post('/update-service', async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('🚀 Server running at http://localhost:3000');
+  console.log('🚀 Server running at http://localhost:3000');
 });
