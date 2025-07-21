@@ -37,12 +37,13 @@ app.post('/search', async (req, res) => {
     const matches = result.matches.map(match => ({
       id: match.id,
       score: match.score,
-      service_name: match.metadata?.service_name,
+      name: match.metadata?.name,
       description: match.metadata?.description,
+      complement: match.metadata?.complement,
       contact: match.metadata?.Contact,
       output: match.metadata?.Output,
       url: match.metadata?.URL,
-      "regional infrastructure": match.metadata?.["regional infrastructure"]
+      regional: match.metadata?.regional
     }));
 
     res.json({ results: matches });
@@ -66,8 +67,14 @@ app.get('/services', async (req, res) => {
       const meta = records[id].metadata || {};
       results.push({
         id,
-        service_name: meta.service_name || null,
-        description: meta.description || null
+        name: meta.name || null,
+        description: meta.description || null,
+        organization: meta.organization || null,
+        regional: meta.regional || null,
+        complement: meta.complement || null,
+        contact: meta.contact || null,
+        output: meta.output || null,
+        url: meta.url || null,
       });
     }
 
@@ -82,11 +89,11 @@ app.get('/services', async (req, res) => {
 
 app.post('/update-service', async (req, res) => {
   try {
-    const { id, description, service_name } = req.body;
+    const { id, description, name } = req.body;
 
-    if (!id || !description || !service_name) {
+    if (!id || !description || !name) {
       return res.status(400).json({
-        error: "Missing 'id', 'description', or 'service_name'"
+        error: "Missing 'id', 'description', or 'name'"
       });
     }
 
@@ -111,7 +118,7 @@ app.post('/update-service', async (req, res) => {
         values: newEmbedding,
         metadata: {
           id,
-          service_name,
+          name,
           description
         }
       }
@@ -142,7 +149,7 @@ Researcher query:
 "${query}"
 
 Matched services:
-${matches.map((m, i) => `${i + 1}. ${m.service_name || 'Unnamed service'} — ${m.description || 'No description available.'}`).join('\n')}
+${matches.map((m, i) => `${i + 1}. ${m.name || 'Unnamed service'} — ${m.description || 'No description available.'}`).join('\n')}
 
 For each service, provide a short, helpful explanation of why it is relevant to the query.
 Respond with a JSON array of strings, one explanation per service, in order.
