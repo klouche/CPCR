@@ -8,7 +8,19 @@ const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
 
 const app = express();
-app.use(cors());
+const allowedOrigins = ['http://localhost:3000', 'https://swissbiobanking.ch'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
+}));
 app.use(express.json());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -97,6 +109,11 @@ app.post('/update-service', async (req, res) => {
       });
     }
 
+    // Fetch existing metadata
+    const fetchResult = await index.fetch([id]);
+    const existing = fetchResult.vectors?.[id];
+    const existingMetadata = existing?.metadata || {};
+
     if (!serviceIds.includes(id)) {
       return res.status(404).json({
         error: `Service ID '${id}' not recognized.`
@@ -117,7 +134,7 @@ app.post('/update-service', async (req, res) => {
         id,
         values: newEmbedding,
         metadata: {
-          id,
+          ...existingMetadata,
           name,
           description
         }
