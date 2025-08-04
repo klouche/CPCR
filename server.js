@@ -50,11 +50,13 @@ app.post('/search', async (req, res) => {
       id: match.id,
       score: match.score,
       name: match.metadata?.name,
+      description: match.metadata?.hidden,
       description: match.metadata?.description,
       complement: match.metadata?.complement,
-      contact: match.metadata?.Contact,
-      output: match.metadata?.Output,
-      url: match.metadata?.URL,
+      contact: match.metadata?.contact,
+      output: match.metadata?.output,
+      url: match.metadata?.url,
+      docs: match.metadata?.docs,
       regional: match.metadata?.regional
     }));
 
@@ -87,6 +89,7 @@ app.get('/services', async (req, res) => {
         contact: meta.contact || null,
         output: meta.output || null,
         url: meta.url || null,
+        docs: meta.docs || null,
       });
     }
 
@@ -101,7 +104,7 @@ app.get('/services', async (req, res) => {
 
 app.post('/update-service', async (req, res) => {
   try {
-    const { id, description, name } = req.body;
+    const { id, name, hidden, description, complement, contact, url, docs, organization, regional } = req.body;
 
     if (!id || !description || !name) {
       return res.status(400).json({
@@ -135,8 +138,15 @@ app.post('/update-service', async (req, res) => {
         values: newEmbedding,
         metadata: {
           ...existingMetadata,
-          name,
-          description
+          name: name,
+          organization: organization,
+          regional: regional,
+          hidden: hidden,
+          description: description,
+          complement: complement,
+          contact: contact,
+          url: url,
+          docs: docs
         }
       }
     ]);
