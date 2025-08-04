@@ -104,7 +104,7 @@ app.get('/services', async (req, res) => {
 
 app.post('/update-service', async (req, res) => {
   try {
-    const { id, name, hidden, description, complement, contact, url, docs, organization, regional } = req.body;
+    const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
 
     if (!id || !description || !name) {
       return res.status(400).json({
@@ -145,6 +145,7 @@ app.post('/update-service', async (req, res) => {
           description: description,
           complement: complement,
           contact: contact,
+          output: output,
           url: url,
           docs: docs
         }
