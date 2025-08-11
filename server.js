@@ -187,44 +187,37 @@ app.post('/update-service', async (req, res) => {
 
 
 // Route to generate GPT-4 explanations for match relevance
-app.post('/explain-matches', async (req, res) => {
-  const { query, matches } = req.body;
+app.post('/explain-match', async (req, res) => {
+  const { query, match } = req.body;
 
-  if (!query || !matches || !Array.isArray(matches)) {
-    return res.status(400).json({ error: "Missing or invalid 'query' or 'matches' in request body." });
+  if (!query || !match) {
+    return res.status(400).json({ error: "Missing or invalid 'query' or 'match' in request body." });
   }
 
   const explanationPrompt = `
-You are helping a researcher understand why certain services match their query.
+You are helping a researcher understand why a service match their query.
 
 Researcher query:
 "${query}"
 
-Matched services:
-${matches.map((m, i) => `${i + 1}. ${m.name || 'Unnamed service'} — ${m.description || 'No description available.'}`).join('\n')}
+Matched service:
+Name: ${match.name}, Description: ${match.hidden}, ${match.description}
 
-For each service, provide a short, helpful explanation of why it is relevant to the query.
-Respond with a JSON array of strings, one explanation per service, in order.
+Provide a short, helpful explanation of why it is relevant to the query.
   `;
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-5',
       messages: [
         { role: 'system', content: 'You are a helpful assistant for researchers.' },
         { role: 'user', content: explanationPrompt }
-      ],
-      temperature: 0.7
+      ]
     });
 
     const text = response.choices[0].message.content;
-    const explanations = JSON.parse(text);
 
-    if (!Array.isArray(explanations)) {
-      throw new Error("Unexpected GPT response format. Expected JSON array.");
-    }
-
-    res.json({ explanations });
+    res.json({ text });
   } catch (err) {
     console.error("🔥 Failed to generate explanations:", err.message);
     res.status(500).json({ error: "Could not generate explanations", detail: err.message });
