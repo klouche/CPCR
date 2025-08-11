@@ -84,6 +84,7 @@ app.get('/services', async (req, res) => {
         name: meta.name || null,
         description: meta.description || null,
         organization: meta.organization || null,
+        hidden: meta.hidden || null,
         regional: meta.regional || null,
         complement: meta.complement || null,
         contact: meta.contact || null,
