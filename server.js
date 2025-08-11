@@ -28,6 +28,27 @@ const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX);
 console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
+// Build a single text string for embeddings from multiple metadata fields
+function buildEmbeddingText({ name, organization, hidden, description }) {
+  const parts = [];
+  if (name) parts.push(`Name: ${String(name).trim()}`);
+  if (organization) parts.push(`Organization: ${String(organization).trim()}`);
+  // hidden can be boolean or string; include if defined
+  if (hidden !== undefined && hidden !== null && hidden !== '') {
+    parts.push(`Hidden: ${String(hidden).trim()}`);
+  }
+  if (description) parts.push(`Description: ${String(description).trim()}`);
+
+  // Join with newlines to give the model light structure
+  const text = parts.join('\n');
+
+  // Normalize whitespace/newlines to avoid accidental duplication
+  return text
+    .replace(/\r\n?|\u2028|\u2029/g, '\n')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+}
+
 app.post('/search', async (req, res) => {
   try {
     const query = req.body.query;
@@ -124,10 +145,12 @@ app.post('/update-service', async (req, res) => {
       });
     }
 
-    // Generate new embedding
+    // Generate new embedding from multiple metadata fields
+    const embeddingInput = buildEmbeddingText({ name, organization, hidden, description });
+
     const embeddingResponse = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: description
+      model: 'text-embedding-3-small',
+      input: embeddingInput
     });
 
     const newEmbedding = embeddingResponse.data[0].embedding;
