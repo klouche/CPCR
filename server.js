@@ -50,7 +50,7 @@ app.post('/search', async (req, res) => {
       id: match.id,
       score: match.score,
       name: match.metadata?.name,
-      description: match.metadata?.hidden,
+      hidden: match.metadata?.hidden,
       description: match.metadata?.description,
       complement: match.metadata?.complement,
       contact: match.metadata?.contact,
