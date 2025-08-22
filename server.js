@@ -50,7 +50,7 @@ app.post('/search', async (req, res) => {
       id: match.id,
       score: match.score,
       name: match.metadata?.name,
-      description: match.metadata?.hidden,
+      hidden: match.metadata?.hidden,
       description: match.metadata?.description,
       complement: match.metadata?.complement,
       contact: match.metadata?.contact,
@@ -82,6 +82,7 @@ app.get('/services', async (req, res) => {
       results.push({
         id,
         name: meta.name || null,
+        hidden: meta.hidden || null,
         description: meta.description || null,
         organization: meta.organization || null,
         regional: meta.regional || null,
@@ -102,6 +103,61 @@ app.get('/services', async (req, res) => {
   }
 });
 
+app.post('/update-metadata', async (req, res) => {
+  try {
+    const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
+
+    if (!id || !description || !name) {
+      return res.status(400).json({
+        error: "Missing 'id', 'description', or 'name'"
+      });
+    }
+
+    // Fetch existing metadata
+    const fetchResult = await index.fetch([id]);
+    const existing = fetchResult.records?.[id];
+    const existingMetadata = existing?.metadata || {};
+    if (!existing) {
+      return res.status(404).json({
+        error: `Service ID '${id}' not found in Pinecone index.`
+      });
+    }
+    if (!serviceIds.includes(id)) {
+      return res.status(404).json({
+        error: `Service ID '${id}' not recognized.`
+      });
+    }
+
+    // Upsert vector
+    await index.upsert([
+      {
+        id,
+        values: existing.values,
+        metadata: {
+          ...existingMetadata,
+          name: name,
+          organization: organization,
+          regional: regional,
+          hidden: hidden,
+          description: description,
+          complement: complement,
+          contact: contact,
+          output: output,
+          url: url,
+          docs: docs
+        }
+      }
+    ]);
+
+    console.log(`✅ Updated service ${id}`);
+    res.json({ success: true, message: `Service ${id} updated.` });
+
+  } catch (err) {
+    console.error("🔥 Failed to update service:", err);
+    res.status(500).json({ error: "Could not update service", detail: err.message });
+  }
+});
+
 app.post('/update-service', async (req, res) => {
   try {
     const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
@@ -114,7 +170,7 @@ app.post('/update-service', async (req, res) => {
 
     // Fetch existing metadata
     const fetchResult = await index.fetch([id]);
-    const existing = fetchResult.vectors?.[id];
+    const existing = fetchResult.records?.[id];
     const existingMetadata = existing?.metadata || {};
 
     if (!serviceIds.includes(id)) {
@@ -160,6 +216,7 @@ app.post('/update-service', async (req, res) => {
     res.status(500).json({ error: "Could not update service", detail: err.message });
   }
 });
+
 
 
 // Route to generate GPT-4 explanations for match relevance
