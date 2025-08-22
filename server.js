@@ -28,6 +28,27 @@ const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX);
 console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
+// Build a single text string for embeddings from multiple metadata fields
+function buildEmbeddingText({ name, organization, hidden, description }) {
+  const parts = [];
+  if (name) parts.push(`Name: ${String(name).trim()}`);
+  if (organization) parts.push(`Organization: ${String(organization).trim()}`);
+  // hidden can be boolean or string; include if defined
+  if (hidden !== undefined && hidden !== null && hidden !== '') {
+    parts.push(`Hidden: ${String(hidden).trim()}`);
+  }
+  if (description) parts.push(`Description: ${String(description).trim()}`);
+
+  // Join with newlines to give the model light structure
+  const text = parts.join('\n');
+
+  // Normalize whitespace/newlines to avoid accidental duplication
+  return text
+    .replace(/\r\n?|\u2028|\u2029/g, '\n')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+}
+
 app.post('/search', async (req, res) => {
   try {
     const query = req.body.query;
@@ -85,6 +106,7 @@ app.get('/services', async (req, res) => {
         hidden: meta.hidden || null,
         description: meta.description || null,
         organization: meta.organization || null,
+        hidden: meta.hidden || null,
         regional: meta.regional || null,
         complement: meta.complement || null,
         contact: meta.contact || null,
@@ -179,10 +201,12 @@ app.post('/update-service', async (req, res) => {
       });
     }
 
-    // Generate new embedding
+    // Generate new embedding from multiple metadata fields
+    const embeddingInput = buildEmbeddingText({ name, organization, hidden, description });
+
     const embeddingResponse = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: description
+      model: 'text-embedding-3-small',
+      input: embeddingInput
     });
 
     const newEmbedding = embeddingResponse.data[0].embedding;
@@ -220,44 +244,37 @@ app.post('/update-service', async (req, res) => {
 
 
 // Route to generate GPT-4 explanations for match relevance
-app.post('/explain-matches', async (req, res) => {
-  const { query, matches } = req.body;
+app.post('/explain-match', async (req, res) => {
+  const { query, match } = req.body;
 
-  if (!query || !matches || !Array.isArray(matches)) {
-    return res.status(400).json({ error: "Missing or invalid 'query' or 'matches' in request body." });
+  if (!query || !match) {
+    return res.status(400).json({ error: "Missing or invalid 'query' or 'match' in request body." });
   }
 
   const explanationPrompt = `
-You are helping a researcher understand why certain services match their query.
+You are helping a researcher understand why a service match their query.
 
 Researcher query:
 "${query}"
 
-Matched services:
-${matches.map((m, i) => `${i + 1}. ${m.name || 'Unnamed service'} — ${m.description || 'No description available.'}`).join('\n')}
+Matched service:
+Name: ${match.name}, Description: ${match.hidden}, ${match.description}
 
-For each service, provide a short, helpful explanation of why it is relevant to the query.
-Respond with a JSON array of strings, one explanation per service, in order.
+Provide a short, helpful explanation of why it is relevant to the query.
   `;
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-5',
       messages: [
         { role: 'system', content: 'You are a helpful assistant for researchers.' },
         { role: 'user', content: explanationPrompt }
-      ],
-      temperature: 0.7
+      ]
     });
 
     const text = response.choices[0].message.content;
-    const explanations = JSON.parse(text);
 
-    if (!Array.isArray(explanations)) {
-      throw new Error("Unexpected GPT response format. Expected JSON array.");
-    }
-
-    res.json({ explanations });
+    res.json({ text });
   } catch (err) {
     console.error("🔥 Failed to generate explanations:", err.message);
     res.status(500).json({ error: "Could not generate explanations", detail: err.message });
