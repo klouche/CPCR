@@ -26,6 +26,7 @@ app.use(express.json());
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX);
+const orgIndex = pinecone.Index("infrastructure-index");
 console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
 // Build a single text string for embeddings from multiple metadata fields
@@ -280,6 +281,49 @@ Provide a short, helpful explanation of why it is relevant to the query.
     res.status(500).json({ error: "Could not generate explanations", detail: err.message });
   }
 });
+
+app.post('/proximity-score', async (req, res) => {
+  try {
+    const { serviceIds } = req.body;
+    const orgIds = ["SBP", "Swiss-Cancer-Institute", "SCTO", "SPHN-DCC"];
+
+    if (!Array.isArray(serviceIds) || serviceIds.length === 0) {
+      return res.status(400).json({ error: "Missing or invalid 'serviceIds' array" });
+    }
+
+    const serviceResults = await index.fetch(serviceIds);
+    const orgResult = await orgIndex.fetch(orgIds);
+
+    const results = [];
+
+    for (const serviceId of serviceIds) {
+      const serviceVec = serviceResults.records?.[serviceId]?.values;
+      if (!serviceVec) continue;
+
+      const scores = [];
+
+      for (const orgId of orgIds) {
+        const orgVec = orgResult.records?.[orgId]?.values;
+        if (!orgVec) continue;
+
+        const dotProduct = serviceVec.reduce((sum, v, i) => sum + v * orgVec[i], 0);
+        const magnitudeA = Math.sqrt(serviceVec.reduce((sum, v) => sum + v * v, 0));
+        const magnitudeB = Math.sqrt(orgVec.reduce((sum, v) => sum + v * v, 0));
+        const similarity = dotProduct / (magnitudeA * magnitudeB);
+        scores.push({ organization: orgId, similarity });
+      }
+
+      results.push({ serviceId, scores });
+    }
+
+    res.json({ results });
+
+  } catch (err) {
+    console.error("🔥 Failed to compute proximity scores:", err);
+    res.status(500).json({ error: "Could not compute proximity scores", detail: err.message });
+  }
+});
+
 
 app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:3000');
