@@ -79,7 +79,8 @@ app.post('/search', async (req, res) => {
       output: match.metadata?.output,
       url: match.metadata?.url,
       docs: match.metadata?.docs,
-      regional: match.metadata?.regional
+      regional: match.metadata?.regional,
+      organization: match.metadata?.organization
     }));
 
     res.json({ results: matches });
