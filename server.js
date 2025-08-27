@@ -32,13 +32,9 @@ console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 // Build a single text string for embeddings from multiple metadata fields
 function buildEmbeddingText({ name, organization, hidden, description }) {
   const parts = [];
-  if (name) parts.push(`Name: ${String(name).trim()}`);
+  if (description) parts.push(`Description: ${(hidden? String(hidden).trim() + " - ":"") + String(description).trim()}`);
+  if (name) parts.push(`Service name: ${String(name).trim()}`);
   if (organization) parts.push(`Organization: ${String(organization).trim()}`);
-  // hidden can be boolean or string; include if defined
-  if (hidden !== undefined && hidden !== null && hidden !== '') {
-    parts.push(`Hidden: ${String(hidden).trim()}`);
-  }
-  if (description) parts.push(`Description: ${String(description).trim()}`);
 
   // Join with newlines to give the model light structure
   const text = parts.join('\n');
