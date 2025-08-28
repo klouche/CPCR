@@ -1,9 +1,11 @@
-const cors = require('cors');
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const { OpenAI } = require('openai');
 const { Pinecone } = require('@pinecone-database/pinecone');
-
+const acronyms = require('./acronym.json');
+const { normalizeTextField } = require('./utils/text.js');
+  
 const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
 
@@ -29,17 +31,79 @@ const index = pinecone.Index(process.env.PINECONE_INDEX);
 const orgIndex = pinecone.Index("infrastructure-index");
 console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
-// Build a single text string for embeddings from multiple metadata fields
-function buildEmbeddingText({ name, organization, hidden, description }) {
-  const parts = [];
-  if (description) parts.push(`Description: ${(hidden? String(hidden).trim() + " - ":"") + String(description).trim()}`);
-  if (name) parts.push(`Service name: ${String(name).trim()}`);
-  if (organization) parts.push(`Organization: ${String(organization).trim()}`);
+// --- Acronym helpers ---
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-  // Join with newlines to give the model light structure
+/**
+ * Build a unique list of aliases (acronyms and expansions) detected in the given fields.
+ * The file ./acronym.json must map acronym => [expansions...]
+ */
+function buildAliasesForFields({ name, organization, hidden, description }) {
+  const haystack = [name, organization, hidden, description]
+    .filter(Boolean)
+    .map(s => String(s))
+    .join('\n');
+
+  const aliasesSet = new Set();
+
+  for (const [acro, expansions] of Object.entries(acronyms || {})) {
+    const acroRegex = new RegExp(`\\b${escapeRegExp(acro)}\\b`, 'i');
+    const hasAcro = acroRegex.test(haystack);
+
+    const hasExpansion = Array.isArray(expansions) && expansions.some(exp => {
+      const re = new RegExp(`\\b${escapeRegExp(exp)}\\b`, 'i');
+      return re.test(haystack);
+    });
+
+    if (hasAcro || hasExpansion) {
+      aliasesSet.add(acro);
+      if (Array.isArray(expansions)) {
+        for (const exp of expansions) aliasesSet.add(exp);
+      }
+    }
+  }
+
+  return Array.from(aliasesSet);
+}
+// --- end helpers ---
+
+// --- Query expansion helpers ---
+function extractAcronymsFromQuery(q) {
+  if (!q) return [];
+  const tokens = String(q)
+    .split(/\s+/)
+    .map(t => t.toUpperCase().replace(/[^A-Z]/g, ''));
+  const set = new Set();
+  for (const t of tokens) {
+    if (t && Object.prototype.hasOwnProperty.call(acronyms, t)) set.add(t);
+  }
+  return Array.from(set);
+}
+
+function expandQueryWithAcronyms(q) {
+  const matched = extractAcronymsFromQuery(q);
+  if (!matched.length) return { expanded: q, matched };
+  const pieces = matched.map(acro => {
+    const exps = Array.isArray(acronyms[acro]) ? acronyms[acro].join(' | ') : '';
+    return `${acro}${exps ? ` (${exps})` : ''}`;
+  });
+  const expanded = `${q}\nAcronyms: ${pieces.join('; ')}`;
+  return { expanded, matched };
+}
+// --- end query expansion helpers ---
+
+
+function buildEmbeddingText({ name, organization, hidden, description, aliases }) {
+  const parts = [];
+  if (description) parts.push(`Description: ${(hidden ? String(hidden).trim() + " - " : "") + String(description).trim()}`);
+  if (name) parts.push(`Service name: ${String(normalizeTextField(name)).trim()}`);
+  if (organization) parts.push(`Organization: ${String(organization).trim()}`);
+  if (Array.isArray(aliases) && aliases.length) parts.push(`Aliases: ${aliases.join(', ')}`);
+
   const text = parts.join('\n');
 
-  // Normalize whitespace/newlines to avoid accidental duplication
   return text
     .replace(/\r\n?|\u2028|\u2029/g, '\n')
     .replace(/\n{2,}/g, '\n')
@@ -51,9 +115,11 @@ app.post('/search', async (req, res) => {
     const query = req.body.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
 
+    const { expanded, matched } = expandQueryWithAcronyms(query);
+
     const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
-      input: [query]
+      input: [expanded]
     });
 
     const embedding = response.data[0].embedding;
@@ -64,20 +130,31 @@ app.post('/search', async (req, res) => {
       includeMetadata: true
     });
 
-    const matches = result.matches.map(match => ({
-      id: match.id,
-      score: match.score,
-      name: match.metadata?.name,
-      hidden: match.metadata?.hidden,
-      description: match.metadata?.description,
-      complement: match.metadata?.complement,
-      contact: match.metadata?.contact,
-      output: match.metadata?.output,
-      url: match.metadata?.url,
-      docs: match.metadata?.docs,
-      regional: match.metadata?.regional,
-      organization: match.metadata?.organization
-    }));
+    const BONUS = 0.05; // small nudge for exact acronym hits in aliases
+
+    const matches = result.matches
+      .map(match => {
+        const aliases = match.metadata?.aliases || [];
+        const hasExact = Array.isArray(aliases) && matched?.some(a => aliases.includes(a));
+        const boostedScore = hasExact ? (match.score + BONUS) : match.score;
+        return {
+          id: match.id,
+          score: boostedScore,
+          name: match.metadata?.name,
+          hidden: match.metadata?.hidden,
+          description: match.metadata?.description,
+          complement: match.metadata?.complement,
+          contact: match.metadata?.contact,
+          output: match.metadata?.output,
+          url: match.metadata?.url,
+          docs: match.metadata?.docs,
+          regional: match.metadata?.regional,
+          organization: match.metadata?.organization,
+          aliases
+        };
+      })
+      .sort((a, b) => b.score - a.score);
+
 
     res.json({ results: matches });
 
@@ -111,6 +188,7 @@ app.get('/services', async (req, res) => {
         output: meta.output || null,
         url: meta.url || null,
         docs: meta.docs || null,
+        aliases: meta.aliases || null,
       });
     }
 
@@ -155,7 +233,7 @@ app.post('/update-metadata', async (req, res) => {
         values: existing.values,
         metadata: {
           ...existingMetadata,
-          name: name,
+          name: normalizeTextField(name),
           organization: organization,
           regional: regional,
           hidden: hidden,
@@ -199,9 +277,12 @@ app.post('/update-service', async (req, res) => {
       });
     }
 
-    // Generate new embedding from multiple metadata fields
-    const embeddingInput = buildEmbeddingText({ name, organization, hidden, description });
+    // Detect acronyms/expansions present in the provided fields
+    const aliases = buildAliasesForFields({ name, organization, hidden, description });
+    // Generate new embedding from multiple metadata fields + aliases
+    const embeddingInput = buildEmbeddingText({ name, organization, hidden, description, aliases });
 
+    console.log(embeddingInput)
     const embeddingResponse = await openai.embeddings.create({
       model: 'text-embedding-3-small',
       input: embeddingInput
@@ -216,7 +297,7 @@ app.post('/update-service', async (req, res) => {
         values: newEmbedding,
         metadata: {
           ...existingMetadata,
-          name: name,
+          name: normalizeTextField(name),
           organization: organization,
           regional: regional,
           hidden: hidden,
@@ -225,7 +306,8 @@ app.post('/update-service', async (req, res) => {
           contact: contact,
           output: output,
           url: url,
-          docs: docs
+          docs: docs,
+          aliases: aliases
         }
       }
     ]);

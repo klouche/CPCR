@@ -1,0 +1,20 @@
+{
+  "MTA": ["Material Transfer Agreement", "Sample sharing"],
+  "DTA": ["Data Transfer Agreement", "Data sharing"],
+  "DMP": ["Data management plan"],
+  "CT": ["Clinical trials"],
+  "PPI": ["Patient and public involvement"],
+  "BIMS": ["Biobank information management system"],
+  "IICT": ["Investigator initiated clinical trials"],
+  "SCTO": ["Swiss clinical trials organization"],
+  "SNSF": ["Swiss national science foundation"],
+  "SPHN": ["Swiss personal health network"],
+  "SBP": ["Swiss biobanking platform"],
+  "ELSI": ["Ethical, legal, and social issues"],
+  "RA": ["Regulatory affairs"],
+  "UH": ["University hospital"],
+  "HRA": ["Human research act"],
+  "GC": ["General consent"],
+  "EC": ["Ethics committee"],
+  "CTIS": ["Clinical Trials Information System"]
+}
