@@ -5,9 +5,12 @@ const { OpenAI } = require('openai');
 const { Pinecone } = require('@pinecone-database/pinecone');
 const acronyms = require('./acronym.json');
 const { normalizeTextField } = require('./utils/text.js');
-  
+
 const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
+
+// In-memory overlay for recently updated services to defeat eventual consistency
+const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
 const allowedOrigins = ['http://localhost:3000', 'https://swissbiobanking.ch'];
@@ -24,6 +27,12 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+function noStore(res) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+}
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
@@ -111,6 +120,7 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
 }
 
 app.post('/search', async (req, res) => {
+  noStore(res);
   try {
     const query = req.body.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
@@ -155,7 +165,7 @@ app.post('/search', async (req, res) => {
       })
       .sort((a, b) => b.score - a.score);
 
-
+    noStore(res);
     res.json({ results: matches });
 
   } catch (err) {
@@ -165,6 +175,7 @@ app.post('/search', async (req, res) => {
 });
 
 app.get('/services', async (req, res) => {
+  noStore(res);
   try {
     const results = [];
 
@@ -174,7 +185,12 @@ app.get('/services', async (req, res) => {
     const records = vectorData.records || {}; // ✅ not .vectors
 
     for (const id in records) {
-      const meta = records[id].metadata || {};
+
+      const rec = records[id] || {}
+      const fromFetch = rec.metadata || {}
+      const overlay = recentUpdates.get(id)
+      const meta = overlay?.metadata && overlay.updatedAt ? { ...fromFetch, ...overlay.metadata, updatedAt: overlay.updatedAt } : fromFetch
+
       results.push({
         id,
         name: meta.name || null,
@@ -189,6 +205,7 @@ app.get('/services', async (req, res) => {
         url: meta.url || null,
         docs: meta.docs || null,
         aliases: meta.aliases || null,
+        updatedAt: meta.updatedAt || null,
       });
     }
 
@@ -202,6 +219,8 @@ app.get('/services', async (req, res) => {
 });
 
 app.post('/update-metadata', async (req, res) => {
+  noStore(res);
+
   try {
     const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
 
@@ -226,30 +245,37 @@ app.post('/update-metadata', async (req, res) => {
       });
     }
 
-    // Upsert vector
+    // Build normalized metadata (Pinecone supports lists of strings)
+    const normArr = v => Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim().length).map(x => x.trim()) : []
+    const normStr = v => (v == null ? null : String(v))
+    const stamp = Date.now()
+
+    const newMetadata = {
+      ...existingMetadata,
+      name: normalizeTextField(name),
+      organization: normStr(organization),
+      regional: Array.isArray(regional) ? regional : (typeof regional === 'string' ? regional.split(',').map(s => s.trim()).filter(Boolean) : []),
+      hidden: normStr(hidden),
+      description: normStr(description),
+      complement: normStr(complement),
+      contact: normArr(contact),
+      output: normArr(output),
+      url: normArr(url),
+      docs: normArr(docs),
+      updatedAt: stamp
+    }
+
+    // Upsert vector with existing values but new metadata
     await index.upsert([
-      {
-        id,
-        values: existing.values,
-        metadata: {
-          ...existingMetadata,
-          name: normalizeTextField(name),
-          organization: organization,
-          regional: regional,
-          hidden: hidden,
-          description: description,
-          complement: complement,
-          contact: contact,
-          output: output,
-          url: url,
-          docs: docs
-        }
-      }
+      { id, values: existing.values, metadata: newMetadata }
     ]);
 
-    console.log(`✅ Updated service ${id}`);
-    res.json({ success: true, message: `Service ${id} updated.` });
+    // Update in-memory overlay so subsequent /services reflect this immediately
+    recentUpdates.set(id, { metadata: newMetadata, updatedAt: stamp })
 
+    console.log(`✅ Updated service ${id}`);
+    noStore(res);
+    res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
   } catch (err) {
     console.error("🔥 Failed to update service:", err);
     res.status(500).json({ error: "Could not update service", detail: err.message });
@@ -257,6 +283,8 @@ app.post('/update-metadata', async (req, res) => {
 });
 
 app.post('/update-service', async (req, res) => {
+  noStore(res);
+  res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
   try {
     const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
 
@@ -290,31 +318,36 @@ app.post('/update-service', async (req, res) => {
 
     const newEmbedding = embeddingResponse.data[0].embedding;
 
-    // Upsert vector
+    // Normalize fields and build metadata
+    const normArr = v => Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim().length).map(x => x.trim()) : []
+    const normStr = v => (v == null ? null : String(v))
+    const stamp = Date.now()
+
+    const newMetadata = {
+      ...existingMetadata,
+      name: normalizeTextField(name),
+      organization: normStr(organization),
+      regional: Array.isArray(regional) ? regional : (typeof regional === 'string' ? regional.split(',').map(s => s.trim()).filter(Boolean) : []),
+      hidden: normStr(hidden),
+      description: normStr(description),
+      complement: normStr(complement),
+      contact: normArr(contact),
+      output: normArr(output),
+      url: normArr(url),
+      docs: normArr(docs),
+      aliases: Array.isArray(aliases) ? aliases : [],
+      updatedAt: stamp
+    }
     await index.upsert([
-      {
-        id,
-        values: newEmbedding,
-        metadata: {
-          ...existingMetadata,
-          name: normalizeTextField(name),
-          organization: organization,
-          regional: regional,
-          hidden: hidden,
-          description: description,
-          complement: complement,
-          contact: contact,
-          output: output,
-          url: url,
-          docs: docs,
-          aliases: aliases
-        }
-      }
+      { id, values: newEmbedding, metadata: newMetadata }
     ]);
 
-    console.log(`✅ Updated service ${id}`);
-    res.json({ success: true, message: `Service ${id} updated.` });
+    // Update in-memory overlay
+    recentUpdates.set(id, { metadata: newMetadata, updatedAt: stamp })
 
+    console.log(`✅ Updated service ${id}`);
+    noStore(res);
+    res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
   } catch (err) {
     console.error("🔥 Failed to update service:", err);
     res.status(500).json({ error: "Could not update service", detail: err.message });
@@ -325,6 +358,7 @@ app.post('/update-service', async (req, res) => {
 
 // Route to generate GPT-4 explanations for match relevance
 app.post('/explain-match', async (req, res) => {
+  noStore(res);
   const { query, match } = req.body;
 
   if (!query || !match) {
@@ -362,6 +396,7 @@ Provide a short, helpful explanation of why it is relevant to the query.
 });
 
 app.post('/proximity-score', async (req, res) => {
+  noStore(res);
   try {
     const { serviceIds } = req.body;
     const orgIds = ["SBP", "Swiss-Cancer-Institute", "SCTO", "SPHN-DCC"];
