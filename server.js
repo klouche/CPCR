@@ -284,7 +284,6 @@ app.post('/update-metadata', async (req, res) => {
 
 app.post('/update-service', async (req, res) => {
   noStore(res);
-  res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
   try {
     const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
 
@@ -365,17 +364,42 @@ app.post('/explain-match', async (req, res) => {
     return res.status(400).json({ error: "Missing or invalid 'query' or 'match' in request body." });
   }
 
-  const explanationPrompt = `
-You are helping a researcher understand why a service match their query.
+    // Expand the user's query with known acronyms and build a glossary for GPT
+  const { expanded: expandedQuery, matched: matchedFromQuery } = expandQueryWithAcronyms(query);
 
-Researcher query:
-"${query}"
+  // Collect acronyms found in the matched service text as well
+  const matchText = [match.name, match.hidden, match.description, Array.isArray(match.aliases) ? match.aliases.join(' ') : '']
+    .filter(Boolean)
+    .join('\n');
+  const matchedFromService = extractAcronymsFromQuery(matchText);
+
+  // Union of acronyms from query and service
+  const allMatched = Array.from(new Set([...(matchedFromQuery || []), ...(matchedFromService || [])]));
+
+  // Build a glossary section for the prompt
+  let glossarySection = '';
+  if (allMatched.length) {
+    const lines = allMatched.map(acro => {
+      const exps = Array.isArray(acronyms[acro]) ? acronyms[acro] : [];
+      return `${acro}: ${exps.join(' | ')}`;
+    }).filter(Boolean);
+    if (lines.length) {
+      glossarySection = `Acronym glossary (use these meanings):\n${lines.join('\n')}\n\n`;
+    }
+  }
+
+  const explanationPrompt = `
+You are helping a researcher understand why a service matches their query. When acronyms appear, use the glossary below; prefer writing the expansion first and the acronym in parentheses.
+
+${glossarySection}Researcher query (expanded):
+"${expandedQuery}"
 
 Matched service:
-Name: ${match.name}, Description: ${match.hidden}, ${match.description}
+Name: ${match.name}
+Aliases: ${(Array.isArray(match.aliases) ? match.aliases.join(', ') : '')}
+Description: ${match.hidden || ''} ${match.description || ''}
 
-Provide a short, helpful explanation of why it is relevant to the query.
-  `;
+Provide a short, helpful explanation (2–4 sentences) of why it is relevant to the query. Be concrete and cite the specific phrases or capabilities that match the intent.`;
 
   try {
     const response = await openai.chat.completions.create({
