@@ -8,7 +8,7 @@ const { normalizeTextField } = require('./utils/text.js');
 const fs = require('fs');
 const path = require('path');
 
-const LOG_FILE = path.join(__dirname, 'requests-log.json');
+const LOG_FILE = '/var/data/requests-log.json';
 // make sure log file exists
 if (!fs.existsSync(LOG_FILE)) {
   fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
