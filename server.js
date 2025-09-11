@@ -140,6 +140,10 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
     .trim();
 }
 
+app.get('/logs', (req, res) => {
+  res.download(LOG_FILE, 'requests-log.json'); // forces download
+});
+
 app.post('/search', async (req, res) => {
   noStore(res);
   try {
