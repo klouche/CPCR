@@ -14,6 +14,8 @@ if (!fs.existsSync(LOG_FILE)) {
   fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
 }
 
+app.set('trust proxy', true);
+
 function getClientIp(req) {
   let ip = req.ip || '';
   if (ip.startsWith('::ffff:')) {
