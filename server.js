@@ -14,11 +14,19 @@ if (!fs.existsSync(LOG_FILE)) {
   fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
 }
 
+function getClientIp(req) {
+  let ip = req.ip || '';
+  if (ip.startsWith('::ffff:')) {
+    ip = ip.replace('::ffff:', '');
+  }
+  return ip;
+}
+
 function logRequest(req, resBody) {
   const entry = {
     timestamp: new Date().toISOString(),
-    ip: req.ip,
-    body: req.body,
+    ip: getClientIp(req),
+    query: req.body?.query,
     result: resBody
   };
 
