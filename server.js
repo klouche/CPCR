@@ -14,8 +14,6 @@ if (!fs.existsSync(LOG_FILE)) {
   fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
 }
 
-app.set('trust proxy', true);
-
 function getClientIp(req) {
   let ip = req.ip || '';
   if (ip.startsWith('::ffff:')) {
@@ -45,6 +43,9 @@ const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
 const allowedOrigins = ['http://localhost:3000', 'https://swissbiobanking.ch'];
+
+app.set('trust proxy', true);
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
