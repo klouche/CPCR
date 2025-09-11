@@ -5,6 +5,27 @@ const { OpenAI } = require('openai');
 const { Pinecone } = require('@pinecone-database/pinecone');
 const acronyms = require('./acronym.json');
 const { normalizeTextField } = require('./utils/text.js');
+const fs = require('fs');
+const path = require('path');
+
+const LOG_FILE = path.join(__dirname, 'requests-log.json');
+// make sure log file exists
+if (!fs.existsSync(LOG_FILE)) {
+  fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
+}
+
+function logRequest(req, resBody) {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    ip: req.ip,
+    body: req.body,
+    result: resBody
+  };
+
+  const logs = JSON.parse(fs.readFileSync(LOG_FILE, 'utf-8'));
+  logs.push(entry);
+  fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2));
+}
 
 const serviceIds = require('./service_ids');
 console.log('Loaded', serviceIds.length, 'service IDs');
@@ -164,6 +185,14 @@ app.post('/search', async (req, res) => {
         };
       })
       .sort((a, b) => b.score - a.score);
+
+    logRequest(req, matches.map(match => {
+      return {
+        "id": match.id,
+        "name": match.name,
+      }
+    }
+    ));
 
     noStore(res);
     res.json({ results: matches });
@@ -364,7 +393,7 @@ app.post('/explain-match', async (req, res) => {
     return res.status(400).json({ error: "Missing or invalid 'query' or 'match' in request body." });
   }
 
-    // Expand the user's query with known acronyms and build a glossary for GPT
+  // Expand the user's query with known acronyms and build a glossary for GPT
   const { expanded: expandedQuery, matched: matchedFromQuery } = expandQueryWithAcronyms(query);
 
   // Collect acronyms found in the matched service text as well
