@@ -8,11 +8,29 @@ const { normalizeTextField } = require('./utils/text.js');
 const fs = require('fs');
 const path = require('path');
 
-const LOG_FILE = '/var/data/requests-log.json';
-// make sure log file exists
-if (!fs.existsSync(LOG_FILE)) {
-  fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
+// Resolve a safe log path for both local dev and Render
+const DEFAULT_LOG_DIR = process.env.LOG_DIR || (process.env.RENDER ? '/var/data' : path.join(__dirname, 'data'));
+const LOG_FILE = process.env.LOG_FILE || path.join(DEFAULT_LOG_DIR, 'requests-log.json');
+
+// Ensure parent directory exists
+const ensureDir = (dir) => {
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+  } catch (e) {
+    console.error('⚠️ Failed to create log directory:', dir, e.message);
+  }
+};
+ensureDir(path.dirname(LOG_FILE));
+
+// Make sure log file exists
+try {
+  if (!fs.existsSync(LOG_FILE)) {
+    fs.writeFileSync(LOG_FILE, '[]'); // initialize empty JSON array
+  }
+} catch (e) {
+  console.error('⚠️ Failed to initialize log file:', LOG_FILE, e.message);
 }
+console.log('📝 Logging to:', LOG_FILE);
 
 function getClientIp(req) {
   let ip = req.ip || '';
@@ -23,16 +41,28 @@ function getClientIp(req) {
 }
 
 function logRequest(req, resBody) {
-  const entry = {
-    timestamp: new Date().toISOString(),
-    ip: getClientIp(req),
-    query: req.body?.query,
-    result: resBody
-  };
+  try {
+    const entry = {
+      timestamp: new Date().toISOString(),
+      ip: getClientIp(req),
+      query: req.body?.query,
+      result: resBody
+    };
 
-  const logs = JSON.parse(fs.readFileSync(LOG_FILE, 'utf-8'));
-  logs.push(entry);
-  fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2));
+    let logs = [];
+    try {
+      const raw = fs.readFileSync(LOG_FILE, 'utf-8');
+      logs = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(logs)) logs = [];
+    } catch (_) {
+      logs = [];
+    }
+
+    logs.push(entry);
+    fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2));
+  } catch (e) {
+    console.error('⚠️ logRequest failed:', e.message);
+  }
 }
 
 const serviceIds = require('./service_ids');
@@ -140,7 +170,7 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
   const parts = [];
   if (description) parts.push(`Description: ${(hidden ? String(hidden).trim() + " - " : "") + String(description).trim()}`);
   if (name) parts.push(`Service name: ${String(normalizeTextField(name)).trim()}`);
-  if (organization) parts.push(`Organization: ${String(organization).trim()}`);
+  //if (organization) parts.push(`Organization: ${String(organization).trim()}`);
   if (Array.isArray(aliases) && aliases.length) parts.push(`Aliases: ${aliases.join(', ')}`);
 
   const text = parts.join('\n');
@@ -152,7 +182,15 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
 }
 
 app.get('/logs', (req, res) => {
-  res.download(LOG_FILE, 'requests-log.json'); // forces download
+  try {
+    if (!fs.existsSync(LOG_FILE)) {
+      return res.status(204).end(); // No Content
+    }
+    return res.download(LOG_FILE, 'requests-log.json');
+  } catch (e) {
+    console.error('⚠️ /logs failed:', e.message);
+    return res.status(500).json({ error: 'Could not read logs' });
+  }
 });
 
 app.post('/search', async (req, res) => {
@@ -172,7 +210,7 @@ app.post('/search', async (req, res) => {
 
     const result = await index.query({
       vector: embedding,
-      topK: 5,
+      topK: 1000,
       includeMetadata: true
     });
 
