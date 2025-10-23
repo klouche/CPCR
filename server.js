@@ -229,6 +229,9 @@ app.post('/search', async (req, res) => {
           description: match.metadata?.description,
           complement: match.metadata?.complement,
           contact: match.metadata?.contact,
+          research: match.metadata?.research,
+          phase: match.metadata?.phase,
+          category: match.metadata?.category,
           output: match.metadata?.output,
           url: match.metadata?.url,
           docs: match.metadata?.docs,
@@ -283,6 +286,9 @@ app.get('/services', async (req, res) => {
         regional: meta.regional || null,
         complement: meta.complement || null,
         contact: meta.contact || null,
+        research: meta.research || null,
+        phase: meta.phase || null,
+        category: meta.category || null,
         output: meta.output || null,
         url: meta.url || null,
         docs: meta.docs || null,
@@ -304,7 +310,7 @@ app.post('/update-metadata', async (req, res) => {
   noStore(res);
 
   try {
-    const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
+    const { id, name, hidden, description, complement, contact, research, phase, category, output, url, docs, organization, regional } = req.body;
 
     if (!id || !description || !name) {
       return res.status(400).json({
@@ -341,6 +347,9 @@ app.post('/update-metadata', async (req, res) => {
       description: normStr(description),
       complement: normStr(complement),
       contact: normArr(contact),
+      research: normArr(research),
+      phase: normArr(phase),
+      category: normArr(category),
       output: normArr(output),
       url: normArr(url),
       docs: normArr(docs),
@@ -367,7 +376,7 @@ app.post('/update-metadata', async (req, res) => {
 app.post('/update-service', async (req, res) => {
   noStore(res);
   try {
-    const { id, name, hidden, description, complement, contact, output, url, docs, organization, regional } = req.body;
+    const { id, name, hidden, description, complement, contact, research, phase, category, output, url, docs, organization, regional } = req.body;
 
     if (!id || !description || !name) {
       return res.status(400).json({
@@ -413,6 +422,9 @@ app.post('/update-service', async (req, res) => {
       description: normStr(description),
       complement: normStr(complement),
       contact: normArr(contact),
+      research: normArr(research),
+      phase: normArr(phase),
+      category: normArr(category),
       output: normArr(output),
       url: normArr(url),
       docs: normArr(docs),
