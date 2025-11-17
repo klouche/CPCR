@@ -7,6 +7,10 @@ const acronyms = require('./acronym.json');
 const { normalizeTextField } = require('./utils/text.js');
 const fs = require('fs');
 const path = require('path');
+const { prisma } = require('./db');
+
+// or ESM
+// import { prisma } from './db.js';
 
 // Resolve a safe log path for both local dev and Render
 const DEFAULT_LOG_DIR = process.env.LOG_DIR || (process.env.RENDER ? '/var/data' : path.join(__dirname, 'data'));
@@ -65,8 +69,6 @@ function logRequest(req, resBody) {
   }
 }
 
-const serviceIds = require('./service_ids');
-console.log('Loaded', serviceIds.length, 'service IDs');
 
 // In-memory overlay for recently updated services to defeat eventual consistency
 const recentUpdates = new Map(); // id -> { metadata, updatedAt }
@@ -181,6 +183,15 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
     .trim();
 }
 
+function arraysEqual(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b)) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
 app.get('/logs', (req, res) => {
   try {
     if (!fs.existsSync(LOG_FILE)) {
@@ -216,39 +227,24 @@ app.post('/search', async (req, res) => {
 
     const BONUS = 0.05; // small nudge for exact acronym hits in aliases
 
-    const matches = result.matches
+    const matches = (result.matches || [])
       .map(match => {
         const aliases = match.metadata?.aliases || [];
         const hasExact = Array.isArray(aliases) && matched?.some(a => aliases.includes(a));
         const boostedScore = hasExact ? (match.score + BONUS) : match.score;
         return {
           id: match.id,
-          score: boostedScore,
-          name: match.metadata?.name,
-          hidden: match.metadata?.hidden,
-          description: match.metadata?.description,
-          complement: match.metadata?.complement,
-          contact: match.metadata?.contact,
-          research: match.metadata?.research,
-          phase: match.metadata?.phase,
-          category: match.metadata?.category,
-          output: match.metadata?.output,
-          url: match.metadata?.url,
-          docs: match.metadata?.docs,
-          regional: match.metadata?.regional,
-          organization: match.metadata?.organization,
-          aliases
+          score: boostedScore
         };
       })
       .sort((a, b) => b.score - a.score);
 
     logRequest(req, matches.map(match => {
       return {
-        "id": match.id,
-        "name": match.name,
-      }
-    }
-    ));
+        id: match.id,
+        score: match.score
+      };
+    }));
 
     noStore(res);
     res.json({ results: matches });
@@ -262,162 +258,77 @@ app.post('/search', async (req, res) => {
 app.get('/services', async (req, res) => {
   noStore(res);
   try {
-    const results = [];
+    const services = await prisma.service.findMany({
+      orderBy: { name: 'asc' },
+    });
 
-    // Fetch all vectors (adjust batch size if needed later)
-    const vectorData = await index.fetch(serviceIds);
-
-    const records = vectorData.records || {}; // ✅ not .vectors
-
-    for (const id in records) {
-
-      const rec = records[id] || {}
-      const fromFetch = rec.metadata || {}
-      const overlay = recentUpdates.get(id)
-      const meta = overlay?.metadata && overlay.updatedAt ? { ...fromFetch, ...overlay.metadata, updatedAt: overlay.updatedAt } : fromFetch
-
-      results.push({
-        id,
-        name: meta.name || null,
-        hidden: meta.hidden || null,
-        description: meta.description || null,
-        organization: meta.organization || null,
-        hidden: meta.hidden || null,
-        regional: meta.regional || null,
-        complement: meta.complement || null,
-        contact: meta.contact || null,
-        research: meta.research || null,
-        phase: meta.phase || null,
-        category: meta.category || null,
-        output: meta.output || null,
-        url: meta.url || null,
-        docs: meta.docs || null,
-        aliases: meta.aliases || null,
-        updatedAt: meta.updatedAt || null,
-      });
-    }
-
-    console.log(`✅ Fetched ${results.length} services from Pinecone`);
-    res.json({ services: results });
-
+    res.json({ services });
   } catch (err) {
     console.error("🔥 Failed to fetch services:", err.message);
     res.status(500).json({ error: "Could not fetch services" });
   }
 });
 
-app.post('/update-metadata', async (req, res) => {
-  noStore(res);
-
-  try {
-    const { id, name, hidden, description, complement, contact, research, phase, category, output, url, docs, organization, regional } = req.body;
-
-    if (!id || !description || !name) {
-      return res.status(400).json({
-        error: "Missing 'id', 'description', or 'name'"
-      });
-    }
-
-    // Fetch existing metadata
-    const fetchResult = await index.fetch([id]);
-    const existing = fetchResult.records?.[id];
-    const existingMetadata = existing?.metadata || {};
-    if (!existing) {
-      return res.status(404).json({
-        error: `Service ID '${id}' not found in Pinecone index.`
-      });
-    }
-    if (!serviceIds.includes(id)) {
-      return res.status(404).json({
-        error: `Service ID '${id}' not recognized.`
-      });
-    }
-
-    // Build normalized metadata (Pinecone supports lists of strings)
-    const normArr = v => Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim().length).map(x => x.trim()) : []
-    const normStr = v => (v == null ? null : String(v))
-    const stamp = Date.now()
-
-    const newMetadata = {
-      ...existingMetadata,
-      name: normalizeTextField(name),
-      organization: normStr(organization),
-      regional: Array.isArray(regional) ? regional : (typeof regional === 'string' ? regional.split(',').map(s => s.trim()).filter(Boolean) : []),
-      hidden: normStr(hidden),
-      description: normStr(description),
-      complement: normStr(complement),
-      contact: normArr(contact),
-      research: normArr(research),
-      phase: normArr(phase),
-      category: normArr(category),
-      output: normArr(output),
-      url: normArr(url),
-      docs: normArr(docs),
-      updatedAt: stamp
-    }
-
-    // Upsert vector with existing values but new metadata
-    await index.upsert([
-      { id, values: existing.values, metadata: newMetadata }
-    ]);
-
-    // Update in-memory overlay so subsequent /services reflect this immediately
-    recentUpdates.set(id, { metadata: newMetadata, updatedAt: stamp })
-
-    console.log(`✅ Updated service ${id}`);
-    noStore(res);
-    res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
-  } catch (err) {
-    console.error("🔥 Failed to update service:", err);
-    res.status(500).json({ error: "Could not update service", detail: err.message });
-  }
-});
-
 app.post('/update-service', async (req, res) => {
   noStore(res);
   try {
-    const { id, name, hidden, description, complement, contact, research, phase, category, output, url, docs, organization, regional } = req.body;
+    const {
+      id,
+      name,
+      hidden,
+      description,
+      complement,
+      contact,
+      research,
+      phase,
+      category,
+      output,
+      url,
+      docs,
+      organization,
+      regional,
+      active
+    } = req.body;
 
-    if (!id || !description || !name) {
+    if (!id || !name) {
       return res.status(400).json({
-        error: "Missing 'id', 'description', or 'name'"
+        error: "Missing 'id' or 'name'"
       });
     }
 
-    // Fetch existing metadata
-    const fetchResult = await index.fetch([id]);
-    const existing = fetchResult.records?.[id];
-    const existingMetadata = existing?.metadata || {};
 
-    if (!serviceIds.includes(id)) {
+    // Load existing record from Postgres
+    const existing = await prisma.service.findUnique({ where: { id } });
+
+    if (!existing) {
       return res.status(404).json({
-        error: `Service ID '${id}' not recognized.`
+        error: `Service with ID '${id}' not found in database.`
       });
     }
 
     // Detect acronyms/expansions present in the provided fields
     const aliases = buildAliasesForFields({ name, organization, hidden, description });
-    // Generate new embedding from multiple metadata fields + aliases
-    const embeddingInput = buildEmbeddingText({ name, organization, hidden, description, aliases });
 
-    console.log(embeddingInput)
-    const embeddingResponse = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: embeddingInput
-    });
+    // Normalization helpers
+    const normArr = v =>
+      Array.isArray(v)
+        ? v
+            .filter(x => typeof x === 'string' && x.trim().length)
+            .map(x => x.trim())
+        : [];
+    const normStr = v => (v == null ? null : String(v));
 
-    const newEmbedding = embeddingResponse.data[0].embedding;
+    const regionalArray = Array.isArray(regional)
+      ? regional
+      : (typeof regional === 'string'
+          ? regional.split(',').map(s => s.trim()).filter(Boolean)
+          : []);
 
-    // Normalize fields and build metadata
-    const normArr = v => Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim().length).map(x => x.trim()) : []
-    const normStr = v => (v == null ? null : String(v))
-    const stamp = Date.now()
-
-    const newMetadata = {
-      ...existingMetadata,
-      name: normalizeTextField(name),
+    // Prepare new data for DB update
+    const newData = {
+      name,
       organization: normStr(organization),
-      regional: Array.isArray(regional) ? regional : (typeof regional === 'string' ? regional.split(',').map(s => s.trim()).filter(Boolean) : []),
+      regional: regionalArray,
       hidden: normStr(hidden),
       description: normStr(description),
       complement: normStr(complement),
@@ -428,25 +339,274 @@ app.post('/update-service', async (req, res) => {
       output: normArr(output),
       url: normArr(url),
       docs: normArr(docs),
-      aliases: Array.isArray(aliases) ? aliases : [],
-      updatedAt: stamp
+      aliases,
+      active: typeof active === 'boolean' ? active : existing.active
+    };
+
+    // Detect if embedding-relevant fields changed
+    const embeddingFieldsChanged =
+      (existing.name || '') !== (name || '') ||
+      (existing.organization || '') !== (organization || '') ||
+      (existing.hidden || '') !== (hidden || '') ||
+      (existing.description || '') !== (description || '') ||
+      !arraysEqual(existing.aliases || [], aliases || []);
+
+    // Always update DB first (source of truth)
+    const updatedService = await prisma.service.update({
+      where: { id },
+      data: newData
+    });
+
+    let pineconeUpdated = false;
+
+    if (embeddingFieldsChanged) {
+      const embeddingInput = buildEmbeddingText({
+        name,
+        organization,
+        hidden,
+        description,
+        aliases
+      });
+
+      const embeddingResponse = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: embeddingInput
+      });
+
+      const newEmbedding = embeddingResponse.data[0].embedding;
+      const stamp = Date.now();
+
+      // Metadata for Pinecone: keep in sync with DB, plus updatedAt
+      const pineconeMetadata = {
+        name: normalizeTextField(name),
+        organization: normStr(organization),
+        regional: regionalArray,
+        hidden: normStr(hidden),
+        description: normStr(description),
+        complement: normStr(complement),
+        contact: normArr(contact),
+        research: normArr(research),
+        phase: normArr(phase),
+        category: normArr(category),
+        output: normArr(output),
+        url: normArr(url),
+        docs: normArr(docs),
+        aliases: Array.isArray(aliases) ? aliases : [],
+        updatedAt: stamp
+      };
+
+      await index.upsert([
+        { id, values: newEmbedding, metadata: pineconeMetadata }
+      ]);
+
+      pineconeUpdated = true;
+      console.log(`✅ Updated service ${id} in DB and Pinecone`);
+    } else {
+      console.log(`✅ Updated service ${id} in DB (no embedding change)`);
     }
-    await index.upsert([
-      { id, values: newEmbedding, metadata: newMetadata }
-    ]);
 
-    // Update in-memory overlay
-    recentUpdates.set(id, { metadata: newMetadata, updatedAt: stamp })
-
-    console.log(`✅ Updated service ${id}`);
     noStore(res);
-    res.json({ success: true, message: `Service ${id} updated.`, service: { id, ...newMetadata } });
+    res.json({
+      success: true,
+      message: `Service ${id} updated.`,
+      service: updatedService,
+      pineconeUpdated
+    });
   } catch (err) {
     console.error("🔥 Failed to update service:", err);
     res.status(500).json({ error: "Could not update service", detail: err.message });
   }
 });
 
+
+app.post('/create-service', async (req, res) => {
+  noStore(res);
+  try {
+    const {
+      id,
+      name,
+      organization,
+      regional,
+      hidden,
+      description,
+      complement,
+      contact,
+      research,
+      phase,
+      category,
+      output,
+      url,
+      docs,
+      active
+    } = req.body;
+
+    // Minimal required fields
+    if (!id || !name || !organization) {
+      return res.status(400).json({
+        error: "Missing 'id', 'name', or 'organization'."
+      });
+    }
+
+    // Check if service already exists in DB
+    const existing = await prisma.service.findUnique({ where: { id } });
+    if (existing) {
+      return res.status(400).json({
+        error: `Service with ID '${id}' already exists in database.`,
+      });
+    }
+
+    // Normalization helpers (same spirit as in /update-service)
+    const normArr = v =>
+      Array.isArray(v)
+        ? v
+            .filter(x => typeof x === 'string' && x.trim().length)
+            .map(x => x.trim())
+        : [];
+
+    const normStr = v => (v == null ? null : String(v));
+
+    const regionalArray = Array.isArray(regional)
+      ? regional
+      : (typeof regional === 'string'
+          ? regional.split(',').map(s => s.trim()).filter(Boolean)
+          : []);
+
+    const contactArray = normArr(contact);
+    const researchArray = normArr(research);
+    const phaseArray = normArr(phase);
+    const categoryArray = normArr(category);
+    const outputArray = normArr(output);
+    const urlArray = normArr(url);
+    const docsArray = normArr(docs);
+
+    // Detect aliases from the provided text fields
+    const aliases = buildAliasesForFields({
+      name,
+      organization,
+      hidden,
+      description
+    });
+
+    // Create in DB (source of truth)
+    const newService = await prisma.service.create({
+      data: {
+        id,
+        name,
+        organization: normStr(organization),
+        regional: regionalArray,
+        hidden: normStr(hidden),
+        description: normStr(description),
+        complement: normStr(complement),
+        contact: contactArray,
+        research: researchArray,
+        phase: phaseArray,
+        category: categoryArray,
+        output: outputArray,
+        url: urlArray,
+        docs: docsArray,
+        aliases,
+        active: typeof active === 'boolean' ? active : true
+      }
+    });
+
+    // Build text for embedding (same logic as elsewhere)
+    const embeddingInput = buildEmbeddingText({
+      name,
+      organization,
+      hidden,
+      description,
+      aliases
+    });
+
+    const embeddingResponse = await openai.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: embeddingInput
+    });
+
+    const embedding = embeddingResponse.data[0].embedding;
+    const stamp = Date.now();
+
+    const pineconeMetadata = {
+      name: normalizeTextField(name),
+      organization: normStr(organization),
+      regional: regionalArray,
+      hidden: normStr(hidden),
+      description: normStr(description),
+      complement: normStr(complement),
+      contact: contactArray,
+      research: researchArray,
+      phase: phaseArray,
+      category: categoryArray,
+      output: outputArray,
+      url: urlArray,
+      docs: docsArray,
+      aliases: Array.isArray(aliases) ? aliases : [],
+      updatedAt: stamp
+    };
+
+    await index.upsert([
+      {
+        id,
+        values: embedding,
+        metadata: pineconeMetadata
+      }
+    ]);
+
+    console.log(`✨ Created new service '${id}' in DB and Pinecone`);
+
+    res.json({
+      success: true,
+      message: `Service ${id} saved.`,
+      service: newService,
+      pineconeIndexed: true
+    });
+
+  } catch (err) {
+    console.error("🔥 Failed to create service:", err);
+    res.status(500).json({
+      error: "Could not create service",
+      detail: err.message
+    });
+  }
+});
+
+app.post('/delete-service', async (req, res) => {
+  noStore(res);
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ error: "Missing 'id'." });
+    }
+
+    // Check existence in DB first
+    const existing = await prisma.service.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: `Service '${id}' not found in database.` });
+    }
+
+    // Delete from DB (source of truth)
+    await prisma.service.delete({ where: { id } });
+
+    // Try to delete from Pinecone too
+    try {
+      // Depending on your client, this might be:
+      // await index.deleteMany({ ids: [id] });
+      await index.deleteOne(id);
+      console.log(`🧹 Deleted service '${id}' from Pinecone and DB`);
+    } catch (pineErr) {
+      console.error(`⚠️ Deleted from DB but failed to delete '${id}' from Pinecone:`, pineErr);
+    }
+
+    res.json({
+      success: true,
+      message: `Service '${id}' deleted from DB and Pinecone (if present).`
+    });
+  } catch (err) {
+    console.error("🔥 Failed to delete service:", err);
+    res.status(500).json({ error: "Could not delete service", detail: err.message });
+  }
+});
 
 
 // Route to generate GPT-4 explanations for match relevance
