@@ -113,7 +113,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      // secure: true,        // uncomment when behind HTTPS in production
+      secure: true,        // uncomment when behind HTTPS in production
       maxAge: 1000 * 60 * 60 * 8 // 8 hours
     }
   })
