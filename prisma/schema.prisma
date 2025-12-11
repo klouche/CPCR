@@ -15,12 +15,14 @@ datasource db {
 }
 
 model Service {
-  id           String   @id @default(uuid())
-  active       Boolean  @default(true)
-  name         String
-  organization String
+  id               String        @id @default(uuid())
+  active           Boolean       @default(true)
+  name             String
+  organizationCode String
+  organization     Organization  @relation(fields: [organizationCode], references: [code])
+
   regional     String[] @default([])
-  hidden       String? 
+  hidden       String?
   description  String?
   complement   String?
   aliases      String[] @default([])
@@ -33,4 +35,23 @@ model Service {
   contact      String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Organization {
+  // We use the symbolic organization code as the primary key, e.g. "SBP", "SE"
+  code      String  @id          // "SBP"
+  label     String               // human-readable label, e.g. "swissethics"
+  fullName  String
+  idPrefix  String               // e.g. "SE"
+  users     User[]               // relation from User
+  services  Service[]
+}
+
+model User {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  password         String        // hashed
+  organizationCode String
+  organization     Organization  @relation(fields: [organizationCode], references: [code])
+  isSuperAdmin     Boolean       @default(false)
 }

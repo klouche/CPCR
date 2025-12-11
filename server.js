@@ -8,9 +8,7 @@ const { normalizeTextField } = require('./utils/text.js');
 const fs = require('fs');
 const path = require('path');
 const { prisma } = require('./db');
-
-// or ESM
-// import { prisma } from './db.js';
+const bcrypt = require('bcrypt');
 
 // Resolve a safe log path for both local dev and Render
 const DEFAULT_LOG_DIR = process.env.LOG_DIR || (process.env.RENDER ? '/var/data' : path.join(__dirname, 'data'));
@@ -44,13 +42,14 @@ function getClientIp(req) {
   return ip;
 }
 
-function logRequest(req, resBody) {
+function logRequest(req, resBody, meta = {}) {
   try {
     const entry = {
       timestamp: new Date().toISOString(),
       ip: getClientIp(req),
       query: req.body?.query,
-      result: resBody
+      result: resBody,
+      ...meta
     };
 
     let logs = [];
@@ -97,6 +96,30 @@ function noStore(res) {
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
 }
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+const session = require('express-session');
+
+const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me';
+
+app.use(
+  session({
+    name: 'cpcr.sid',         // cookie name
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+      // secure: true,        // uncomment when behind HTTPS in production
+      maxAge: 1000 * 60 * 60 * 8 // 8 hours
+    }
+  })
+);
+
+
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
@@ -192,7 +215,133 @@ function arraysEqual(a, b) {
   return true;
 }
 
-app.get('/logs', (req, res) => {
+
+// ============================================================================
+// AUTH ROUTES
+// ============================================================================
+
+// POST /api/login  { username, password }
+// Handles user login, verifies credentials against the User table,
+// sets an authenticated session, and returns user + organization info.
+// For now, "username" is treated as the user's email.
+app.post('/api/login', express.json(), async (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Missing username or password' });
+  }
+
+  try {
+    // Look up user by email (username)
+    const user = await prisma.user.findUnique({
+      where: { email: username },
+      include: { organization: true }
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const passwordOk = await bcrypt.compare(password, user.password);
+    if (!passwordOk) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Store minimal info in session
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      role: 'admin',
+      organizationCode: user.organizationCode,
+      isSuperAdmin: user.isSuperAdmin
+    };
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: 'admin',
+        organizationCode: user.organizationCode,
+        isSuperAdmin: user.isSuperAdmin,
+        organization: user.organization
+      }
+    });
+  } catch (err) {
+    console.error('🔥 Failed to log in user:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/me
+// Returns the currently authenticated user (if any), including
+// their organization information, based on the session cookie.
+// ---------------------------------------------------------------------------
+// GET /me → returns current session user with organization info
+app.get('/api/me', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(200).json({ authenticated: false });
+  }
+
+  try {
+    const sessionUser = req.session.user;
+
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      include: { organization: true }
+    });
+
+    if (!user) {
+      return res.status(200).json({ authenticated: false });
+    }
+
+    res.json({
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: sessionUser.role || 'admin',
+        organizationCode: user.organizationCode,
+        organization: user.organization
+      }
+    });
+  } catch (err) {
+    console.error('🔥 Failed to fetch current user:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/logout
+// Destroys the current session and clears the auth cookie.
+// ---------------------------------------------------------------------------
+// POST /logout
+app.post('/api/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Failed to destroy session:', err);
+      return res.status(500).json({ error: 'Could not log out' });
+    }
+    res.clearCookie('cpcr.sid');
+    res.json({ success: true });
+  });
+});
+
+
+function requireAuth(req, res, next) {
+  if (req.session && req.session.user && req.session.user.role === 'admin') {
+    return next();
+  }
+  return res.status(401).json({ error: 'Authentication required' });
+}
+
+
+// ============================================================================
+// LOGS ROUTE
+// ============================================================================
+// GET /api/logs
+// Streams the JSON log file of past search requests (if present).
+app.get('/api/logs', (req, res) => {
   try {
     if (!fs.existsSync(LOG_FILE)) {
       return res.status(204).end(); // No Content
@@ -204,7 +353,13 @@ app.get('/logs', (req, res) => {
   }
 });
 
-app.post('/search', async (req, res) => {
+// ============================================================================
+// SEARCH ROUTE
+// ============================================================================
+// POST /api/search
+// Takes a free-text query, expands acronyms, creates an embedding,
+// queries Pinecone, and returns ranked service IDs with scores.
+app.post('/api/search', async (req, res) => {
   noStore(res);
   try {
     const query = req.body.query;
@@ -239,12 +394,11 @@ app.post('/search', async (req, res) => {
       })
       .sort((a, b) => b.score - a.score);
 
-    logRequest(req, matches.map(match => {
-      return {
-        id: match.id,
-        score: match.score
-      };
-    }));
+    logRequest(
+      req,
+      matches.map(match => ({ id: match.id, score: match.score })),
+      { type: 'search' }
+    );
 
     noStore(res);
     res.json({ results: matches });
@@ -255,11 +409,19 @@ app.post('/search', async (req, res) => {
   }
 });
 
-app.get('/services', async (req, res) => {
+// ============================================================================
+// SERVICES LIST ROUTE
+// ============================================================================
+// GET /api/services
+// Returns all services from Postgres, including their Organization relation.
+app.get('/api/services', async (req, res) => {
   noStore(res);
   try {
     const services = await prisma.service.findMany({
       orderBy: { name: 'asc' },
+      include: {
+        organization: true,
+      },
     });
 
     res.json({ services });
@@ -269,7 +431,13 @@ app.get('/services', async (req, res) => {
   }
 });
 
-app.post('/update-service', async (req, res) => {
+// ============================================================================
+// UPDATE SERVICE ROUTE
+// ============================================================================
+// POST /api/update-service
+// Requires authentication. Updates a service in Postgres, and when relevant
+// also regenerates the embedding and updates the corresponding Pinecone vector.
+app.post('/api/update-service', requireAuth, async (req, res) => {
   noStore(res);
   try {
     const {
@@ -313,21 +481,21 @@ app.post('/update-service', async (req, res) => {
     const normArr = v =>
       Array.isArray(v)
         ? v
-            .filter(x => typeof x === 'string' && x.trim().length)
-            .map(x => x.trim())
+          .filter(x => typeof x === 'string' && x.trim().length)
+          .map(x => x.trim())
         : [];
     const normStr = v => (v == null ? null : String(v));
 
     const regionalArray = Array.isArray(regional)
       ? regional
       : (typeof regional === 'string'
-          ? regional.split(',').map(s => s.trim()).filter(Boolean)
-          : []);
+        ? regional.split(',').map(s => s.trim()).filter(Boolean)
+        : []);
 
     // Prepare new data for DB update
     const newData = {
       name,
-      organization: normStr(organization),
+      organizationCode: normStr(organization),
       regional: regionalArray,
       hidden: normStr(hidden),
       description: normStr(description),
@@ -346,7 +514,7 @@ app.post('/update-service', async (req, res) => {
     // Detect if embedding-relevant fields changed
     const embeddingFieldsChanged =
       (existing.name || '') !== (name || '') ||
-      (existing.organization || '') !== (organization || '') ||
+      (existing.organizationCode || '') !== (organization || '') ||
       (existing.hidden || '') !== (hidden || '') ||
       (existing.description || '') !== (description || '') ||
       !arraysEqual(existing.aliases || [], aliases || []);
@@ -405,6 +573,19 @@ app.post('/update-service', async (req, res) => {
       console.log(`✅ Updated service ${id} in DB (no embedding change)`);
     }
 
+    // Log the service update in the same log file as searches
+    logRequest(
+      req,
+      {
+        action: 'update-service',
+        id,
+        updatedFields: newData,
+        pineconeUpdated,
+        user: req.session?.user?.email || null
+      },
+      { type: 'service-change' }
+    );
+
     noStore(res);
     res.json({
       success: true,
@@ -419,7 +600,13 @@ app.post('/update-service', async (req, res) => {
 });
 
 
-app.post('/create-service', async (req, res) => {
+// ============================================================================
+// CREATE SERVICE ROUTE
+// ============================================================================
+// POST /api/create-service
+// Creates a new service in Postgres and indexes it in Pinecone with a fresh
+// embedding and metadata derived from the service fields.
+app.post('/api/create-service', requireAuth, async (req, res) => {
   noStore(res);
   try {
     const {
@@ -459,8 +646,8 @@ app.post('/create-service', async (req, res) => {
     const normArr = v =>
       Array.isArray(v)
         ? v
-            .filter(x => typeof x === 'string' && x.trim().length)
-            .map(x => x.trim())
+          .filter(x => typeof x === 'string' && x.trim().length)
+          .map(x => x.trim())
         : [];
 
     const normStr = v => (v == null ? null : String(v));
@@ -468,8 +655,8 @@ app.post('/create-service', async (req, res) => {
     const regionalArray = Array.isArray(regional)
       ? regional
       : (typeof regional === 'string'
-          ? regional.split(',').map(s => s.trim()).filter(Boolean)
-          : []);
+        ? regional.split(',').map(s => s.trim()).filter(Boolean)
+        : []);
 
     const contactArray = normArr(contact);
     const researchArray = normArr(research);
@@ -492,7 +679,7 @@ app.post('/create-service', async (req, res) => {
       data: {
         id,
         name,
-        organization: normStr(organization),
+        organizationCode: normStr(organization),
         regional: regionalArray,
         hidden: normStr(hidden),
         description: normStr(description),
@@ -554,6 +741,19 @@ app.post('/create-service', async (req, res) => {
 
     console.log(`✨ Created new service '${id}' in DB and Pinecone`);
 
+    // Log the service creation in the same log file as searches
+    logRequest(
+      req,
+      {
+        action: 'create-service',
+        id,
+        data: newService,
+        pineconeIndexed: true,
+        user: req.session?.user?.email || null
+      },
+      { type: 'service-change' }
+    );
+
     res.json({
       success: true,
       message: `Service ${id} saved.`,
@@ -570,7 +770,13 @@ app.post('/create-service', async (req, res) => {
   }
 });
 
-app.post('/delete-service', async (req, res) => {
+// ============================================================================
+// DELETE SERVICE ROUTE
+// ============================================================================
+// POST /api/delete-service
+// Deletes a service from Postgres and attempts to remove its vector from
+// Pinecone as well.
+app.post('/api/delete-service', requireAuth, async (req, res) => {
   noStore(res);
   try {
     const { id } = req.body;
@@ -598,6 +804,17 @@ app.post('/delete-service', async (req, res) => {
       console.error(`⚠️ Deleted from DB but failed to delete '${id}' from Pinecone:`, pineErr);
     }
 
+    // Log the service deletion in the same log file as searches
+    logRequest(
+      req,
+      {
+        action: 'delete-service',
+        id,
+        user: req.session?.user?.email || null
+      },
+      { type: 'service-change' }
+    );
+
     res.json({
       success: true,
       message: `Service '${id}' deleted from DB and Pinecone (if present).`
@@ -609,8 +826,14 @@ app.post('/delete-service', async (req, res) => {
 });
 
 
+// ============================================================================
+// EXPLAIN MATCH ROUTE
+// ============================================================================
+// POST /api/explain-match
+// Uses GPT to generate a short human-readable explanation for why a given
+// service matches a user query, including acronym expansions.
 // Route to generate GPT-4 explanations for match relevance
-app.post('/explain-match', async (req, res) => {
+app.post('/api/explain-match', async (req, res) => {
   noStore(res);
   const { query, match } = req.body;
 
@@ -673,7 +896,13 @@ Provide a short, helpful explanation (2–4 sentences) of why it is relevant to 
   }
 });
 
-app.post('/proximity-score', async (req, res) => {
+// ============================================================================
+// PROXIMITY SCORE ROUTE
+// ============================================================================
+// POST /api/proximity-score
+// Computes cosine-like similarity scores between service vectors and a
+// fixed set of organization vectors stored in the orgIndex.
+app.post('/api/proximity-score', async (req, res) => {
   noStore(res);
   try {
     const { serviceIds } = req.body;
@@ -717,6 +946,9 @@ app.post('/proximity-score', async (req, res) => {
 });
 
 
+// ============================================================================
+// SERVER STARTUP
+// ============================================================================
 app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:3000');
 });
