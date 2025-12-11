@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchHub Admin</title>
+    <script src="./js/libraries/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body>
+
+    <div id = "header">
+        <div id = "header-user"></div>
+        <button type="button" id="header-logout">Logout</button>
+    </div>
+    <div id="layout-container">
+
+        <div id="login-form">
+            <form id="login-form-element">
+                <h2>Login</h2>
+                <label class="field-label" for="login-username">Email</label>
+                <input type="text" id="login-username" name="username" autocomplete="username" required />
+
+                <label class="field-label" for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" autocomplete="current-password" required />
+
+                <button type="button" id="login-button">Login</button>
+                <p id="login-message"></p>
+            </form>
+        </div>
+
+        <!-- Header des requetes -->
+        <!-- Filtre des infrastructure -->
+
+        <!-- Colonne gauche : Filtres -->
+        <div id="filters-column">
+
+            <div id="request-selector">
+                <!-- Filtre des requetes -->
+                <h2>ResearchHub service management</h2>
+                <label class="field-label" for="services">Service</label>
+                <select id="services" name="services"></select>
+                <button id="service-create" name="service-create" style="display:none;">New service</button>
+                <button id="service-export" name="service-export" style="display:none;">Export services</button>
+
+                <div id="service" style="display: none;">
+                    <div class="field-info">Fields with * affect ranking</div>
+                    <label class="field-label single-checkbox" for="service-active">Service is active</label>
+                    <input type="checkbox" id="service-active" contenteditable="true"></input>
+                    <label class="field-label" for="service-name">Name*</label>
+                    <div class="editable-field" id="service-name" contenteditable="true"></div>
+                    <label class="field-label" for="service-regional">Regional infrastructures</label>
+                    <div class="editable-field" id="service-regional" contenteditable="true"></div>
+                    <label class="field-label" for="service-hidden">Hidden description* (not visible to users)</label>
+                    <div class="editable-field" id="service-hidden" contenteditable="true"></div>
+                    <label class="field-label" for="service-description">Description*</label>
+                    <div class="editable-field" id="service-description" contenteditable="true"></div>
+                    <label class="field-label" for="service-complement">Description complement</label>
+                    <div class="editable-field" id="service-complement" contenteditable="true"></div>
+                    <label class="field-label" for="service-research">Type of research</label>
+                    <div class="read-only-field" id="service-research"></div>
+                    <label class="field-label" for="service-phase">Project phase</label>
+                    <div class="read-only-field" id="service-phase"></div>
+                    <label class="field-label" for="service-category">Service category</label>
+                    <div class="read-only-field" id="service-category"></div>
+                    <label class="field-label" for="service-output">Type of service</label>
+                    <div class="read-only-field" id="service-output"></div>
+
+                    <label class="field-label" for="service-contacts">Contacts</label>
+                    <pre id="service-contacts" class="editable-field" placeholder="Optional"
+                        contenteditable="true"></pre>
+                    <div class="field-info">Format: "a.muster@website.ch" or "Alex Muster, a.muster@website.ch". One
+                        email address per line</div>
+
+                    <label class="field-label" for="service-urls">Links</label>
+                    <pre id="service-urls" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
+                    <div class="field-info">Format: "www.website.ch" or "My website, www.website.ch". One url per line
+                    </div>
+
+                    <label class="field-label" for="service-docs">Documents</label>
+                    <pre id="service-docs" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
+                    <div class="field-info">Format: "www.website.ch/document.pdf" or "My document,
+                        www.infra.ch/document.pdf". One document url per line</div>
+
+                    <button id="service-revert" name="service-revert">Cancel changes</button>
+                    <button id="service-update" name="service-update">Update service</button>
+                    <p id="message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/visualization.js"></script>
+</body>
+
+</html>
