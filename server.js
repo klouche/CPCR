@@ -73,7 +73,11 @@ function logRequest(req, resBody, meta = {}) {
 const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
-const allowedOrigins = ['http://localhost:3000', 'https://swissbiobanking.ch'];
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'https://swissbiobanking.ch',
+  'https://cpcr.onrender.com'
+];
 
 app.set('trust proxy', true);
 
