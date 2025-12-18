@@ -13,8 +13,8 @@
 
 <body>
 
-    <div id = "header">
-        <div id = "header-user"></div>
+    <div id="header">
+        <div id="header-user"></div>
         <button type="button" id="header-logout">Logout</button>
     </div>
     <div id="layout-container">
@@ -38,16 +38,40 @@
 
         <!-- Colonne gauche : Filtres -->
         <div id="filters-column">
+            <h2>Research Hub</h2>
 
-            <div id="request-selector">
+            <div id="organization-panel" class="panel">
+                <h3>Organization management</h3>
+                <label class="field-label" for="organizations">Organization</label>
+                <select id="organizations" name="organizations"></select>
+                <button id="organization-create" name="organizaton-create" style="display:none;">New organization</button>
+
+                <div id="organization" class="panel-detail" style="display: none;">
+                    <label class="field-label" for="organization-code">Code</label>
+                    <div class="editable-field" id="organization-code" contenteditable="true"></div>
+                    <label class="field-label" for="organization-label">Label</label>
+                    <div class="editable-field" id="organization-label" contenteditable="true"></div>
+                    <label class="field-label" for="organization-full-name">Full name</label>
+                    <div class="editable-field" id="organization-full-name" contenteditable="true"></div>
+                    <label class="field-label" for="organization-id-prefix">ID prefix</label>
+                    <div class="editable-field" id="organization-id-prefix" contenteditable="true"></div>
+
+                    <button id="organization-revert" name="organization-revert">Cancel changes</button>
+                    <button id="organization-update" name="organization-update">Update organization</button>
+                    <p id="message"></p>
+                </div>
+            </div>
+
+
+            <div id="service-panel" class="panel">
                 <!-- Filtre des requetes -->
-                <h2>ResearchHub service management</h2>
+                <h3>Service management</h3>
                 <label class="field-label" for="services">Service</label>
                 <select id="services" name="services"></select>
                 <button id="service-create" name="service-create" style="display:none;">New service</button>
                 <button id="service-export" name="service-export" style="display:none;">Export services</button>
 
-                <div id="service" style="display: none;">
+                <div id="service" class="panel-detail" style="display: none;">
                     <div class="field-info">Fields with * affect ranking</div>
                     <label class="field-label single-checkbox" for="service-active">Service is active</label>
                     <input type="checkbox" id="service-active" contenteditable="true"></input>
@@ -55,7 +79,8 @@
                     <div class="editable-field" id="service-name" contenteditable="true"></div>
                     <label class="field-label" for="service-regional">Regional infrastructures</label>
                     <div class="editable-field" id="service-regional" contenteditable="true"></div>
-                    <label class="field-label" for="service-hidden">Hidden description* (not visible to users)</label>
+                    <label class="field-label" for="service-hidden">Hidden description* (not visible to
+                        users)</label>
                     <div class="editable-field" id="service-hidden" contenteditable="true"></div>
                     <label class="field-label" for="service-description">Description*</label>
                     <div class="editable-field" id="service-description" contenteditable="true"></div>
@@ -78,7 +103,8 @@
 
                     <label class="field-label" for="service-urls">Links</label>
                     <pre id="service-urls" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
-                    <div class="field-info">Format: "www.website.ch" or "My website, www.website.ch". One url per line
+                    <div class="field-info">Format: "www.website.ch" or "My website, www.website.ch". One url per
+                        line
                     </div>
 
                     <label class="field-label" for="service-docs">Documents</label>
@@ -91,6 +117,7 @@
                     <p id="message"></p>
                 </div>
             </div>
+
         </div>
     </div>
     <script src="./js/visualization.js"></script>

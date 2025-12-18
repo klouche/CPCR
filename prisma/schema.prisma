@@ -54,4 +54,5 @@ model User {
   organizationCode String
   organization     Organization  @relation(fields: [organizationCode], references: [code])
   isSuperAdmin     Boolean       @default(false)
+  forcePasswordChange Boolean @default(false)
 }

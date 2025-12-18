@@ -74,7 +74,7 @@ const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
 const allowedOrigins = [
-  'http://localhost:3000', 
+  'http://localhost:3000',
   'https://swissbiobanking.ch',
   'https://cpcr.onrender.com'
 ];
@@ -116,8 +116,16 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: true,        // uncomment when behind HTTPS in production
+      // Use secure cookies only when actually behind HTTPS (e.g. on Render).
+      // If secure is true while running on http://localhost, browsers will not store/send the cookie.
+      secure: !!process.env.RENDER,
+
+      // SameSite=None is required for cross-site cookies, but browsers require Secure when SameSite=None.
+      // So we only enable SameSite=None when CROSS_SITE_COOKIES=true AND cookies are secure.
+      sameSite:
+        process.env.CROSS_SITE_COOKIES === 'true' && !!process.env.RENDER
+          ? 'none'
+          : 'lax',
       maxAge: 1000 * 60 * 60 * 8 // 8 hours
     }
   })
@@ -264,10 +272,10 @@ app.post('/api/login', express.json(), async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: 'admin',
         organizationCode: user.organizationCode,
         isSuperAdmin: user.isSuperAdmin,
-        organization: user.organization
+        organization: user.organization,
+        forcePasswordChange: user.forcePasswordChange
       }
     });
   } catch (err) {
@@ -304,9 +312,10 @@ app.get('/api/me', async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: sessionUser.role || 'admin',
         organizationCode: user.organizationCode,
-        organization: user.organization
+        isSuperAdmin: !!user.isSuperAdmin,
+        organization: user.organization,
+        forcePasswordChange: user.forcePasswordChange
       }
     });
   } catch (err) {
@@ -320,24 +329,134 @@ app.get('/api/me', async (req, res) => {
 // Destroys the current session and clears the auth cookie.
 // ---------------------------------------------------------------------------
 // POST /logout
+
 app.post('/api/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error('Failed to destroy session:', err);
       return res.status(500).json({ error: 'Could not log out' });
     }
-    res.clearCookie('cpcr.sid');
+    res.clearCookie('cpcr.sid', {
+      secure: !!process.env.RENDER,
+      sameSite:
+        process.env.CROSS_SITE_COOKIES === 'true' && !!process.env.RENDER
+          ? 'none'
+          : 'lax'
+    });
     res.json({ success: true });
   });
 });
 
+// ---------------------------------------------------------------------------
+// POST /api/change-password
+// Allows an authenticated user to change their password.
+// Body: { currentPassword, newPassword }
+// - Verifies current password
+// - Stores new bcrypt hash
+// - Clears forcePasswordChange flag
+// ---------------------------------------------------------------------------
+app.post('/api/change-password', requireAuth, async (req, res) => {
+  noStore(res);
+  try {
+    const { currentPassword, newPassword } = req.body || {};
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Missing 'currentPassword' or 'newPassword'." });
+    }
+
+    // Keep frontend + backend aligned (frontend enforces >= 8)
+    if (String(newPassword).length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+    }
+
+    const sessionUser = req.session.user;
+
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id }
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    const ok = await bcrypt.compare(currentPassword, user.password);
+    if (!ok) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashed,
+        forcePasswordChange: false
+      }
+    });
+
+    // Keep session in sync
+    if (req.session?.user) {
+      req.session.user.forcePasswordChange = false;
+    }
+
+    // Log the password change event (no sensitive fields)
+    logRequest(
+      req,
+      {
+        action: 'change-password',
+        user: req.session?.user?.email || null
+      },
+      { type: 'auth' }
+    );
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('🔥 Failed to change password:', err);
+    return res.status(500).json({ error: 'Could not change password', detail: err.message });
+  }
+});
+
+
 
 function requireAuth(req, res, next) {
-  if (req.session && req.session.user && req.session.user.role === 'admin') {
+  if (req.session?.user) {
     return next();
   }
   return res.status(401).json({ error: 'Authentication required' });
 }
+
+function requireSuperAdmin(req, res, next) {
+  if (req.session?.user?.isSuperAdmin) {
+    return next();
+  }
+  return res.status(403).json({ error: 'Superadmin privileges required' });
+}
+
+// --- Service org scoping helpers ---
+function getSessionOrgCode(req) {
+  return req.session?.user?.organizationCode || null;
+}
+
+function isSuperAdmin(req) {
+  return !!req.session?.user?.isSuperAdmin;
+}
+
+function assertServiceOrgAccess(req, serviceOrgCode) {
+  // Superadmins can access everything
+  if (isSuperAdmin(req)) return { ok: true };
+
+  const userOrg = getSessionOrgCode(req);
+  if (!userOrg) {
+    return { ok: false, status: 401, error: 'Authentication required' };
+  }
+
+  if (String(serviceOrgCode || '') !== String(userOrg)) {
+    return { ok: false, status: 403, error: 'Forbidden: service outside your organization' };
+  }
+
+  return { ok: true };
+}
+// --- end helpers ---
 
 
 // ============================================================================
@@ -421,7 +540,14 @@ app.post('/api/search', async (req, res) => {
 app.get('/api/services', async (req, res) => {
   noStore(res);
   try {
+    const where = {};
+    // If a user is authenticated and not superadmin, scope services to their org
+    if (req.session?.user && !isSuperAdmin(req)) {
+      where.organizationCode = getSessionOrgCode(req);
+    }
+
     const services = await prisma.service.findMany({
+      where,
       orderBy: { name: 'asc' },
       include: {
         organization: true,
@@ -432,6 +558,186 @@ app.get('/api/services', async (req, res) => {
   } catch (err) {
     console.error("🔥 Failed to fetch services:", err.message);
     res.status(500).json({ error: "Could not fetch services" });
+  }
+});
+
+
+// ============================================================================
+// ORGANIZATIONS LIST ROUTE
+// ============================================================================
+// GET /api/organizations
+// Returns all organizations from Postgres
+app.get('/api/organizations', async (req, res) => {
+  noStore(res);
+  try {
+    const organizations = await prisma.organization.findMany({
+      orderBy: { label: 'asc' }
+    });
+
+    res.json({ organizations });
+  } catch (err) {
+    console.error("🔥 Failed to fetch organizations:", err.message);
+    res.status(500).json({ error: "Could not fetch organizations" });
+  }
+});
+
+// ============================================================================
+// ORGANIZATION ADMIN ROUTES (SUPERADMIN ONLY)
+// ============================================================================
+
+// POST /api/create-organization
+// Creates a new organization in Postgres.
+// Body: { code, label, fullName?, idPrefix? }
+app.post('/api/create-organization', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const { code, label, fullName, idPrefix } = req.body || {};
+
+    if (!code || !label) {
+      return res.status(400).json({ error: "Missing 'code' or 'label'." });
+    }
+
+    const normStr = v => (v == null ? null : String(v).trim());
+    const codeNorm = normStr(code);
+    const labelNorm = normStr(label);
+    const fullNameNorm = normStr(fullName);
+    const idPrefixNorm = normStr(idPrefix);
+
+    if (!codeNorm || !labelNorm) {
+      return res.status(400).json({ error: "Invalid 'code' or 'label'." });
+    }
+
+    const existing = await prisma.organization.findUnique({ where: { code: codeNorm } });
+    if (existing) {
+      return res.status(400).json({ error: `Organization '${codeNorm}' already exists.` });
+    }
+
+    const created = await prisma.organization.create({
+      data: {
+        code: codeNorm,
+        label: labelNorm,
+        ...(fullNameNorm ? { fullName: fullNameNorm } : {}),
+        ...(idPrefixNorm ? { idPrefix: idPrefixNorm } : {})
+      }
+    });
+
+    logRequest(
+      req,
+      {
+        action: 'create-organization',
+        code: created.code,
+        data: created,
+        user: req.session?.user?.email || null
+      },
+      { type: 'organization-change' }
+    );
+
+    res.json({ success: true, organization: created });
+  } catch (err) {
+    console.error('🔥 Failed to create organization:', err);
+    res.status(500).json({ error: 'Could not create organization', detail: err.message });
+  }
+});
+
+// POST /api/update-organization
+// Updates an organization in Postgres (does NOT rename the organization code).
+// Body: { code, label?, fullName?, idPrefix? }
+app.post('/api/update-organization', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const { code, label, fullName, idPrefix } = req.body || {};
+
+    if (!code) {
+      return res.status(400).json({ error: "Missing 'code'." });
+    }
+
+    const normStr = v => (v == null ? null : String(v).trim());
+    const codeNorm = normStr(code);
+
+    const existing = await prisma.organization.findUnique({ where: { code: codeNorm } });
+    if (!existing) {
+      return res.status(404).json({ error: `Organization '${codeNorm}' not found.` });
+    }
+
+    // Only update provided fields; do not allow code renames here because of FK constraints.
+    const data = {};
+    if (label != null) data.label = normStr(label);
+    if (fullName != null) data.fullName = normStr(fullName);
+    if (idPrefix != null) data.idPrefix = normStr(idPrefix);
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No fields provided to update.' });
+    }
+
+    const updated = await prisma.organization.update({
+      where: { code: codeNorm },
+      data
+    });
+
+    logRequest(
+      req,
+      {
+        action: 'update-organization',
+        code: updated.code,
+        updatedFields: data,
+        user: req.session?.user?.email || null
+      },
+      { type: 'organization-change' }
+    );
+
+    res.json({ success: true, organization: updated });
+  } catch (err) {
+    console.error('🔥 Failed to update organization:', err);
+    res.status(500).json({ error: 'Could not update organization', detail: err.message });
+  }
+});
+
+// POST /api/delete-organization
+// Deletes an organization from Postgres.
+// Body: { code }
+// Refuses deletion if any services or users still reference this organization.
+app.post('/api/delete-organization', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const { code } = req.body || {};
+
+    if (!code) {
+      return res.status(400).json({ error: "Missing 'code'." });
+    }
+
+    const codeNorm = String(code).trim();
+
+    const existing = await prisma.organization.findUnique({ where: { code: codeNorm } });
+    if (!existing) {
+      return res.status(404).json({ error: `Organization '${codeNorm}' not found.` });
+    }
+
+    const servicesCount = await prisma.service.count({ where: { organizationCode: codeNorm } });
+    const usersCount = await prisma.user.count({ where: { organizationCode: codeNorm } });
+
+    if (servicesCount > 0 || usersCount > 0) {
+      return res.status(400).json({
+        error: `Cannot delete organization '${codeNorm}' because it is still referenced.`,
+        detail: { servicesCount, usersCount }
+      });
+    }
+
+    await prisma.organization.delete({ where: { code: codeNorm } });
+
+    logRequest(
+      req,
+      {
+        action: 'delete-organization',
+        code: codeNorm,
+        user: req.session?.user?.email || null
+      },
+      { type: 'organization-change' }
+    );
+
+    res.json({ success: true, message: `Organization '${codeNorm}' deleted.` });
+  } catch (err) {
+    console.error('🔥 Failed to delete organization:', err);
+    res.status(500).json({ error: 'Could not delete organization', detail: err.message });
   }
 });
 
@@ -468,7 +774,6 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       });
     }
 
-
     // Load existing record from Postgres
     const existing = await prisma.service.findUnique({ where: { id } });
 
@@ -476,6 +781,14 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       return res.status(404).json({
         error: `Service with ID '${id}' not found in database.`
       });
+    }
+
+    // Org scoping: non-superadmins may only update services from their organization
+    {
+      const access = assertServiceOrgAccess(req, existing?.organizationCode);
+      if (!access.ok) {
+        return res.status(access.status).json({ error: access.error });
+      }
     }
 
     // Detect acronyms/expansions present in the provided fields
@@ -499,7 +812,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
     // Prepare new data for DB update
     const newData = {
       name,
-      organizationCode: normStr(organization),
+      organizationCode: isSuperAdmin(req) ? normStr(organization) : existing.organizationCode,
       regional: regionalArray,
       hidden: normStr(hidden),
       description: normStr(description),
@@ -518,7 +831,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
     // Detect if embedding-relevant fields changed
     const embeddingFieldsChanged =
       (existing.name || '') !== (name || '') ||
-      (existing.organizationCode || '') !== (organization || '') ||
+      (existing.organizationCode || '') !== (isSuperAdmin(req) ? (organization || '') : (existing.organizationCode || '')) ||
       (existing.hidden || '') !== (hidden || '') ||
       (existing.description || '') !== (description || '') ||
       !arraysEqual(existing.aliases || [], aliases || []);
@@ -638,6 +951,17 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       });
     }
 
+    // Org scoping: non-superadmins can only create services in their own organization
+    if (!isSuperAdmin(req)) {
+      const userOrg = getSessionOrgCode(req);
+      if (!userOrg) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+      if (String(organization || '') !== String(userOrg)) {
+        return res.status(403).json({ error: 'Forbidden: cannot create service outside your organization' });
+      }
+    }
+
     // Check if service already exists in DB
     const existing = await prisma.service.findUnique({ where: { id } });
     if (existing) {
@@ -683,7 +1007,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       data: {
         id,
         name,
-        organizationCode: normStr(organization),
+        organizationCode: isSuperAdmin(req) ? normStr(organization) : getSessionOrgCode(req),
         regional: regionalArray,
         hidden: normStr(hidden),
         description: normStr(description),
@@ -719,7 +1043,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
 
     const pineconeMetadata = {
       name: normalizeTextField(name),
-      organization: normStr(organization),
+      organization: isSuperAdmin(req) ? normStr(organization) : getSessionOrgCode(req),
       regional: regionalArray,
       hidden: normStr(hidden),
       description: normStr(description),
@@ -793,6 +1117,14 @@ app.post('/api/delete-service', requireAuth, async (req, res) => {
     const existing = await prisma.service.findUnique({ where: { id } });
     if (!existing) {
       return res.status(404).json({ error: `Service '${id}' not found in database.` });
+    }
+
+    // Org scoping: non-superadmins may only delete services from their organization
+    {
+      const access = assertServiceOrgAccess(req, existing?.organizationCode);
+      if (!access.ok) {
+        return res.status(access.status).json({ error: access.error });
+      }
     }
 
     // Delete from DB (source of truth)

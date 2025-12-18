@@ -63,7 +63,7 @@ h2 {
     padding-bottom: 50px;
 }
 
-#service {
+.panel-detail {
     background-color: #fff;
     padding: 25px;
     margin-top: 40px;
@@ -89,7 +89,7 @@ padding-right: 10px;
     padding-top: 15px;
     color:#909090;
 }
-#request-selector label[for="services"] {
+.panel label[for="services"] {
     display: inline;
     border-top-width: 0px;
     font-size: 1.4em;
@@ -132,7 +132,7 @@ padding-right: 10px;
     color:#909090;
 }
 
-#service .field-info:first-child{
+.panel-detail .field-info:first-child{
     color:black;
     font-size: 1em;
     margin-bottom: 40px;
@@ -145,7 +145,7 @@ padding-right: 10px;
 .read-only-field {
 }
 
-#request-selector .field-info:last-of-type {
+.panel .field-info:last-of-type {
   border-bottom: 2px solid white;
   margin-bottom: 20px;
   padding-bottom: 15px;
@@ -274,7 +274,7 @@ button#service-export, #service-update  {
   float: right;
 }
 
-#request-selector #service-create 
+.panel #service-create 
 {display: inline !important; margin-left: 10px;}
 
 
