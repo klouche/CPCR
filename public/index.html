@@ -44,7 +44,8 @@
                 <h3>Organization management</h3>
                 <label class="field-label" for="organizations">Organization</label>
                 <select id="organizations" name="organizations"></select>
-                <button id="organization-create" name="organizaton-create" style="display:none;">New organization</button>
+                <button id="organization-create" name="organizaton-create" style="display:none;">New
+                    organization</button>
 
                 <div id="organization" class="panel-detail" style="display: none;">
                     <label class="field-label" for="organization-code">Code</label>
@@ -58,7 +59,7 @@
 
                     <button id="organization-revert" name="organization-revert">Cancel changes</button>
                     <button id="organization-update" name="organization-update">Update organization</button>
-                    <p id="message"></p>
+                    <p id="organization-message"></p>
                 </div>
             </div>
 
@@ -114,7 +115,33 @@
 
                     <button id="service-revert" name="service-revert">Cancel changes</button>
                     <button id="service-update" name="service-update">Update service</button>
-                    <p id="message"></p>
+                    <p id="service-message"></p>
+                </div>
+            </div>
+
+            <div id="user-panel" class="panel">
+                <h3>User management</h3>
+                <label class="field-label" for="users">User</label>
+                <select id="users" name="users"></select>
+                <button id="user-create" name="user-create" style="display:none;">New user</button>
+
+                <div id="user" class="panel-detail" style="display: none;">
+                    <label class="field-label" for="user-id">ID</label>
+                    <div class="read-only-field" id="user-id" contenteditable="false"></div>
+                    <label class="field-label" for="user-email">Email</label>
+                    <div class="editable-field" id="user-email" contenteditable="true"></div>
+                    <label class="field-label single-checkbox" for="user-is-superadmin">Is superadmin?</label>
+                    <input type="checkbox" id="user-is-superadmin" contenteditable="true"></input>
+                    <label class="field-label" for="user-organization">Affiliation</label>
+                    <select id="user-organization" name="user-organization"></select>
+                    <label class="field-label" for="user-password">New password</label>
+                    <div class="editable-field" id="user-password" contenteditable="true"></div>
+                    <label class="field-label single-checkbox" for="user-force-password-change">Change password next login</label>
+                    <input type="checkbox" id="user-force-password-change" contenteditable="true"></input>
+
+                    <button id="user-revert" name="user-revert">Cancel changes</button>
+                    <button id="user-update" name="user-update">Update user</button>
+                    <p id="user-message"></p>
                 </div>
             </div>
 

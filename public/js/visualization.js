@@ -1,13 +1,16 @@
 let ORG = "SBP";
 let STEM = ORG;
 
-let user
+let me
 let services
 let organizations
+let users
 let currentService
 let currentOrganization
+let currentUser
 let serviceDraft = null
 let organizationDraft = null
+let userDraft = null
 const phases = ["conception", "development", "execution", "completion"]
 const categories = ['ethics submission', 'regulatory and contracts', 'statistics and feasibility', 'PPI', 'study design', 'project management', 'monitoring and audit']
 const outputs = ['consulting', 'datasets', 'IT infrastructure', 'IT tool', 'outsourced service', 'standards', 'templates', 'training']
@@ -24,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerUser = document.getElementById('header-user');
     const headerLogout = document.getElementById('header-logout');
     const organizationPanel = document.getElementById('organization-panel');
+    const userPanel = document.getElementById('user-panel');
 
     // --- Force password change overlay (shown when user.forcePasswordChange === true) ---
     function showForcePasswordChangeOverlay() {
@@ -48,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label style="display:block; font-weight:600; margin:10px 0 6px 0;">Current password</label>
                 <input id="pw-current" type="password" autocomplete="current-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
 
-                <label style="display:block; font-weight:600; margin:12px 0 6px 0;">New password (min 12 chars)</label>
+                <label style="display:block; font-weight:600; margin:12px 0 6px 0;">New password (min 8 chars)</label>
                 <input id="pw-new" type="password" autocomplete="new-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
 
                 <label style="display:block; font-weight:600; margin:12px 0 6px 0;">Confirm new password</label>
@@ -118,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Success: update local state and continue
-                if (user) user.forcePasswordChange = false;
+                if (me) me.forcePasswordChange = false;
                 if (window.currentUser) window.currentUser.forcePasswordChange = false;
 
                 overlay.remove();
@@ -129,14 +133,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Restore org panel visibility for superadmins
                 if (organizationPanel) {
-                    organizationPanel.style.display = (user && user.isSuperAdmin) ? 'block' : 'none';
+                    organizationPanel.style.display = (me && me.isSuperAdmin) ? 'block' : 'none';
+                }
+                // Restore user panel visibility for superadmins
+                if (userPanel) {
+                    userPanel.style.display = (me && me.isSuperAdmin) ? 'block' : 'none';
                 }
 
                 // Load data now that password has been updated
                 if (typeof loadServices === 'function') {
                     loadServices();
                 }
-                if (user && user.isSuperAdmin && typeof loadOrganizations === 'function') {
+                if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
                     loadOrganizations();
                 }
             } catch (e) {
@@ -181,37 +189,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (headerUser) headerUser.textContent = 'Not logged in';
                 if (headerLogout) headerLogout.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
+                if (userPanel) userPanel.style.display = 'none';
                 return;
             }
 
             // Restore user from session
-            user = data.user;
+            me = data.user;
             window.currentUser = data.user;
-            if (headerUser) headerUser.textContent = `${user.email}, ${user.organizationCode}`;
+            if (headerUser) headerUser.textContent = `${me.email}, ${me.organizationCode}`;
             if (headerLogout) headerLogout.style.display = 'block';
 
             // Show organization panel only for superadmins
             if (organizationPanel) {
-                organizationPanel.style.display = user.isSuperAdmin ? 'block' : 'none';
+                organizationPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+            }
+            // Show user panel only for superadmins
+            if (userPanel) {
+                userPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
             }
 
             // Set organization context from logged-in user (needed even if password change is forced)
-            if (user.organizationCode) {
-                currentOrganization = user.organization;
-                ORG = user.organizationCode;
-                if (user.organization && user.organization.idPrefix) {
-                    STEM = user.organization.idPrefix;
+            if (me.organizationCode) {
+                currentOrganization = me.organization;
+                ORG = me.organizationCode;
+                if (me.organization && me.organization.idPrefix) {
+                    STEM = me.organization.idPrefix;
                 } else {
-                    STEM = user.organizationCode;
+                    STEM = me.organizationCode;
                 }
             }
 
             // If this account must change password, block access until done
-            if (user.forcePasswordChange) {
+            if (me.forcePasswordChange) {
                 // Hide admin UI while forcing password change
                 loginFormContainer.style.display = 'none';
                 filtersColumn.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
+                if (userPanel) userPanel.style.display = 'none';
                 showForcePasswordChangeOverlay();
                 return;
             }
@@ -224,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof loadServices === 'function') {
                 loadServices();
             }
-            if (user.isSuperAdmin && typeof loadOrganizations === 'function') {
+            if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
                 loadOrganizations();
             }
         } catch (err) {
@@ -239,6 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
     filtersColumn.style.display = 'none';
     // Hide organization panel by default; only superadmins can see it
     if (organizationPanel) organizationPanel.style.display = 'none';
+    // Hide user panel by default; only superadmins can see it
+    if (userPanel) userPanel.style.display = 'none';
 
     // Allow pressing Enter to submit login
     const loginUsernameInput = document.getElementById('login-username');
@@ -285,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await res.json();
 
-            user = data.user
+            me = data.user
 
             if (!res.ok || !data.success) {
                 loginMessage.textContent = data.error || 'Invalid credentials.';
@@ -306,32 +322,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Optionally keep current user in memory
             window.currentUser = data.user;
-            if (headerUser) headerUser.textContent = `${user.email} (${user.organizationCode})`;
+            if (headerUser) headerUser.textContent = `${me.email} (${me.organizationCode})`;
             if (headerLogout) headerLogout.style.display = 'block';
 
             // Show organization panel only for superadmins
             if (organizationPanel) {
-                organizationPanel.style.display = user.isSuperAdmin ? 'block' : 'none';
+                organizationPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+            }
+            // Show user panel only for superadmins
+            if (userPanel) {
+                userPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
             }
 
             // Set organization context from logged-in user (needed even if password change is forced)
-            if (user && user.organizationCode) {
-                currentOrganization = user.organization;
-                ORG = user.organizationCode;
+            if (me && me.organizationCode) {
+                currentOrganization = me.organization;
+                ORG = me.organizationCode;
                 // Prefer idPrefix if present, otherwise fall back to org code
-                if (user.organization && user.organization.idPrefix) {
-                    STEM = user.organization.idPrefix;
+                if (me.organization && me.organization.idPrefix) {
+                    STEM = me.organization.idPrefix;
                 } else {
-                    STEM = user.organizationCode;
+                    STEM = me.organizationCode;
                 }
             }
 
             // If this account must change password, block access until done
-            if (user && user.forcePasswordChange) {
+            if (me && me.forcePasswordChange) {
                 // Hide admin UI while forcing password change
                 loginFormContainer.style.display = 'none';
                 filtersColumn.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
+                if (userPanel) userPanel.style.display = 'none';
                 showForcePasswordChangeOverlay();
                 // Re-enable login button for future attempts (overlay handles next step)
                 loginButton.disabled = false;
@@ -345,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadServices();
             }
 
-            if (user.isSuperAdmin && typeof loadOrganizations === 'function') {
+            if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
                 loadOrganizations();
             }
 
@@ -380,7 +401,7 @@ async function logout() {
             console.log("Logged out.");
 
             // Clear local user state
-            user = null;
+            me = null;
             window.currentUser = null;
             const headerUser = document.getElementById('header-user');
             if (headerUser) {
@@ -395,6 +416,8 @@ async function logout() {
             document.getElementById('filters-column').style.display = 'none';
             const organizationPanel = document.getElementById('organization-panel');
             if (organizationPanel) organizationPanel.style.display = 'none';
+            const userPanel = document.getElementById('user-panel');
+            if (userPanel) userPanel.style.display = 'none';
             const overlay = document.getElementById('force-password-overlay');
             if (overlay) overlay.remove();
 
@@ -441,8 +464,8 @@ async function loadServices() {
             let fetched = json.services || [];
 
             // If a user is logged in and is not superadmin, restrict services to their organization
-            if (user && user.organizationCode && !user.isSuperAdmin) {
-                const orgCode = user.organizationCode;
+            if (me && me.organizationCode && !me.isSuperAdmin) {
+                const orgCode = me.organizationCode;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
             }
 
@@ -483,6 +506,27 @@ async function loadOrganizations() {
 
             console.log("Organizations", organizations)
             enterOrganizations()
+            loadUsers();
+        })
+}
+
+async function loadUsers() {
+    fetch("/api/users", {
+        cache: "no-store",
+        method: "GET",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            let fetched = json.users || [];
+            users = fetched
+
+            d3.select("#user-create").style("display", "inherit")
+
+            console.log("Users", users)
+            enterUsers()
         })
 }
 
@@ -502,7 +546,7 @@ function enterServices() {
     //Requests selector
     d3.select("#services").html("")
     //d3.select("#services").append("option").attr("value", "").attr("disabled", true).attr("hidden", true).property("selected", true).text("Select service")
-    console.log("User", user)
+    console.log("User", me)
     services.filter(service => service.organizationCode == ORG).forEach(service => {
         let name = service.id + ": " + service.name
         let length = 50
@@ -521,7 +565,7 @@ function enterServices() {
 
 async function updateService() {
 
-    d3.select("#message").html("Uploading changes...")
+    d3.select("#service-message").html("Uploading changes...")
     let text = d3.select("#service-description").html()
     text = stripHtml(text)
     if (currentService) {
@@ -573,7 +617,7 @@ async function updateService() {
             .then(async json => {
                 console.log(json)
                 serviceDraft = null
-                d3.select("#message").html(json.message)
+                d3.select("#service-message").html(json.message)
                 await loadServices()
             })
     }
@@ -627,7 +671,7 @@ function getLinesFromEditablePre(preEl) {
 }
 
 function serviceSelect(id = null) {
-    if (id != currentService?.id) d3.select("#message").html("")
+    if (id != currentService?.id) d3.select("#service-message").html("")
     d3.select("#service").style("display", "inherit")
     if (id) currentService = services.find(service => service.id == id)
     else currentService = services[0]
@@ -644,7 +688,7 @@ function displayService(service) {
     if (serviceDraft && serviceDraft.id == service.id)
         d3.select("#service-update").text("Save service")
 
-    d3.select("#service-active").node().checked = service.active
+    d3.select("#service-active").node().checked = service?.active
     d3.select("#service-name").html(service.name)
     d3.select("#service-organization").html(service.organization)
     d3.select("#service-regional").html(Array.isArray(service.regional) ? service.regional.join(", ") : (currentService.regional || ""))
@@ -749,7 +793,7 @@ function exportServices() {
 function enterOrganizations() {
     //Requests selector
     d3.select("#organizations").html("")
-    console.log("User", user)
+    console.log("User", me)
     organizations.forEach(organization => {
         let label = organization.fullName + (organization.fullName != organization.label ? " (" + organization.label + ")" : "")
         let length = 50
@@ -767,7 +811,7 @@ function enterOrganizations() {
 }
 
 async function organizationSelect(code) {
-    if (code != currentOrganization?.code) d3.select("#message").html("")
+    if (code != currentOrganization?.code) d3.select("#organization-message").html("")
     d3.select("#organization").style("display", "inherit")
     currentOrganization = organizations.find(organization => organization.code == code)
     ORG = currentOrganization.code
@@ -793,7 +837,7 @@ function displayOrganization(organization) {
 
 async function updateOrganization() {
 
-    d3.select("#message").html("Uploading changes...")
+    d3.select("#organization-message").html("Uploading changes...")
     if (currentOrganization) {
 
         let uri = 'update-organization'
@@ -814,7 +858,7 @@ async function updateOrganization() {
         }).then((response) => response.json())
             .then(async json => {
                 organizationDraft = null
-                d3.select("#message").html(json.message)
+                d3.select("#organization-message").html(json.message)
                 await loadOrganizations()
             })
     }
@@ -840,6 +884,109 @@ function newOrganization() {
         displayOrganization(organization)
     }
 }
+
+
+function enterUsers() {
+    //Requests selector
+    d3.select("#users").html("")
+    users.forEach(user => {
+        d3.select("#users").append("option").attr("value", user.id).property("selected", currentUser ? currentUser.id == user.id : me.id == user.id)
+            .text(user.email)
+    })
+    d3.select("#users").on("change", e => {
+        userSelect(e.target.value)
+    })
+    if (currentUser) userSelect(currentUser.id)
+    else userSelect()
+}
+
+async function userSelect(id = null) {
+    if (!id) id = me.id
+    d3.select("#user").style("display", "inherit")
+    currentUser = users.find(user => user.id == id)
+    console.log("User selected", currentUser)
+    displayUser(currentUser)
+}
+
+function displayUser(user) {
+
+    d3.select("#user-update").text("Update user")
+    if (!user?.id)
+        d3.select("#user-update").text("Save user")
+
+    d3.select("#user-id").html(user.id)
+    d3.select("#user-email").html(user.email)
+    d3.select("#user-password").html("")
+    d3.select("#user-force-password-change").node().checked = user.forcePasswordChange
+    d3.select("#user-is-superadmin").node().checked = user.isSuperAdmin
+    d3.select("#user-organization").html("")
+    organizations.forEach(organization => {
+        let label = organization.fullName + (organization.fullName != organization.label ? " (" + organization.label + ")" : "")
+        let length = 50
+        if (label.length > length) {
+            label = label.substring(0, length - 1) + "…"
+        }
+        d3.select("#user-organization").append("option").attr("value", organization.code).property("selected", organization.code == user.organizationCode)
+            .text(label)
+    })
+}
+
+async function updateUser() {
+
+    const passwordValue = d3.select("#user-password").text().trim();
+
+    const userUpdate = {
+        id: currentUser.id,
+        email: d3.select("#user-email").text().trim(),
+        isSuperAdmin: d3.select("#user-is-superadmin").property("checked"),
+        organization: d3.select("#user-organization").property("value"),
+        organizationCode: d3.select("#user-organization").property("value"),
+        forcePasswordChange: d3.select("#user-force-password-change").property("checked")
+    };
+
+    // Only send password if non-empty
+    if (passwordValue.length) {
+        userUpdate.password = passwordValue;
+    }
+
+    if (currentUser) {
+        d3.select("#user-message").html("Uploading changes...")
+
+        let uri = 'update-user'
+        if (!currentUser.id) {
+            uri = 'create-user'
+        }
+
+        await fetch(`/api/${uri}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // IMPORTANT: send cookies
+            body: JSON.stringify(userUpdate)
+        }).then((response) => response.json())
+            .then(async json => {
+                userDraft = null
+                d3.select("#user-message").html(json.message)
+                await loadUsers()
+            })
+    }
+}
+
+function newUser() {
+    
+        user = {
+            email: "",
+            password: "",
+            organization: ORG,
+            organizationCode: ORG,
+            isSuperAdmin: false,
+            forcePasswordChange: true
+        }
+        currentUser = user
+        d3.select("#user").style("display", "inherit")
+        displayUser(user)
+}
+
+
 
 function getTime() {
     const d = new Date();
@@ -872,5 +1019,9 @@ d3.select("#service-export").on("click", exportServices)
 d3.select("#organization-update").on("click", updateOrganization)
 d3.select("#organization-revert").on("click", enterOrganizations)
 d3.select("#organization-create").on("click", newOrganization)
+
+d3.select("#user-update").on("click", updateUser)
+d3.select("#user-revert").on("click", enterUsers)
+d3.select("#user-create").on("click", newUser)
 
 d3.select("#header-logout").on("click", logout)

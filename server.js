@@ -567,6 +567,7 @@ app.get('/api/services', async (req, res) => {
 // ============================================================================
 // GET /api/organizations
 // Returns all organizations from Postgres
+
 app.get('/api/organizations', async (req, res) => {
   noStore(res);
   try {
@@ -578,6 +579,220 @@ app.get('/api/organizations', async (req, res) => {
   } catch (err) {
     console.error("🔥 Failed to fetch organizations:", err.message);
     res.status(500).json({ error: "Could not fetch organizations" });
+  }
+});
+
+// ============================================================================
+// USERS LIST ROUTE (SUPERADMIN ONLY)
+// ============================================================================
+// GET /api/users
+// Returns all users from Postgres (excluding password hashes), including
+// their Organization relation.
+
+app.get('/api/users', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { email: 'asc' },
+      select: {
+        id: true,
+        email: true,
+        organizationCode: true,
+        isSuperAdmin: true,
+        forcePasswordChange: true,
+        organization: true
+      }
+    });
+
+    res.json({ users });
+  } catch (err) {
+    console.error('🔥 Failed to fetch users:', err);
+    res.status(500).json({ error: 'Could not fetch users', detail: err.message });
+  }
+});
+
+// ============================================================================
+// USER ADMIN ROUTES (SUPERADMIN ONLY)
+// ============================================================================
+
+// POST /api/create-user
+// Creates a new user in Postgres.
+// Body: { email, organizationCode, password, isSuperAdmin?, forcePasswordChange? }
+app.post('/api/create-user', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const { email, organizationCode, password, isSuperAdmin: isSA, forcePasswordChange: fpc } = req.body || {};
+
+    if (!email || !organizationCode || !password) {
+      return res.status(400).json({ error: "Missing 'email', 'organizationCode', or 'password'." });
+    }
+
+    const normStr = v => (v == null ? null : String(v).trim());
+    const emailNorm = normStr(email);
+    const orgNorm = normStr(organizationCode);
+
+    if (!emailNorm || !orgNorm) {
+      return res.status(400).json({ error: "Invalid 'email' or 'organizationCode'." });
+    }
+
+    if (String(password).length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+    }
+
+    // Ensure org exists
+    const org = await prisma.organization.findUnique({ where: { code: orgNorm } });
+    if (!org) {
+      return res.status(400).json({ error: `Organization '${orgNorm}' not found.` });
+    }
+
+    // Ensure user doesn't already exist
+    const existing = await prisma.user.findUnique({ where: { email: emailNorm } });
+    if (existing) {
+      return res.status(400).json({ error: `User '${emailNorm}' already exists.` });
+    }
+
+    const hashed = await bcrypt.hash(String(password), 10);
+
+    const created = await prisma.user.create({
+      data: {
+        email: emailNorm,
+        organizationCode: orgNorm,
+        password: hashed,
+        isSuperAdmin: !!isSA,
+        forcePasswordChange: typeof fpc === 'boolean' ? fpc : true
+      },
+      select: {
+        id: true,
+        email: true,
+        organizationCode: true,
+        isSuperAdmin: true,
+        forcePasswordChange: true,
+        organization: true
+      }
+    });
+
+    logRequest(
+      req,
+      {
+        action: 'create-user',
+        email: created.email,
+        data: created,
+        user: req.session?.user?.email || null
+      },
+      { type: 'user-change' }
+    );
+
+    res.json({ success: true, user: created });
+  } catch (err) {
+    console.error('🔥 Failed to create user:', err);
+    res.status(500).json({ error: 'Could not create user', detail: err.message });
+  }
+});
+
+// POST /api/update-user
+// Updates a user in Postgres.
+// Body: { id, email?, organizationCode?, isSuperAdmin?, forcePasswordChange?, password? }
+// Notes:
+// - Identifies the user by `id`.
+// - Allows changing email (set `email`).
+// - If `password` is provided, it is hashed and stored.
+app.post('/api/update-user', requireAuth, requireSuperAdmin, async (req, res) => {
+  noStore(res);
+  try {
+    const { id, email, organizationCode, isSuperAdmin: isSA, forcePasswordChange: fpc, password } = req.body || {};
+
+    if (!id) {
+      return res.status(400).json({ error: "Missing 'id'." });
+    }
+
+    const normStr = v => (v == null ? null : String(v).trim());
+    const idNorm = normStr(id);
+    const emailNorm = normStr(email);
+    const orgNorm = normStr(organizationCode);
+
+    const existing = await prisma.user.findUnique({ where: { id: idNorm } });
+    if (!existing) {
+      return res.status(404).json({ error: `User '${idNorm}' not found.` });
+    }
+
+    // Build update data from provided fields
+    const data = {};
+
+    if (email != null) {
+      if (!emailNorm) {
+        return res.status(400).json({ error: "Invalid 'email'." });
+      }
+      // ensure uniqueness
+      const conflict = await prisma.user.findUnique({ where: { email: emailNorm } });
+      if (conflict && conflict.id !== existing.id) {
+        return res.status(400).json({ error: `Email '${emailNorm}' is already in use.` });
+      }
+      data.email = emailNorm;
+    }
+
+    if (organizationCode != null) {
+      if (!orgNorm) {
+        return res.status(400).json({ error: "Invalid 'organizationCode'." });
+      }
+      const org = await prisma.organization.findUnique({ where: { code: orgNorm } });
+      if (!org) {
+        return res.status(400).json({ error: `Organization '${orgNorm}' not found.` });
+      }
+      data.organizationCode = orgNorm;
+    }
+
+    if (isSA != null) data.isSuperAdmin = !!isSA;
+    if (fpc != null) data.forcePasswordChange = !!fpc;
+
+    if (password != null) {
+      if (String(password).length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+      }
+      data.password = await bcrypt.hash(String(password), 10);
+    }
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No fields provided to update.' });
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: idNorm },
+      data,
+      select: {
+        id: true,
+        email: true,
+        organizationCode: true,
+        isSuperAdmin: true,
+        forcePasswordChange: true,
+        organization: true
+      }
+    });
+
+    logRequest(
+      req,
+      {
+        action: 'update-user',
+        id: idNorm,
+        targetEmail: existing.email,
+        updatedFields: Object.keys(data),
+        data: { ...updated },
+        user: req.session?.user?.email || null
+      },
+      { type: 'user-change' }
+    );
+
+    // If the superadmin updated themselves and changed flags, keep session in sync
+    if (req.session?.user?.id === existing.id) {
+      if (data.email) req.session.user.email = data.email;
+      if (data.organizationCode) req.session.user.organizationCode = data.organizationCode;
+      if (typeof data.isSuperAdmin === 'boolean') req.session.user.isSuperAdmin = data.isSuperAdmin;
+      if (typeof data.forcePasswordChange === 'boolean') req.session.user.forcePasswordChange = data.forcePasswordChange;
+    }
+
+    res.json({ success: true, user: updated });
+  } catch (err) {
+    console.error('🔥 Failed to update user:', err);
+    res.status(500).json({ error: 'Could not update user', detail: err.message });
   }
 });
 
