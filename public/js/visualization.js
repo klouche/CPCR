@@ -467,6 +467,10 @@ async function loadServices() {
             if (me && me.organizationCode && !me.isSuperAdmin) {
                 const orgCode = me.organizationCode;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
+            }else{
+                console.log("current organisation", currentOrganization)
+                const orgCode = currentOrganization.code;
+                fetched = fetched.filter(s => s.organizationCode === orgCode);
             }
 
             services = fetched;
@@ -671,6 +675,7 @@ function getLinesFromEditablePre(preEl) {
 }
 
 function serviceSelect(id = null) {
+    console.log("current service", currentService)
     if (id != currentService?.id) d3.select("#service-message").html("")
     d3.select("#service").style("display", "inherit")
     if (id) currentService = services.find(service => service.id == id)
