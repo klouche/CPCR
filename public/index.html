@@ -8,12 +8,14 @@
     <title>ResearchHub Admin</title>
     <script src="./js/libraries/jquery.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./js/admin-tabs.js" defer></script>
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 
 <body>
 
     <div id="header">
+        <img src="../images/logo_horiz.png" alt="Research Hub" id="header-logo">
         <div id="header-user"></div>
         <button type="button" id="header-logout">Logout</button>
     </div>
@@ -38,10 +40,18 @@
 
         <!-- Colonne gauche : Filtres -->
         <div id="filters-column">
-            <h2>Research Hub</h2>
 
-            <div id="organization-panel" class="panel">
-                <h3>Organization management</h3>
+            <nav id="admin-tabs" class="admin-tabs" aria-label="Admin sections">
+                <button class="admin-tab" type="button" data-tab="organization-panel">Organization management</button>
+                <button class="admin-tab" type="button" data-tab="service-panel">Service management</button>
+                <button class="admin-tab" type="button" data-tab="user-panel">User management</button>
+            </nav>
+
+
+            <h2 class="MainTitle">Research Hub</h2>
+
+            <div id="organization-panel" class="panel admin-section">
+                <h3 class="SectionTitle">Organization management</h3>
                 <label class="field-label" for="organizations">Organization</label>
                 <select id="organizations" name="organizations"></select>
                 <button id="organization-create" name="organizaton-create" style="display:none;">New
@@ -56,17 +66,18 @@
                     <div class="editable-field" id="organization-full-name" contenteditable="true"></div>
                     <label class="field-label" for="organization-id-prefix">ID prefix</label>
                     <div class="editable-field" id="organization-id-prefix" contenteditable="true"></div>
-
-                    <button id="organization-revert" name="organization-revert">Cancel changes</button>
-                    <button id="organization-update" name="organization-update">Update organization</button>
-                    <p id="organization-message"></p>
+                    <div class="endbuttons">
+                        <button id="organization-revert" name="organization-revert">Cancel changes</button>
+                        <button id="organization-update" name="organization-update">Update organization</button>
+                        <p id="organization-message" class="message"></p>
+                    </div>
                 </div>
             </div>
 
 
-            <div id="service-panel" class="panel">
+            <div id="service-panel" class="panel admin-section">
                 <!-- Filtre des requetes -->
-                <h3>Service management</h3>
+                <h3 class="SectionTitle">Service management</h3>
                 <label class="field-label" for="services">Service</label>
                 <select id="services" name="services"></select>
                 <button id="service-create" name="service-create" style="display:none;">New service</button>
@@ -112,15 +123,16 @@
                     <pre id="service-docs" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
                     <div class="field-info">Format: "www.website.ch/document.pdf" or "My document,
                         www.infra.ch/document.pdf". One document url per line</div>
-
-                    <button id="service-revert" name="service-revert">Cancel changes</button>
-                    <button id="service-update" name="service-update">Update service</button>
-                    <p id="service-message"></p>
+                    <div class="endbuttons">
+                        <button id="service-revert" name="service-revert">Cancel changes</button>
+                        <button id="service-update" name="service-update">Update service</button>
+                        <p id="service-message" class="message"></p>
+                    </div>
                 </div>
             </div>
 
-            <div id="user-panel" class="panel">
-                <h3>User management</h3>
+            <div id="user-panel" class="panel admin-section">
+                <h3 class="SectionTitle">User management</h3>
                 <label class="field-label" for="users">User</label>
                 <select id="users" name="users"></select>
                 <button id="user-create" name="user-create" style="display:none;">New user</button>
@@ -136,12 +148,16 @@
                     <select id="user-organization" name="user-organization"></select>
                     <label class="field-label" for="user-password">New password</label>
                     <div class="editable-field" id="user-password" contenteditable="true"></div>
-                    <label class="field-label single-checkbox" for="user-force-password-change">Change password next login</label>
-                    <input type="checkbox" id="user-force-password-change" contenteditable="true"></input>
-
-                    <button id="user-revert" name="user-revert">Cancel changes</button>
-                    <button id="user-update" name="user-update">Update user</button>
-                    <p id="user-message"></p>
+                    <div class="form-row">
+                        <label class="field-label single-checkbox" for="user-force-password-change">Change password next
+                            login</label>
+                        <input type="checkbox" id="user-force-password-change" contenteditable="true"></input>
+                    </div>
+                    <div class="endbuttons">
+                        <button id="user-revert" name="user-revert">Cancel changes</button>
+                        <button id="user-update" name="user-update">Update user</button>
+                        <p id="user-message" class="message"></p>
+                    </div>
                 </div>
             </div>
 

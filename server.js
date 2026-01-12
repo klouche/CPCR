@@ -73,11 +73,12 @@ function logRequest(req, resBody, meta = {}) {
 const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://swissbiobanking.ch',
-  'https://cpcr.onrender.com'
-];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
+allowedOrigins.push('https://swissbiobanking.ch', 'https://cpcr.onrender.com');
 
 app.set('trust proxy', true);
 
@@ -360,8 +361,8 @@ app.post('/api/change-password', requireAuth, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body || {};
 
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: "Missing 'currentPassword' or 'newPassword'." });
+    if (!newPassword) {
+      return res.status(400).json({ error: "Missing 'newPassword'." });
     }
 
     // Keep frontend + backend aligned (frontend enforces >= 8)
@@ -379,9 +380,17 @@ app.post('/api/change-password', requireAuth, async (req, res) => {
       return res.status(401).json({ error: 'User not found' });
     }
 
-    const ok = await bcrypt.compare(currentPassword, user.password);
-    if (!ok) {
-      return res.status(401).json({ error: 'Current password is incorrect' });
+    // If this is NOT a forced password change flow, require and verify current password.
+    // If the user is flagged for forced change, we allow changing without the old password.
+    if (!user.forcePasswordChange) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Missing 'currentPassword'." });
+      }
+
+      const ok = await bcrypt.compare(currentPassword, user.password);
+      if (!ok) {
+        return res.status(401).json({ error: 'Current password is incorrect' });
+      }
     }
 
     const hashed = await bcrypt.hash(newPassword, 10);
@@ -682,7 +691,7 @@ app.post('/api/create-user', requireAuth, requireSuperAdmin, async (req, res) =>
       { type: 'user-change' }
     );
 
-    res.json({ success: true, user: created });
+    res.json({ success: true, message: `User '${created.email}' created.`, user: created });
   } catch (err) {
     console.error('🔥 Failed to create user:', err);
     res.status(500).json({ error: 'Could not create user', detail: err.message });
@@ -789,7 +798,7 @@ app.post('/api/update-user', requireAuth, requireSuperAdmin, async (req, res) =>
       if (typeof data.forcePasswordChange === 'boolean') req.session.user.forcePasswordChange = data.forcePasswordChange;
     }
 
-    res.json({ success: true, user: updated });
+    res.json({ success: true, message: `User '${updated.email}' updated.`, user: updated });
   } catch (err) {
     console.error('🔥 Failed to update user:', err);
     res.status(500).json({ error: 'Could not update user', detail: err.message });
@@ -847,7 +856,7 @@ app.post('/api/create-organization', requireAuth, requireSuperAdmin, async (req,
       { type: 'organization-change' }
     );
 
-    res.json({ success: true, organization: created });
+    res.json({ success: true, message: `Organization '${created.code}' created.`, organization: created });
   } catch (err) {
     console.error('🔥 Failed to create organization:', err);
     res.status(500).json({ error: 'Could not create organization', detail: err.message });
@@ -900,7 +909,7 @@ app.post('/api/update-organization', requireAuth, requireSuperAdmin, async (req,
       { type: 'organization-change' }
     );
 
-    res.json({ success: true, organization: updated });
+    res.json({ success: true, message: `Organization '${updated.code}' updated.`, organization: updated });
   } catch (err) {
     console.error('🔥 Failed to update organization:', err);
     res.status(500).json({ error: 'Could not update organization', detail: err.message });
@@ -1500,6 +1509,9 @@ app.post('/api/proximity-score', async (req, res) => {
 // ============================================================================
 // SERVER STARTUP
 // ============================================================================
-app.listen(3000, () => {
-  console.log('🚀 Server running at http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
+
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT} (listening on ${HOST})`);
 });

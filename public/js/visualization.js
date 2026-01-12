@@ -28,8 +28,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerLogout = document.getElementById('header-logout');
     const organizationPanel = document.getElementById('organization-panel');
     const userPanel = document.getElementById('user-panel');
+    const adminTabs = document.getElementById('admin-tabs');
 
     // --- Force password change overlay (shown when user.forcePasswordChange === true) ---
+
+    // Ensure the correct admin UI is shown based on authentication/role
+    function applyAdminVisibility(user) {
+        const servicePanel = document.getElementById('service-panel');
+        const orgPanel = document.getElementById('organization-panel');
+        const usrPanel = document.getElementById('user-panel');
+
+        // Tabs: only superadmins can see and use them
+        if (adminTabs) {
+            adminTabs.style.display = (user && user.isSuperAdmin) ? 'flex' : 'none';
+        }
+
+        // Panels: regular admins should only see service management
+        if (orgPanel) orgPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
+        if (usrPanel) usrPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
+        if (servicePanel) servicePanel.style.display = 'inherit';
+
+        // Also enforce the active tab/panel CSS state
+        const tabs = Array.from(document.querySelectorAll('.admin-tab'));
+        const panels = Array.from(document.querySelectorAll('.admin-section'));
+
+        if (user && user.isSuperAdmin) {
+            // Leave existing tab logic to decide which panel is active (hash-based).
+            return;
+        }
+
+        // Non-superadmins: force service panel active
+        tabs.forEach(t => t.classList.remove('is-active'));
+        panels.forEach(p => p.classList.remove('is-active'));
+
+        const servicePanelEl = document.getElementById('service-panel');
+        const serviceTabBtn = document.querySelector('.admin-tab[data-tab="service-panel"]');
+        if (serviceTabBtn) serviceTabBtn.classList.add('is-active');
+        if (servicePanelEl) servicePanelEl.classList.add('is-active');
+
+        // Keep URL hash consistent
+        if (location.hash !== '#service-panel') {
+            history.replaceState(null, '', '#service-panel');
+        }
+    }
     function showForcePasswordChangeOverlay() {
         // Avoid duplicates
         if (document.getElementById('force-password-overlay')) return;
@@ -49,9 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 style="margin:0 0 8px 0; font-size:20px;">Change your password</h2>
                 <p style="margin:0 0 16px 0; line-height:1.4;">For security reasons, you must set a new password before continuing.</p>
 
-                <label style="display:block; font-weight:600; margin:10px 0 6px 0;">Current password</label>
-                <input id="pw-current" type="password" autocomplete="current-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
-
                 <label style="display:block; font-weight:600; margin:12px 0 6px 0;">New password (min 8 chars)</label>
                 <input id="pw-new" type="password" autocomplete="new-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
 
@@ -62,13 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <button id="pw-save" style="width:100%; padding:10px 12px; border:0; border-radius:10px; cursor:pointer; font-weight:700;">Save new password</button>
 
-                <p style="margin:12px 0 0 0; font-size:12px; opacity:0.8;">Tip: use a long passphrase. You can still logout from the header if needed.</p>
+                <p style="margin:12px 0 0 0; font-size:12px; opacity:0.8;"></p>
             </div>
         `;
 
         document.body.appendChild(overlay);
 
-        const currentEl = document.getElementById('pw-current');
         const newEl = document.getElementById('pw-new');
         const confirmEl = document.getElementById('pw-confirm');
         const saveBtn = document.getElementById('pw-save');
@@ -77,11 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const submit = async () => {
             errEl.textContent = '';
 
-            const currentPassword = currentEl.value;
             const newPassword = newEl.value;
             const confirm = confirmEl.value;
 
-            if (!currentPassword || !newPassword || !confirm) {
+            if (!newPassword || !confirm) {
                 errEl.textContent = 'Please fill all fields.';
                 return;
             }
@@ -104,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ currentPassword, newPassword })
+                    body: JSON.stringify({ newPassword })
                 });
 
                 let data = null;
@@ -129,16 +165,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Ensure admin UI is visible
                 loginFormContainer.style.display = 'none';
-                filtersColumn.style.display = 'block';
+                filtersColumn.style.display = 'inherit';
 
                 // Restore org panel visibility for superadmins
                 if (organizationPanel) {
-                    organizationPanel.style.display = (me && me.isSuperAdmin) ? 'block' : 'none';
+                    organizationPanel.style.display = (me && me.isSuperAdmin) ? 'inherit' : 'none';
                 }
                 // Restore user panel visibility for superadmins
                 if (userPanel) {
-                    userPanel.style.display = (me && me.isSuperAdmin) ? 'block' : 'none';
+                    userPanel.style.display = (me && me.isSuperAdmin) ? 'inherit' : 'none';
                 }
+                applyAdminVisibility(me);
+
 
                 // Load data now that password has been updated
                 if (typeof loadServices === 'function') {
@@ -165,12 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 submit();
             }
         };
-        currentEl.addEventListener('keydown', onEnter);
         newEl.addEventListener('keydown', onEnter);
         confirmEl.addEventListener('keydown', onEnter);
 
-        // Focus the current password field
-        setTimeout(() => currentEl.focus(), 0);
+        // Focus the new password field
+        setTimeout(() => newEl.focus(), 0);
     }
 
     async function checkSession() {
@@ -184,12 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!data.authenticated || !data.user) {
                 // No valid session → stay on login form
-                loginFormContainer.style.display = 'block';
+                loginFormContainer.style.display = 'inherit';
                 filtersColumn.style.display = 'none';
                 if (headerUser) headerUser.textContent = 'Not logged in';
                 if (headerLogout) headerLogout.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
                 if (userPanel) userPanel.style.display = 'none';
+                if (adminTabs) adminTabs.style.display = 'none';
                 return;
             }
 
@@ -197,16 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
             me = data.user;
             window.currentUser = data.user;
             if (headerUser) headerUser.textContent = `${me.email}, ${me.organizationCode}`;
-            if (headerLogout) headerLogout.style.display = 'block';
+            if (headerLogout) headerLogout.style.display = 'inherit';
 
             // Show organization panel only for superadmins
             if (organizationPanel) {
-                organizationPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+                organizationPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
             }
             // Show user panel only for superadmins
             if (userPanel) {
-                userPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+                userPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
             }
+            applyAdminVisibility(me);
 
             // Set organization context from logged-in user (needed even if password change is forced)
             if (me.organizationCode) {
@@ -226,13 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 filtersColumn.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
                 if (userPanel) userPanel.style.display = 'none';
+                if (adminTabs) adminTabs.style.display = 'none';
                 showForcePasswordChangeOverlay();
                 return;
             }
 
             // Hide login, show admin UI
             loginFormContainer.style.display = 'none';
-            filtersColumn.style.display = 'block';
+            filtersColumn.style.display = 'inherit';
 
             // Load services for this user/org
             if (typeof loadServices === 'function') {
@@ -244,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error('Failed to restore session:', err);
             // In case of error, fall back to login
-            loginFormContainer.style.display = 'block';
+            loginFormContainer.style.display = 'inherit';
             filtersColumn.style.display = 'none';
         }
     }
@@ -255,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (organizationPanel) organizationPanel.style.display = 'none';
     // Hide user panel by default; only superadmins can see it
     if (userPanel) userPanel.style.display = 'none';
+    // Hide admin tabs by default; only superadmins can see them
+    if (adminTabs) adminTabs.style.display = 'none';
 
     // Allow pressing Enter to submit login
     const loginUsernameInput = document.getElementById('login-username');
@@ -318,21 +360,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Hide the login form and show the admin UI
             loginFormContainer.style.display = 'none';
-            filtersColumn.style.display = 'block';
+            filtersColumn.style.display = 'inherit';
 
-            // Optionally keep current user in memory
+            // Optionally keep current user in memoline 377ry
             window.currentUser = data.user;
             if (headerUser) headerUser.textContent = `${me.email} (${me.organizationCode})`;
-            if (headerLogout) headerLogout.style.display = 'block';
+            if (headerLogout) headerLogout.style.display = 'inherit';
 
             // Show organization panel only for superadmins
             if (organizationPanel) {
-                organizationPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+                organizationPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
             }
             // Show user panel only for superadmins
             if (userPanel) {
-                userPanel.style.display = me.isSuperAdmin ? 'block' : 'none';
+                userPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
             }
+            applyAdminVisibility(me);
 
             // Set organization context from logged-in user (needed even if password change is forced)
             if (me && me.organizationCode) {
@@ -353,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filtersColumn.style.display = 'none';
                 if (organizationPanel) organizationPanel.style.display = 'none';
                 if (userPanel) userPanel.style.display = 'none';
+                if (adminTabs) adminTabs.style.display = 'none';
                 showForcePasswordChangeOverlay();
                 // Re-enable login button for future attempts (overlay handles next step)
                 loginButton.disabled = false;
@@ -418,11 +462,13 @@ async function logout() {
             if (organizationPanel) organizationPanel.style.display = 'none';
             const userPanel = document.getElementById('user-panel');
             if (userPanel) userPanel.style.display = 'none';
+            const adminTabs = document.getElementById('admin-tabs');
+            if (adminTabs) adminTabs.style.display = 'none';
             const overlay = document.getElementById('force-password-overlay');
             if (overlay) overlay.remove();
 
             // Show login form
-            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'inherit';
 
             // Reset login UI state
             const loginMessage = document.getElementById('login-message');
@@ -464,14 +510,14 @@ async function loadServices() {
             let fetched = json.services || [];
 
             // If a user is logged in and is not superadmin, restrict services to their organization
-            if (me && me.organizationCode && !me.isSuperAdmin) {
+            /*if (me && me.organizationCode && !me.isSuperAdmin) {
                 const orgCode = me.organizationCode;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
-            }else{
+            } else {
                 console.log("current organisation", currentOrganization)
                 const orgCode = currentOrganization.code;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
-            }
+            }*/
 
             services = fetched;
 
@@ -551,7 +597,8 @@ function enterServices() {
     d3.select("#services").html("")
     //d3.select("#services").append("option").attr("value", "").attr("disabled", true).attr("hidden", true).property("selected", true).text("Select service")
     console.log("User", me)
-    services.filter(service => service.organizationCode == ORG).forEach(service => {
+    services//.filter(service => service.organizationCode == ORG)
+    .forEach(service => {
         let name = service.id + ": " + service.name
         let length = 50
         if (name.length > length) {
@@ -676,7 +723,7 @@ function getLinesFromEditablePre(preEl) {
 
 function serviceSelect(id = null) {
     console.log("current service", currentService)
-    if (id != currentService?.id) d3.select("#service-message").html("")
+    //if (id != currentService?.id) d3.select("#service-message").html("")
     d3.select("#service").style("display", "inherit")
     if (id) currentService = services.find(service => service.id == id)
     else currentService = services[0]
@@ -816,7 +863,7 @@ function enterOrganizations() {
 }
 
 async function organizationSelect(code) {
-    if (code != currentOrganization?.code) d3.select("#organization-message").html("")
+    //if (code != currentOrganization?.code) d3.select("#organization-message").html("")
     d3.select("#organization").style("display", "inherit")
     currentOrganization = organizations.find(organization => organization.code == code)
     ORG = currentOrganization.code
@@ -860,7 +907,8 @@ async function updateOrganization() {
                 fullName: d3.select("#organization-full-name").html(),
                 idPrefix: d3.select("#organization-id-prefix").html(),
             })
-        }).then((response) => response.json())
+        })
+            .then((response) => response.json())
             .then(async json => {
                 organizationDraft = null
                 d3.select("#organization-message").html(json.message)
@@ -977,18 +1025,18 @@ async function updateUser() {
 }
 
 function newUser() {
-    
-        user = {
-            email: "",
-            password: "",
-            organization: ORG,
-            organizationCode: ORG,
-            isSuperAdmin: false,
-            forcePasswordChange: true
-        }
-        currentUser = user
-        d3.select("#user").style("display", "inherit")
-        displayUser(user)
+
+    user = {
+        email: "",
+        password: "",
+        organization: ORG,
+        organizationCode: ORG,
+        isSuperAdmin: false,
+        forcePasswordChange: true
+    }
+    currentUser = user
+    d3.select("#user").style("display", "inherit")
+    displayUser(user)
 }
 
 
@@ -1030,3 +1078,32 @@ d3.select("#user-revert").on("click", enterUsers)
 d3.select("#user-create").on("click", newUser)
 
 d3.select("#header-logout").on("click", logout)
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = Array.from(document.querySelectorAll('.admin-tab'));
+    const panels = Array.from(document.querySelectorAll('.admin-section'));
+
+    if (!tabs.length || !panels.length) return;
+
+    function activate(id) {
+        const panelExists = panels.some(p => p.id === id);
+        const safeId = panelExists ? id : panels[0].id;
+
+        tabs.forEach(t => t.classList.toggle('is-active', t.dataset.tab === safeId));
+        panels.forEach(p => p.classList.toggle('is-active', p.id === safeId));
+
+        history.replaceState(null, '', '#' + safeId);
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => {
+        // Non-superadmins are forced to the service panel only
+        if (window.currentUser && !window.currentUser.isSuperAdmin) {
+            activate('service-panel');
+            return;
+        }
+        activate(t.dataset.tab);
+    }));
+
+    const initial = (location.hash || '').slice(1) || tabs[0].dataset.tab;
+    activate(initial);
+});

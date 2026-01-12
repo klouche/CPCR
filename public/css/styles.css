@@ -89,7 +89,7 @@ padding-right: 10px;
     padding-top: 15px;
     color:#909090;
 }
-.panel label[for="services"] {
+.panel label[for="services"], .panel label[for="organizations"], .panel label[for="users"] {
     display: inline;
     border-top-width: 0px;
     font-size: 1.4em;
@@ -162,7 +162,7 @@ padding-right: 10px;
 
 
 
-#message {
+.message {
 margin-top: 30px;
   padding: 14px 20px;
   background-color: #dff5e2; /* vert très clair */
@@ -173,7 +173,7 @@ margin-top: 30px;
   text-align: center;
 }
 
-#message:empty {
+.message:empty {
   display: none;
 }
 
@@ -251,35 +251,39 @@ button:disabled {
   transform: none;
 }
 
-#service-export, #service-revert {
+#service-export, #service-revert, #organization-revert, #user-revert {
     background-color: #F5F5F5;   /* bleu doux */
     border: 2px solid #617a9c;
     color: #617a9c;
 }
 
-#service-export:hover, #service-revert:hover {
+#service-export:hover, #service-revert:hover, #organization-revert:hover, #user-revert:hover {
   background-color: #617a9c;   /* un bleu un peu plus foncé */
   transform: translateY(-1px); /* léger effet de soulèvement */
   color: white;
 }
 
-#service-revert {
+#service-revert, #organization-revert, #user-revert {
     margin-right: 30px;
 }
 #service-export {
     margin-left: 30px;
 }
 
-button#service-export, #service-update  {
+button#service-export, #service-update, #organization-update, #user-update  {
   float: right;
 }
 
-.panel #service-create 
+.panel #service-create , .panel #organization-create , .panel #user-create 
 {display: inline !important; margin-left: 10px;}
 
 
 
+.form-row{
+  margin:20px 0;
+}
 
+.endbuttons {margin-top: 30px;}
 /*menus déroulants*/
 
 /* Style général pour les menus déroulants */
@@ -376,3 +380,126 @@ select {
 }
 
 
+/*ADMIN*/
+
+/* Header aligné à droite, email + bouton sur une ligne */
+#header{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
+
+  padding:12px 20px;
+  border-bottom:1px solid #e5e7eb;
+  background:#fff;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  isolation: isolate;
+}
+
+/* Email: propre + tronqué si trop long */
+#header-user{
+  font-size:14px;
+  color:#374151;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:320px; /* ajuste selon ta largeur */
+}
+
+/* Bouton logout discret */
+#header-logout{
+  background:transparent;
+  border:1px solid #d1d5db;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:13px;
+  color:#374151;
+  cursor:pointer;
+}
+
+#header-logout:hover{
+  background:#f9fafb;
+}
+
+/* pousse tout sauf le logo à droite */
+#header-logo{
+  margin-right:auto;
+  height:23px;          /* ajuste si besoin */
+  width:auto;
+  display:block;
+  
+}
+
+.MainTitle 
+{display: none;}
+
+.SectionTitle {
+  display:none;
+}
+
+
+
+
+
+.admin-tabs{
+  display:flex;
+  gap:32px;              /* ↑ espace entre les tabs (avant: 24px) */
+  align-items:flex-end;
+
+  margin:24px 0 36px;
+  padding:0 0 12px;
+
+  border-bottom:2px solid #e5e7eb;
+}
+
+.admin-tab{
+  background:none;
+  border:0;
+  padding:8px 8px;
+
+  font-size:16px;        /* ↑ taille du texte (avant: 15px) */
+  font-weight:600;
+  color:#6b7280;
+
+  cursor:pointer;
+  position:relative;
+}
+
+.admin-tab:hover {
+  color: #fff;
+}
+
+
+
+.admin-tab.is-active{
+  color:#111827;
+}
+
+.admin-tab.is-active:hover {
+  color: #fff;
+}
+
+
+.admin-tab.is-active::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-14px;
+
+  height:3px;
+  background:#111827;
+  border-radius:3px;
+}
+
+/* Force le comportement "tabs" dans cette colonne */
+#filters-column .admin-section{
+  display:none !important;
+}
+
+#filters-column .admin-section.is-active{
+  display:block !important;
+}
