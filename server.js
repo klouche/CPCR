@@ -1,14 +1,14 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
-const { OpenAI } = require('openai');
-const { Pinecone } = require('@pinecone-database/pinecone');
 const acronyms = require('./acronym.json');
 const { normalizeTextField } = require('./utils/text.js');
 const fs = require('fs');
 const path = require('path');
 const { prisma } = require('./db');
+
 const bcrypt = require('bcrypt');
+const { embedQueries, embedPassages, toPgVectorLiteral } = require('./utils/embeddings');
 
 // Resolve a safe log path for both local dev and Render
 const DEFAULT_LOG_DIR = process.env.LOG_DIR || (process.env.RENDER ? '/var/data' : path.join(__dirname, 'data'));
@@ -134,11 +134,6 @@ app.use(
 
 
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
-const index = pinecone.Index(process.env.PINECONE_INDEX);
-const orgIndex = pinecone.Index("infrastructure-index");
-console.log("🔧 Using Pinecone index:", process.env.PINECONE_INDEX);
 
 // --- Acronym helpers ---
 function escapeRegExp(str) {
@@ -204,11 +199,10 @@ function expandQueryWithAcronyms(q) {
 // --- end query expansion helpers ---
 
 
-function buildEmbeddingText({ name, organization, hidden, description, aliases }) {
+function buildEmbeddingText({ name, hidden, description, aliases }) {
   const parts = [];
   if (description) parts.push(`Description: ${(hidden ? String(hidden).trim() + " - " : "") + String(description).trim()}`);
   if (name) parts.push(`Service name: ${String(normalizeTextField(name)).trim()}`);
-  //if (organization) parts.push(`Organization: ${String(organization).trim()}`);
   if (Array.isArray(aliases) && aliases.length) parts.push(`Aliases: ${aliases.join(', ')}`);
 
   const text = parts.join('\n');
@@ -217,6 +211,33 @@ function buildEmbeddingText({ name, organization, hidden, description, aliases }
     .replace(/\r\n?|\u2028|\u2029/g, '\n')
     .replace(/\n{2,}/g, '\n')
     .trim();
+}
+async function upsertServiceEmbedding(serviceId, vector) {
+  const model = process.env.EMBEDDING_MODEL_ID || 'intfloat/multilingual-e5-small';
+  const dim = Number(process.env.EMBEDDING_DIM || 384);
+
+  if (!Array.isArray(vector) || vector.length !== dim) {
+    throw new Error(`Unexpected embedding dim for ${serviceId}: got ${vector?.length}, expected ${dim}`);
+  }
+
+  const vecLiteral = toPgVectorLiteral(vector);
+
+  await prisma.$executeRawUnsafe(
+    `
+    INSERT INTO service_embedding ("serviceId","embedding","model","dim","createdAt","updatedAt")
+    VALUES ($1, $2::vector, $3, $4, NOW(), NOW())
+    ON CONFLICT ("serviceId")
+    DO UPDATE SET
+      "embedding" = EXCLUDED."embedding",
+      "model" = EXCLUDED."model",
+      "dim" = EXCLUDED."dim",
+      "updatedAt" = NOW();
+    `,
+    serviceId,
+    vecLiteral,
+    model,
+    dim
+  );
 }
 
 function arraysEqual(a, b) {
@@ -489,55 +510,86 @@ app.get('/api/logs', (req, res) => {
 // SEARCH ROUTE
 // ============================================================================
 // POST /api/search
-// Takes a free-text query, expands acronyms, creates an embedding,
-// queries Pinecone, and returns ranked service IDs with scores.
+// Takes a free-text query, expands acronyms, creates an embedding via TEI,
+// queries pgvector (service_embedding), and returns ranked service IDs.
 app.post('/api/search', async (req, res) => {
   noStore(res);
   try {
-    const query = req.body.query;
+    const query = req.body?.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
 
     const { expanded, matched } = expandQueryWithAcronyms(query);
 
-    const response = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: [expanded]
-    });
+    // Embed the query via TEI (E5-style prompting handled in utils/embeddings.js)
+    const vectors = await embedQueries([expanded]);
+    const embedding = vectors?.[0];
+    if (!Array.isArray(embedding) || embedding.length === 0) {
+      return res.status(500).json({ error: 'Embedding failed (empty vector).' });
+    }
 
-    const embedding = response.data[0].embedding;
+    const vecLiteral = toPgVectorLiteral(embedding);
 
-    const result = await index.query({
-      vector: embedding,
-      topK: 1000,
-      includeMetadata: true
-    });
+    // If authenticated and not superadmin, restrict search to the user's organization
+    const userOrg = (req.session?.user && !isSuperAdmin(req)) ? getSessionOrgCode(req) : null;
+
+    const topK = Math.min(Math.max(Number(req.body?.topK || 100), 1), 1000);
+
+    // Use cosine distance operator (<=>) from pgvector. Smaller is better.
+    // We convert to a similarity-like score for compatibility with the frontend: score = 1 - distance.
+    // (This is a simple monotonic transform; you may later calibrate if desired.)
+    let rows;
+    if (userOrg) {
+      rows = await prisma.$queryRawUnsafe(
+        `
+        SELECT s.id, s.aliases, (e.embedding <=> $1::vector) AS distance
+        FROM service_embedding e
+        JOIN "Service" s ON s.id = e."serviceId"
+        WHERE s.active = true AND s."organizationCode" = $2
+        ORDER BY e.embedding <=> $1::vector
+        LIMIT $3;
+        `,
+        vecLiteral,
+        String(userOrg),
+        topK
+      );
+    } else {
+      rows = await prisma.$queryRawUnsafe(
+        `
+        SELECT s.id, s.aliases, (e.embedding <=> $1::vector) AS distance
+        FROM service_embedding e
+        JOIN "Service" s ON s.id = e."serviceId"
+        WHERE s.active = true
+        ORDER BY e.embedding <=> $1::vector
+        LIMIT $2;
+        `,
+        vecLiteral,
+        topK
+      );
+    }
 
     const BONUS = 0.05; // small nudge for exact acronym hits in aliases
 
-    const matches = (result.matches || [])
-      .map(match => {
-        const aliases = match.metadata?.aliases || [];
-        const hasExact = Array.isArray(aliases) && matched?.some(a => aliases.includes(a));
-        const boostedScore = hasExact ? (match.score + BONUS) : match.score;
-        return {
-          id: match.id,
-          score: boostedScore
-        };
+    const matches = (rows || [])
+      .map(r => {
+        const aliases = r?.aliases || [];
+        const hasExact = Array.isArray(aliases) && Array.isArray(matched) && matched.some(a => aliases.includes(a));
+        const dist = Number(r?.distance);
+        const baseScore = Number.isFinite(dist) ? (1 - dist) : 0;
+        const boostedScore = hasExact ? (baseScore + BONUS) : baseScore;
+        return { id: r.id, score: boostedScore };
       })
       .sort((a, b) => b.score - a.score);
 
     logRequest(
       req,
-      matches.map(match => ({ id: match.id, score: match.score })),
+      matches.map(m => ({ id: m.id, score: m.score })),
       { type: 'search' }
     );
 
-    noStore(res);
     res.json({ results: matches });
-
   } catch (err) {
-    console.error("🔥 Internal server error:", err);  // 🔍 See this in the logs
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('🔥 Internal server error:', err);
+    res.status(500).json({ error: 'Internal server error', detail: err.message });
   }
 });
 
@@ -609,8 +661,8 @@ app.get('/api/users', requireAuth, requireSuperAdmin, async (req, res) => {
         organizationCode: true,
         isSuperAdmin: true,
         forcePasswordChange: true,
-        organization: true
-      }
+        organization: { select: { code: true, label: true, fullName: true, idPrefix: true } },
+      },
     });
 
     res.json({ users });
@@ -1016,7 +1068,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
     }
 
     // Detect acronyms/expansions present in the provided fields
-    const aliases = buildAliasesForFields({ name, organization, hidden, description });
+    const aliases = buildAliasesForFields({ name, organization: existing.organizationCode, hidden, description });
 
     // Normalization helpers
     const normArr = v =>
@@ -1036,7 +1088,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
     // Prepare new data for DB update
     const newData = {
       name,
-      organizationCode: isSuperAdmin(req) ? normStr(organization) : existing.organizationCode,
+      organizationCode: existing.organizationCode,
       regional: regionalArray,
       hidden: normStr(hidden),
       description: normStr(description),
@@ -1055,7 +1107,6 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
     // Detect if embedding-relevant fields changed
     const embeddingFieldsChanged =
       (existing.name || '') !== (name || '') ||
-      (existing.organizationCode || '') !== (isSuperAdmin(req) ? (organization || '') : (existing.organizationCode || '')) ||
       (existing.hidden || '') !== (hidden || '') ||
       (existing.description || '') !== (description || '') ||
       !arraysEqual(existing.aliases || [], aliases || []);
@@ -1066,50 +1117,23 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       data: newData
     });
 
-    let pineconeUpdated = false;
+    let embeddingUpdated = false;
 
     if (embeddingFieldsChanged) {
       const embeddingInput = buildEmbeddingText({
         name,
-        organization,
         hidden,
         description,
         aliases
       });
 
-      const embeddingResponse = await openai.embeddings.create({
-        model: 'text-embedding-3-small',
-        input: embeddingInput
-      });
+      // TEI embedding (E5 “passage:” prefix handled in utils/embeddings.js)
+      const vecs = await embedPassages([embeddingInput]);
+      const newEmbedding = vecs?.[0];
+      await upsertServiceEmbedding(id, newEmbedding);
 
-      const newEmbedding = embeddingResponse.data[0].embedding;
-      const stamp = Date.now();
-
-      // Metadata for Pinecone: keep in sync with DB, plus updatedAt
-      const pineconeMetadata = {
-        name: normalizeTextField(name),
-        organization: normStr(organization),
-        regional: regionalArray,
-        hidden: normStr(hidden),
-        description: normStr(description),
-        complement: normStr(complement),
-        contact: normArr(contact),
-        research: normArr(research),
-        phase: normArr(phase),
-        category: normArr(category),
-        output: normArr(output),
-        url: normArr(url),
-        docs: normArr(docs),
-        aliases: Array.isArray(aliases) ? aliases : [],
-        updatedAt: stamp
-      };
-
-      await index.upsert([
-        { id, values: newEmbedding, metadata: pineconeMetadata }
-      ]);
-
-      pineconeUpdated = true;
-      console.log(`✅ Updated service ${id} in DB and Pinecone`);
+      embeddingUpdated = true;
+      console.log(`✅ Updated service ${id} in DB and pgvector embedding`);
     } else {
       console.log(`✅ Updated service ${id} in DB (no embedding change)`);
     }
@@ -1121,7 +1145,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
         action: 'update-service',
         id,
         updatedFields: newData,
-        pineconeUpdated,
+        embeddingUpdated,
         user: req.session?.user?.email || null
       },
       { type: 'service-change' }
@@ -1132,7 +1156,7 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       success: true,
       message: `Service ${id} updated.`,
       service: updatedService,
-      pineconeUpdated
+      embeddingUpdated
     });
   } catch (err) {
     console.error("🔥 Failed to update service:", err);
@@ -1153,7 +1177,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
     const {
       id,
       name,
-      organization,
+      organizationCode,
       regional,
       hidden,
       description,
@@ -1169,9 +1193,9 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
     } = req.body;
 
     // Minimal required fields
-    if (!id || !name || !organization) {
+    if (!id || !name || !organizationCode) {
       return res.status(400).json({
-        error: "Missing 'id', 'name', or 'organization'."
+        error: "Missing 'id', 'name', or 'organizationCode'."
       });
     }
 
@@ -1181,7 +1205,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       if (!userOrg) {
         return res.status(401).json({ error: 'Authentication required' });
       }
-      if (String(organization || '') !== String(userOrg)) {
+      if (String(organizationCode || '') !== String(userOrg)) {
         return res.status(403).json({ error: 'Forbidden: cannot create service outside your organization' });
       }
     }
@@ -1221,7 +1245,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
     // Detect aliases from the provided text fields
     const aliases = buildAliasesForFields({
       name,
-      organization,
+      organization: organizationCode,
       hidden,
       description
     });
@@ -1231,7 +1255,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       data: {
         id,
         name,
-        organizationCode: isSuperAdmin(req) ? normStr(organization) : getSessionOrgCode(req),
+        organizationCode: isSuperAdmin(req) ? normStr(organizationCode) : getSessionOrgCode(req),
         regional: regionalArray,
         hidden: normStr(hidden),
         description: normStr(description),
@@ -1248,50 +1272,19 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       }
     });
 
-    // Build text for embedding (same logic as elsewhere)
+    // Build text for embedding (same formatting as backfill)
     const embeddingInput = buildEmbeddingText({
       name,
-      organization,
       hidden,
       description,
       aliases
     });
 
-    const embeddingResponse = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: embeddingInput
-    });
+    const vecs = await embedPassages([embeddingInput]);
+    const embedding = vecs?.[0];
+    await upsertServiceEmbedding(id, embedding);
 
-    const embedding = embeddingResponse.data[0].embedding;
-    const stamp = Date.now();
-
-    const pineconeMetadata = {
-      name: normalizeTextField(name),
-      organization: isSuperAdmin(req) ? normStr(organization) : getSessionOrgCode(req),
-      regional: regionalArray,
-      hidden: normStr(hidden),
-      description: normStr(description),
-      complement: normStr(complement),
-      contact: contactArray,
-      research: researchArray,
-      phase: phaseArray,
-      category: categoryArray,
-      output: outputArray,
-      url: urlArray,
-      docs: docsArray,
-      aliases: Array.isArray(aliases) ? aliases : [],
-      updatedAt: stamp
-    };
-
-    await index.upsert([
-      {
-        id,
-        values: embedding,
-        metadata: pineconeMetadata
-      }
-    ]);
-
-    console.log(`✨ Created new service '${id}' in DB and Pinecone`);
+    console.log(`✨ Created new service '${id}' in DB and pgvector embedding`);
 
     // Log the service creation in the same log file as searches
     logRequest(
@@ -1300,7 +1293,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
         action: 'create-service',
         id,
         data: newService,
-        pineconeIndexed: true,
+        embeddingUpdated: true,
         user: req.session?.user?.email || null
       },
       { type: 'service-change' }
@@ -1310,7 +1303,7 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
       success: true,
       message: `Service ${id} saved.`,
       service: newService,
-      pineconeIndexed: true
+      embeddingUpdated: true
     });
 
   } catch (err) {
@@ -1354,15 +1347,7 @@ app.post('/api/delete-service', requireAuth, async (req, res) => {
     // Delete from DB (source of truth)
     await prisma.service.delete({ where: { id } });
 
-    // Try to delete from Pinecone too
-    try {
-      // Depending on your client, this might be:
-      // await index.deleteMany({ ids: [id] });
-      await index.deleteOne(id);
-      console.log(`🧹 Deleted service '${id}' from Pinecone and DB`);
-    } catch (pineErr) {
-      console.error(`⚠️ Deleted from DB but failed to delete '${id}' from Pinecone:`, pineErr);
-    }
+console.log(`🧹 Deleted service '${id}' from DB (embedding row should cascade)`);
 
     // Log the service deletion in the same log file as searches
     logRequest(
@@ -1377,7 +1362,7 @@ app.post('/api/delete-service', requireAuth, async (req, res) => {
 
     res.json({
       success: true,
-      message: `Service '${id}' deleted from DB and Pinecone (if present).`
+      message: `Service '${id}' deleted from DB.`
     });
   } catch (err) {
     console.error("🔥 Failed to delete service:", err);
@@ -1386,124 +1371,6 @@ app.post('/api/delete-service', requireAuth, async (req, res) => {
 });
 
 
-// ============================================================================
-// EXPLAIN MATCH ROUTE
-// ============================================================================
-// POST /api/explain-match
-// Uses GPT to generate a short human-readable explanation for why a given
-// service matches a user query, including acronym expansions.
-// Route to generate GPT-4 explanations for match relevance
-app.post('/api/explain-match', async (req, res) => {
-  noStore(res);
-  const { query, match } = req.body;
-
-  if (!query || !match) {
-    return res.status(400).json({ error: "Missing or invalid 'query' or 'match' in request body." });
-  }
-
-  // Expand the user's query with known acronyms and build a glossary for GPT
-  const { expanded: expandedQuery, matched: matchedFromQuery } = expandQueryWithAcronyms(query);
-
-  // Collect acronyms found in the matched service text as well
-  const matchText = [match.name, match.hidden, match.description, Array.isArray(match.aliases) ? match.aliases.join(' ') : '']
-    .filter(Boolean)
-    .join('\n');
-  const matchedFromService = extractAcronymsFromQuery(matchText);
-
-  // Union of acronyms from query and service
-  const allMatched = Array.from(new Set([...(matchedFromQuery || []), ...(matchedFromService || [])]));
-
-  // Build a glossary section for the prompt
-  let glossarySection = '';
-  if (allMatched.length) {
-    const lines = allMatched.map(acro => {
-      const exps = Array.isArray(acronyms[acro]) ? acronyms[acro] : [];
-      return `${acro}: ${exps.join(' | ')}`;
-    }).filter(Boolean);
-    if (lines.length) {
-      glossarySection = `Acronym glossary (use these meanings):\n${lines.join('\n')}\n\n`;
-    }
-  }
-
-  const explanationPrompt = `
-You are helping a researcher understand why a service matches their query. When acronyms appear, use the glossary below; prefer writing the expansion first and the acronym in parentheses.
-
-${glossarySection}Researcher query (expanded):
-"${expandedQuery}"
-
-Matched service:
-Name: ${match.name}
-Aliases: ${(Array.isArray(match.aliases) ? match.aliases.join(', ') : '')}
-Description: ${match.hidden || ''} ${match.description || ''}
-
-Provide a short, helpful explanation (2–4 sentences) of why it is relevant to the query. Be concrete and cite the specific phrases or capabilities that match the intent.`;
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-5',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant for researchers.' },
-        { role: 'user', content: explanationPrompt }
-      ]
-    });
-
-    const text = response.choices[0].message.content;
-
-    res.json({ text });
-  } catch (err) {
-    console.error("🔥 Failed to generate explanations:", err.message);
-    res.status(500).json({ error: "Could not generate explanations", detail: err.message });
-  }
-});
-
-// ============================================================================
-// PROXIMITY SCORE ROUTE
-// ============================================================================
-// POST /api/proximity-score
-// Computes cosine-like similarity scores between service vectors and a
-// fixed set of organization vectors stored in the orgIndex.
-app.post('/api/proximity-score', async (req, res) => {
-  noStore(res);
-  try {
-    const { serviceIds } = req.body;
-    const orgIds = ["SBP", "Swiss-Cancer-Institute", "SCTO", "SPHN-DCC"];
-
-    if (!Array.isArray(serviceIds) || serviceIds.length === 0) {
-      return res.status(400).json({ error: "Missing or invalid 'serviceIds' array" });
-    }
-
-    const serviceResults = await index.fetch(serviceIds);
-    const orgResult = await orgIndex.fetch(orgIds);
-
-    const results = [];
-
-    for (const serviceId of serviceIds) {
-      const serviceVec = serviceResults.records?.[serviceId]?.values;
-      if (!serviceVec) continue;
-
-      const scores = [];
-
-      for (const orgId of orgIds) {
-        const orgVec = orgResult.records?.[orgId]?.values;
-        if (!orgVec) continue;
-
-        const dotProduct = serviceVec.reduce((sum, v, i) => sum + v * orgVec[i], 0);
-        const magnitudeA = Math.sqrt(serviceVec.reduce((sum, v) => sum + v * v, 0));
-        const magnitudeB = Math.sqrt(orgVec.reduce((sum, v) => sum + v * v, 0));
-        const similarity = dotProduct / (magnitudeA * magnitudeB);
-        scores.push({ organization: orgId, similarity });
-      }
-
-      results.push({ serviceId, scores });
-    }
-
-    res.json({ results });
-
-  } catch (err) {
-    console.error("🔥 Failed to compute proximity scores:", err);
-    res.status(500).json({ error: "Could not compute proximity scores", detail: err.message });
-  }
-});
 
 
 // ============================================================================

@@ -7,3 +7,7 @@ node_modules
 .DS_Store
 backup
 service_ids.js
+# Dumps only
+*dump*.sql
+backup_*.sql
+seed_from_prod.sql

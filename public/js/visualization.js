@@ -651,7 +651,7 @@ async function updateService() {
                 id: currentService.id,
                 active: d3.select("#service-active").node().checked,
                 name: d3.select("#service-name").html(),
-                organization: ORG,
+                organizationCode: ORG,
                 regional: d3.select("#service-regional").text().split(",").map(d => d.trim()).filter(d => d.length),
                 research: serviceResearch,
                 phase: servicePhase,

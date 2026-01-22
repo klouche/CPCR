@@ -15,7 +15,7 @@ datasource db {
 }
 
 model Service {
-  id               String        @id @default(uuid())
+  id               String        @id
   active           Boolean       @default(true)
   name             String
   organizationCode String
@@ -35,6 +35,9 @@ model Service {
   contact      String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  embedding    ServiceEmbedding?
+
+  @@index([organizationCode])
 }
 
 model Organization {
@@ -53,6 +56,26 @@ model User {
   password         String        // hashed
   organizationCode String
   organization     Organization  @relation(fields: [organizationCode], references: [code])
-  isSuperAdmin     Boolean       @default(false)
-  forcePasswordChange Boolean @default(false)
+  isSuperAdmin         Boolean   @default(false)
+  forcePasswordChange  Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([organizationCode])
+}
+
+model ServiceEmbedding {
+  serviceId   String   @id
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  // pgvector column (Prisma doesn't natively model vector dims well, so we use Unsupported)
+  embedding   Unsupported("vector")
+
+  // useful metadata
+  model       String
+  dim         Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("service_embedding")
 }
