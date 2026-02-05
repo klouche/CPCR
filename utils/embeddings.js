@@ -2,7 +2,40 @@
 // Helper functions for calling Hugging Face Text Embeddings Inference (TEI)
 // and formatting vectors for pgvector.
 
-// Node 18+ provides global fetch. If you run in older Node, install node-fetch.
+// Optional acronym expansion to improve retrieval quality for queries like "CT".
+// This keeps all processing local (no external calls) and makes acronym queries
+// behave more like their expanded forms.
+let ACRONYMS = {};
+try {
+  // utils/embeddings.js lives in ./utils, so acronym.json is one level up
+  ACRONYMS = require('../acronym.json') || {};
+} catch (_) {
+  ACRONYMS = {};
+}
+
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Expand acronyms inline: "CT" -> "CT (Clinical trials)"
+// We only add the expansion when the acronym is a whole word and is not already
+// followed by parentheses.
+function expandAcronymsInline(text) {
+  const s = String(text ?? '');
+  if (!s.trim()) return s;
+
+  let out = s;
+  for (const [acro, exps] of Object.entries(ACRONYMS || {})) {
+    if (!acro) continue;
+    const first = Array.isArray(exps) ? exps.find(e => typeof e === 'string' && e.trim().length) : null;
+    if (!first) continue;
+
+    const re = new RegExp(`\\b${escapeRegExp(acro)}\\b(?!\\s*\\()`, 'gi');
+    out = out.replace(re, (m) => `${m} (${first})`);
+  }
+
+  return out;
+}
 
 function getEmbeddingsBaseUrl() {
   const base = process.env.EMBEDDINGS_BASE_URL || 'http://localhost:8080';
@@ -56,12 +89,18 @@ function asArray(x) {
 
 // E5-style prompting: use explicit prefixes for best retrieval quality.
 async function embedPassages(passages) {
-  const arr = asArray(passages).map(s => `passage: ${String(s ?? '').trim()}`);
+  const arr = asArray(passages).map(s => {
+    const t = expandAcronymsInline(String(s ?? '').trim());
+    return `passage: ${t}`;
+  });
   return teiEmbed(arr);
 }
 
 async function embedQueries(queries) {
-  const arr = asArray(queries).map(s => `query: ${String(s ?? '').trim()}`);
+  const arr = asArray(queries).map(s => {
+    const t = expandAcronymsInline(String(s ?? '').trim());
+    return `query: ${t}`;
+  });
   return teiEmbed(arr);
 }
 
@@ -76,4 +115,5 @@ module.exports = {
   embedPassages,
   embedQueries,
   toPgVectorLiteral,
+  expandAcronymsInline,
 };

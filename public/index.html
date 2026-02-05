@@ -2,167 +2,281 @@
 <html lang="en">
 
 <head>
+
+
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPCR Service Finder admin</title>
+    <title>CPCR Service Finder</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="images/favicon/site.webmanifest">
+
     <script src="./js/libraries/jquery.min.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./js/libraries/d3.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-
-    <div id="header">
-        <img src="../images/logo_horiz.png" alt="Research Hub" id="header-logo">
-        <div id="header-user"></div>
-        <button type="button" id="header-logout">Logout</button>
+    <div id="logo-sponsor">
+        
+        <a href="https://www.samw.ch/en.html" target="_blank"><img src="images/logo_assm.png"
+                alt="Logo SAMW/ASSM" /></a>
     </div>
-    <div id="layout-container">
-
-        <div id="login-form">
-            <form id="login-form-element">
-                <h2>Service administration</h2>
-                <label class="field-label" for="login-username">Email</label>
-                <input type="text" id="login-username" name="username" autocomplete="username" required />
-
-                <label class="field-label" for="login-password">Password</label>
-                <input type="password" id="login-password" name="password" autocomplete="current-password" required />
-
-                <button type="button" id="login-button">Login</button>
-                <p id="login-message"></p>
-            </form>
-        </div>
-
-        <!-- Header des requetes -->
-        <!-- Filtre des infrastructure -->
-
-        <!-- Colonne gauche : Filtres -->
-        <div id="filters-column">
-
-            <nav id="admin-tabs" class="admin-tabs" aria-label="Admin sections">
-                <button class="admin-tab" type="button" data-tab="organization-panel">Organization management</button>
-                <button class="admin-tab" type="button" data-tab="service-panel">Service management</button>
-                <button class="admin-tab" type="button" data-tab="user-panel">User management</button>
-            </nav>
-
-
-            <h2 class="MainTitle">Research Hub</h2>
-
-            <div id="organization-panel" class="panel admin-section">
-                <h3 class="SectionTitle">Organization management</h3>
-                <label class="field-label" for="organizations">Organization</label>
-                <select id="organizations" name="organizations"></select>
-                <button id="organization-create" name="organizaton-create" style="display:none;">New
-                    organization</button>
-
-                <div id="organization" class="panel-detail" style="display: none;">
-                    <label class="field-label" for="organization-code">Code</label>
-                    <div class="editable-field" id="organization-code" contenteditable="true"></div>
-                    <label class="field-label" for="organization-label">Label</label>
-                    <div class="editable-field" id="organization-label" contenteditable="true"></div>
-                    <label class="field-label" for="organization-full-name">Full name</label>
-                    <div class="editable-field" id="organization-full-name" contenteditable="true"></div>
-                    <label class="field-label" for="organization-id-prefix">ID prefix</label>
-                    <div class="editable-field" id="organization-id-prefix" contenteditable="true"></div>
-                    <div class="endbuttons">
-                        <button id="organization-revert" name="organization-revert">Cancel changes</button>
-                        <button id="organization-update" name="organization-update">Update organization</button>
-                        <p id="organization-message" class="message"></p>
-                    </div>
-                </div>
-            </div>
-
-
-            <div id="service-panel" class="panel admin-section">
-                <!-- Filtre des requetes -->
-                <h3 class="SectionTitle">Service management</h3>
-                <label class="field-label" for="services">Service</label>
-                <select id="services" name="services"></select>
-                <button id="service-create" name="service-create" style="display:none;">New service</button>
-                <button id="service-export" name="service-export" style="display:none;">Export services</button>
-
-                <div id="service" class="panel-detail" style="display: none;">
-                    <div class="field-info">Fields with * affect ranking</div>
-                    <label class="field-label single-checkbox" for="service-active">Service is active</label>
-                    <input type="checkbox" id="service-active" contenteditable="true"></input>
-                    <label class="field-label" for="service-name">Name*</label>
-                    <div class="editable-field" id="service-name" contenteditable="true"></div>
-                    <label class="field-label" for="service-regional">Regional infrastructures</label>
-                    <div class="editable-field" id="service-regional" contenteditable="true"></div>
-                    <label class="field-label" for="service-hidden">Hidden description* (not visible to
-                        users)</label>
-                    <div class="editable-field" id="service-hidden" contenteditable="true"></div>
-                    <label class="field-label" for="service-description">Description*</label>
-                    <div class="editable-field" id="service-description" contenteditable="true"></div>
-                    <label class="field-label" for="service-complement">Description complement</label>
-                    <div class="editable-field" id="service-complement" contenteditable="true"></div>
-                    <label class="field-label" for="service-research">Type of research</label>
-                    <div class="read-only-field" id="service-research"></div>
-                    <label class="field-label" for="service-phase">Project phase</label>
-                    <div class="read-only-field" id="service-phase"></div>
-                    <label class="field-label" for="service-category">Service category</label>
-                    <div class="read-only-field" id="service-category"></div>
-                    <label class="field-label" for="service-output">Type of service</label>
-                    <div class="read-only-field" id="service-output"></div>
-
-                    <label class="field-label" for="service-contacts">Contacts</label>
-                    <pre id="service-contacts" class="editable-field" placeholder="Optional"
-                        contenteditable="true"></pre>
-                    <div class="field-info">Format: "a.muster@website.ch" or "Alex Muster, a.muster@website.ch". One
-                        email address per line</div>
-
-                    <label class="field-label" for="service-urls">Links</label>
-                    <pre id="service-urls" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
-                    <div class="field-info">Format: "www.website.ch" or "My website, www.website.ch". One url per
-                        line
-                    </div>
-
-                    <label class="field-label" for="service-docs">Documents</label>
-                    <pre id="service-docs" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
-                    <div class="field-info">Format: "www.website.ch/document.pdf" or "My document,
-                        www.infra.ch/document.pdf". One document url per line</div>
-                    <div class="endbuttons">
-                        <button id="service-revert" name="service-revert">Cancel changes</button>
-                        <button id="service-update" name="service-update">Update service</button>
-                        <p id="service-message" class="message"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="user-panel" class="panel admin-section">
-                <h3 class="SectionTitle">User management</h3>
-                <label class="field-label" for="users">User</label>
-                <select id="users" name="users"></select>
-                <button id="user-create" name="user-create" style="display:none;">New user</button>
-
-                <div id="user" class="panel-detail" style="display: none;">
-                    <label class="field-label" for="user-id">ID</label>
-                    <div class="read-only-field" id="user-id" contenteditable="false"></div>
-                    <label class="field-label" for="user-email">Email</label>
-                    <div class="editable-field" id="user-email" contenteditable="true"></div>
-                    <label class="field-label single-checkbox" for="user-is-superadmin">Is superadmin?</label>
-                    <input type="checkbox" id="user-is-superadmin" contenteditable="true"></input>
-                    <label class="field-label" for="user-organization">Affiliation</label>
-                    <select id="user-organization" name="user-organization"></select>
-                    <label class="field-label" for="user-password">New password</label>
-                    <div class="editable-field" id="user-password" contenteditable="true"></div>
-                    <div class="form-row">
-                        <label class="field-label single-checkbox" for="user-force-password-change">Change password next
-                            login</label>
-                        <input type="checkbox" id="user-force-password-change" contenteditable="true"></input>
-                    </div>
-                    <div class="endbuttons">
-                        <button id="user-revert" name="user-revert">Cancel changes</button>
-                        <button id="user-update" name="user-update">Update user</button>
-                        <p id="user-message" class="message"></p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+    <div id="logo-cpcr">
+        <a href="https://swissbiobanking.ch/cpcr_service_finder_for_researchers_v0.2/index.html"><img
+                src="images/logo_CPCR_service_finder.png" alt="Logo CPCR Service Finder" /></a>
     </div>
+
+    <div id="layout-container" class="splash">
+
+        <!-- ======================== -->
+        <!-- SECTION 1 : Recherche (fond blanc) -->
+        <!-- ======================== -->
+        <section class="section-recherche">
+            <div id="filters-column">
+                <!-- Logo permanent en haut à droite -->
+
+
+                <div id="request-selector">
+
+                    <!-- Champ de requête (contenteditable avec accessibilité) -->
+                    <div class="search-wrap">
+                        <div id="request-text" role="textbox" aria-label="Describe your request" contenteditable="true"
+                            placeholder="Type your request here (e.g., sample tracking, data access, MTA template)">
+                        </div>
+                        <!-- Bouton Search visuellement "dans" le champ -->
+                        <button type="button" class="search-btn" id="search-button" aria-label="Search"
+                            onclick="serviceSearch()" >
+                            Search
+                        </button>
+
+                        <!-- Bouton info à l'extérieur, à droite -->
+                        <button type="button" class="info-btn" id="info-button" aria-label="About this tool">i</button>
+                    </div>
+                    <!-- Avertissement -->
+                    <div id="disclaimer">
+                        <p class="disclaimer-warning">
+                            Please do not enter any personal, sensitive, or confidential information. <br>
+                            Your request is processed by an external AI system to generate relevant service suggestions.
+                        </p>
+
+                    </div>
+
+                    <!-- Filtres -->
+                    <div class="chips-bleed">
+                        <div class="chips">
+                            <div class="chip-wrapper">
+                                <button type="button" class="chip" data-default="Type of research"><span
+                                        class="chip-label">Type of research</span><span
+                                        class="chip-arrow">▾</span></button>
+                                <button type="button" class="chip-clear" aria-label="Clear this filter">×</button>
+                                <div class="chip-menu">
+                                    <div class="menu-header">
+                                        <span class="menu-title">Type of research</span>
+                                        <button class="menu-reset">Clear</button>
+                                    </div>
+                                    <label><input type="checkbox" value="Clinical research"> Clinical research</label>
+                                    <label><input type="checkbox" value="Public health"> Public health</label>
+                                    <label><input type="checkbox" value="Data-driven research"> Data-driven
+                                        research</label>
+                                </div>
+                            </div>
+
+                            <div class="chip-wrapper">
+                                <button type="button" class="chip" data-default="Project phase"><span
+                                        class="chip-label">Project phase</span><span
+                                        class="chip-arrow">▾</span></button>
+                                <button type="button" class="chip-clear" aria-label="Clear this filter">×</button>
+                                <div class="chip-menu">
+                                    <div class="menu-header">
+                                        <span class="menu-title">Project phase</span>
+                                        <button class="menu-reset">Clear</button>
+                                    </div>
+                                    <label><input type="checkbox" value="Planning"> Planning</label>
+                                    <label><input type="checkbox" value="Execution"> Execution</label>
+                                    <label><input type="checkbox" value="Analysis"> Analysis</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- fin #request-selector -->
+
+            </div><!-- fin #filters-column -->
+
+        </section>
+
+        <!-- ======================== -->
+        <!-- SECTION 2 : Contenu (fond gris) -->
+        <!-- ======================== -->
+        <section class="section-results">
+            <div id="results-column">
+                <div id="results-content">
+                    <!-- Logos infrastructures -->
+                    <div id="logos">
+                        <div class="logos-label">
+                            <h2>Services provided by</h2>
+                        </div>
+                        <div class="logos-row">
+                            <a href="https://swissbiobanking.ch" target="_blank"><img
+                                    src="images/logo_provider_sbp.png" /></a>
+                            <a href="https://www.swisscancerinstitute.ch" target="_blank"><img
+                                    src="images/logo_provider_sci.png" /></a>
+                            <a href="https://scto.ch" target="_blank"><img src="images/logo_provider_scto.png" /></a>
+                            <a href="https://sphn.ch" class="sphn" target="_blank"><img class="sphn" src="images/logo_provider_sphn.png" /></a>
+                            <a href="https://swissethics.ch" target="_blank"><img
+                                    src="images/logo_provider_swissethics.png" /></a>
+                        </div>
+                        <div class="scroll">Scroll for more</div>
+                    </div><!-- FIN de #logos -->
+
+
+
+
+                    <!-- Instruction avant recherche (à masquer après lancement) -->
+                    <div id="search-instruction">
+                        <h2>How it works?</h2>
+                        <ul>
+                            <li><b>1. Describe your need</b><br>Enter a short free-text request (e.g., “help with
+                                sample tracking”).</li>
+
+                            <li><b>2. Browse services</b><br>
+                                Your request is matched to a set of harmonised services. AI helps identify the most
+                                relevant ones.</li>
+                            <li><b>3. Refine your results</b><br>
+                                Use filters to narrow down the results and better match your context.</li>
+
+                            <li><b>4. Understand your results</b><br>
+                                Each result comes with a short explanation. Click the "Why this result" in the top-right
+                                corner of
+                                each result to learn why it was selected.</li>
+                        </ul>
+                    </div>
+
+                    <div id="target-audience">
+                        <h2>Who is it for?</h2>
+                        <p>
+                            The <i>CPCR Service Finder</i> is designed for anyone involved in health and clinical
+                            research in Switzerland, from academic researchers and study coordinators to data managers
+                            and biobank professionals.
+                            It supports users in identifying which national infrastructures can provide the expertise,
+                            data, or resources they need at different stages of their projects.
+                        </p>
+                    </div>
+
+                    <!-- Bloc d'introduction (à masquer après la recherche) -->
+                    <div id="result-description">
+                        <h2>About this tool</h2>
+                        <p>
+                            The CPCR Service Finder has been developed by the <b>national Coordination Platform Clinical
+                                Research (<a
+                                    href="https://www.samw.ch/en/Projects/Overview-of-projects/Coordination-Platform-CR.html"
+                                    target="_blank">CPCR</a>)</b> in a joint effort of Swiss Biobanking (technical
+                            lead), Swiss Cancer Institute,
+                            Swiss Clinical Trial Organisation and Swiss Personalized Health Network, with the support
+                            and coordination of the SAMS.
+                            The tool is designed to allow other key national service providers to join. Swissethics is
+                            the first partner organization to integrate its services into the tool.
+
+
+
+
+                        <p> <b>About the CPCR</b><br>
+                            Hosted by the Swiss Academy of Medical Sciences (SAMS) on behalf of the State Secretariat
+                            for Research,
+                            Education and Innovation (SERI), the CPCR aims to strengthen the institutional cooperation
+                            of the main
+                            academic stakeholders of health and clinical research. The CPCR offers a space to pursue
+                            collaborative
+                            projects and develop tools to increase transparency, improve coordination and optimize the
+                            use of resources.
+
+                        </p>
+                    </div>
+
+                    <div id="credits">
+
+                        <div class="creditsSBP logosSBP"><a href="https://swissbiobanking.ch" target="_blank"><img
+                                    src="images/logo_provider_sbp.png" width="150" /></a></div>
+                        <div class="creditsSBP textSBP">
+                            <p><i>Swiss Biobanking</i> is leading the technical development of the tool. Your feedback
+                                is welcome, feel free to contact the development team at <a
+                                    href="mailto:info@swissbiobanking.ch?subject=CPCR Service Finder for clinical research"
+                                    target="_blank">info@swissbiobanking.ch </a></p>
+
+                        </div>
+                    </div><!-- FIN de #credits -->
+
+                    <!-- Conteneur dynamique -->
+                    <h2 id="result-title"></h2>
+                    <div id="ranking"></div>
+                    <div class="load-more" style="display:none;">Load more results</div>
+                </div><!-- fin #results-content -->
+            </div><!-- fin #results-column -->
+        </section>
+
+    </div><!-- fin #layout-container -->
+    <a href="mailto:info@swissbiobanking.ch?subject=Feedback on ResearchHub" id="feedback-btn">
+        Help us improve
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
     <script src="./js/visualization.js"></script>
+    <script>
+        function smoothScrollTo(target, duration = 800) {
+            const start = window.pageYOffset;
+            const end = target.getBoundingClientRect().top + window.pageYOffset;
+            const distance = end - start;
+            const startTime = performance.now();
+
+            function animation(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // easing (plus doux)
+                const ease = 0.5 * (1 - Math.cos(Math.PI * progress));
+
+                window.scrollTo(0, start + distance * ease);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            requestAnimationFrame(animation);
+        }
+
+        document.getElementById('info-button').addEventListener('click', () => {
+            const target = document.getElementById('search-instruction');
+            if (!target) return;
+
+            smoothScrollTo(target, 800); // durée en ms
+        });
+    </script>
+
+
+   
+
+
 </body>
 
 </html>

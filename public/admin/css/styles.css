@@ -1,0 +1,508 @@
+/* Assure que le body et le html utilisent toute la hauteur */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.4em;
+    font-style: normal;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F5F5;
+}
+
+
+
+
+/* Reset de base */
+html, body {
+  height: 100%;
+  overflow-x: hidden; /* évite les scrolls horizontaux cachés */
+}
+
+
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* En-tête fixe */
+#header {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border-bottom: 1px solid black;
+    position: fixed;
+    background-color: white;
+}
+
+
+
+/* Titres pour les sections */
+h2 {
+    font-size: 3em;
+    margin-bottom: 60px;
+    color: #333;
+    font-weight: 300;
+    margin-top: 80px;
+    line-height: 1.1em;
+}
+
+
+/* Layout principal */
+#layout-container {
+    max-width: 1000px;
+    margin: 25px;
+    margin-left: 50px;
+    padding-bottom: 50px;
+}
+
+.panel-detail {
+    background-color: #fff;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+.field-label.single-checkbox {
+display: inline;
+border-bottom-width: 0;
+padding-right: 10px;
+}
+
+
+.field-label {
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-top: 15px;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+    letter-spacing: 0.1em;
+    padding-bottom: 3px;
+    display: block;
+    border-bottom: 1px solid #bcbcbc;
+    padding-top: 15px;
+    color:#909090;
+}
+.panel label[for="services"], .panel label[for="organizations"], .panel label[for="users"] {
+    display: inline;
+    border-top-width: 0px;
+    font-size: 1.4em;
+    color: black;
+    border-bottom-width: 0;
+    text-transform: capitalize;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+
+#service-output {
+    line-height:2em;
+}
+
+#service-output label {
+    margin-right: 20px;
+    margin-left: 5px;
+}
+
+#service-research label {
+    margin-right: 20px;
+    margin-left: 5px;
+}
+
+#service-phase label {
+    margin-right: 20px;
+    margin-left: 5px;
+}
+
+#service-category label {
+    margin-right: 20px;
+    margin-left: 5px;
+}
+
+.field-info {
+    margin-top: 10px;
+    font-size: 0.8em;
+    font-style: italic;
+    color:#909090;
+}
+
+.panel-detail .field-info:first-child{
+    color:black;
+    font-size: 1em;
+    margin-bottom: 40px;
+    margin-top: 0;
+    font-weight: bold;
+    font-style: normal;
+}
+
+
+.read-only-field {
+}
+
+.panel .field-info:last-of-type {
+  border-bottom: 2px solid white;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+.read-only-field:empty::before {
+  content: "Empty";  /* ou ton texte */
+  color: #999;
+  font-style: italic;
+}
+
+
+/* Message de confirmation */
+
+
+
+.message {
+margin-top: 30px;
+  padding: 14px 20px;
+  background-color: #dff5e2; /* vert très clair */
+  color: #1e4620; /* texte vert foncé lisible */
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.message:empty {
+  display: none;
+}
+
+
+/*checkboxes*/
+
+/* Cacher la checkbox native */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #999;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+  background-color: #fff;
+}
+
+/* Au survol */
+input[type="checkbox"]:hover {
+  border-color: #555;
+}
+
+/* Coche active */
+input[type="checkbox"]:checked {
+  background-color: #617a9c;
+  border-color: #4a90e2;
+}
+
+/* Ajouter le check mark */
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/*boutons*/
+
+#login-button {display: block; margin-top: 20px;}
+
+button {
+  background-color: #405a8f;   /* bleu doux */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+button:hover {
+  background-color: #2a3b5c;   /* un bleu un peu plus foncé */
+  transform: translateY(-1px); /* léger effet de soulèvement */
+}
+
+button:active {
+  background-color: #1b253a;   /* encore plus foncé */
+  transform: translateY(0);    /* retour à plat */
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#service-export, #service-revert, #organization-revert, #user-revert {
+    background-color: #F5F5F5;   /* bleu doux */
+    border: 2px solid #617a9c;
+    color: #617a9c;
+}
+
+#service-export:hover, #service-revert:hover, #organization-revert:hover, #user-revert:hover {
+  background-color: #617a9c;   /* un bleu un peu plus foncé */
+  transform: translateY(-1px); /* léger effet de soulèvement */
+  color: white;
+}
+
+#service-revert, #organization-revert, #user-revert {
+    margin-right: 30px;
+}
+#service-export {
+    margin-left: 30px;
+}
+
+button#service-export, #service-update, #organization-update, #user-update  {
+  float: right;
+}
+
+.panel #service-create , .panel #organization-create , .panel #user-create 
+{display: inline !important; margin-left: 10px;}
+
+
+
+.form-row{
+  margin:20px 0;
+}
+
+.endbuttons {margin-top: 30px;}
+/*menus déroulants*/
+
+/* Style général pour les menus déroulants */
+select {
+    appearance: none; /* Supprime le style par défaut du navigateur */
+    background-color: #ffffff; /* Fond blanc */
+    border: 1px solid #ccc; /* Bordure grise */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    padding: 8px 12px; /* Espacement interne */
+    font-size: 1em; /* Taille de police */
+    color: #333; /* Couleur du texte */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    outline: none; /* Retire le contour bleu au focus */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Effet au survol */
+    cursor: pointer;
+}
+
+/* Style au survol */
+select:hover {
+    border-color: #007bff; /* Bordure bleue au survol */
+}
+
+/* Style au focus */
+select:focus {
+    border-color: #007bff; /* Bordure bleue au focus */
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Ombre bleue */
+}
+
+/* Style des options du menu déroulant */
+select option {
+    background-color: #ffffff; /* Fond blanc */
+    color: #333; /* Texte noir */
+    font-size: 1em;
+    padding: 5px;
+}
+
+
+select {
+    position: relative;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23007bff' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    padding-right: 30px; /* Laisse de la place pour la flèche */
+}
+
+
+.editable-field {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: inherit;
+  background-color: #e6ecf5;   /* léger fond bleuté/gris pour contraster */
+  border-radius: 6px;          /* angles doux */
+  border: 1px solid transparent;
+  outline: none;
+  resize: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+/* Effet au focus : accent + légère ombre */
+.editable-field:focus {
+  border-color: #617a9c;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(97, 122, 156, 0.2);
+}
+
+/* Placeholder-like */
+.editable-field:empty:before {
+  content: attr(placeholder);
+  color: #7a7a7a;
+  font-style: italic;
+  pointer-events: none;
+}
+
+/* Style du champ editable */
+.editable-field {
+  display: block;             /* explicite */
+  width: 100%;
+  max-width: 100%;            /* interdit tout dépassement */
+  
+  /* gestion du texte & overflow */
+  white-space: pre-wrap;      /* conserve retours, permet le wrap */
+  overflow-wrap: anywhere;    /* casse même au milieu si nécessaire */
+  word-break: break-word;     /* fallback */
+  
+  /* sécurité overflow horizontal */
+  overflow-x: hidden;         /* au cas où */
+}
+
+
+/*ADMIN*/
+
+/* Header aligné à droite, email + bouton sur une ligne */
+#header{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
+
+  padding:12px 20px;
+  border-bottom:1px solid #e5e7eb;
+  background:#fff;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  isolation: isolate;
+}
+
+/* Email: propre + tronqué si trop long */
+#header-user{
+  font-size:14px;
+  color:#374151;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:320px; /* ajuste selon ta largeur */
+}
+
+/* Bouton logout discret */
+#header-logout{
+  background:transparent;
+  border:1px solid #d1d5db;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:13px;
+  color:#374151;
+  cursor:pointer;
+}
+
+#header-logout:hover{
+  background:#f9fafb;
+}
+
+/* pousse tout sauf le logo à droite */
+#header-logo{
+  margin-right:auto;
+  height:40px;          
+  width:auto;
+  display:block;
+  
+}
+
+.MainTitle 
+{display: none;}
+
+.SectionTitle {
+  display:none;
+}
+
+
+
+
+
+.admin-tabs{
+  display:flex;
+  gap:32px;              /* ↑ espace entre les tabs (avant: 24px) */
+  align-items:flex-end;
+
+  margin:24px 0 36px;
+  padding:0 0 12px;
+
+  border-bottom:2px solid #e5e7eb;
+}
+
+.admin-tab{
+  background:none;
+  border:0;
+  padding:8px 8px;
+
+  font-size:16px;        /* ↑ taille du texte (avant: 15px) */
+  font-weight:600;
+  color:#6b7280;
+
+  cursor:pointer;
+  position:relative;
+}
+
+.admin-tab:hover {
+  color: #fff;
+}
+
+
+
+.admin-tab.is-active{
+  color:#111827;
+}
+
+.admin-tab.is-active:hover {
+  color: #fff;
+}
+
+
+.admin-tab.is-active::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-14px;
+
+  height:3px;
+  background:#111827;
+  border-radius:3px;
+}
+
+/* Force le comportement "tabs" dans cette colonne */
+#filters-column .admin-section{
+  display:none !important;
+}
+
+#filters-column .admin-section.is-active{
+  display:block !important;
+}

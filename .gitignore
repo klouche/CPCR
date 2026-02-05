@@ -11,3 +11,6 @@ service_ids.js
 *dump*.sql
 backup_*.sql
 seed_from_prod.sql
+dumps
+*.ppk
+*.openssh

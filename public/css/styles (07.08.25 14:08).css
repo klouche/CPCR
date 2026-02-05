@@ -1,0 +1,1051 @@
+/* Assure que le body et le html utilisent toute la hauteur */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: 15px;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
+/* En-tete fixe */
+#header {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  border-bottom: 1px solid black;
+  position: fixed;
+  background-color: white;
+}
+
+#header h1 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  margin: 10px;
+  width: 80%;
+  display: inline-block;
+}
+
+/* Layout principal */
+#layout-container {
+  display: flex;
+  flex-direction: row;
+  /* Les colonnes cote a cote */
+  height: calc(100vh - 0px);
+  /* Hauteur totale moins le header */
+
+  box-sizing: border-box;
+  margin: 0;
+}
+
+
+
+
+
+/* Header "infrastructures-selector" */
+#infrastructures-selector {
+  /* background-color: #f9f9f9; 
+    padding: 20px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    width: 100%; 
+    box-sizing: border-box;  */
+}
+
+/* Label et select dans le header */
+#infrastructures-selector label {
+  font-size: 1em;
+  font-weight: bold;
+  color: #333;
+}
+
+#infrastructures-selector select {
+  padding: 5px 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+#infrastructures-selector select:focus {
+  border-color: #007bff;
+  /* Met en surbrillance au focus */
+}
+
+
+
+
+
+
+
+#infrastructures-selector {
+  border-bottom: 1px solid #9c9c9c;
+  padding-bottom: 20px;
+}
+
+#infrastructures-selector span {
+  margin-right: 10px;
+}
+
+/* Colonne des filtres */
+#filters-column {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 5vh 4vw 4vh 5vw;
+  overflow-y: auto;
+  max-height: calc(100vh);
+  position: sticky;
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+}
+
+#filters-column h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 3em;
+  margin-bottom: 50px;
+}
+
+#filters-column #disclaimer {
+  font-size: 0.75em;
+  color: #b5b5b5;
+  font-style: italic;
+  font-weight: 300;
+}
+
+#filters-column #disclaimer p {
+  margin: 0;
+}
+
+
+
+
+/* Style de request-text */
+#request-text {
+  background-color: white;
+  border-bottom: 1px solid #000000;
+  padding-bottom: 10px;
+  /* Espacement interne */
+  margin-bottom: 15px;
+  /* Espacement par rapport au bloc suivant */
+  color: #555;
+  /* Gris fonce pour un look doux */
+  font-size: 1.3em;
+  /* Taille de police legèrement reduite */
+  line-height: 1.4;
+  /* Espacement vertical pour plus de lisibilite */
+  cursor: text;
+  user-select: text;
+  font-style: italic;
+
+}
+
+
+/* Style specifique pour le texte interne */
+#request-text p {
+  margin: 0;
+  /* Retire les marges par defaut des paragraphes */
+}
+
+#request-text[placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #adadad;
+  font-style: italic;
+  /* Texte en italique pour un effet de citation */
+}
+
+#request-text[placeholder]:empty:focus:before {
+  content: "";
+}
+
+.disclaimer {
+  font-size: 0.8em;
+  color: #777;
+  margin: 0;
+}
+
+
+/* Titres pour les sections */
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.instruction-wrapper {display: none;}
+
+.splash .instruction-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 20px 0;
+}
+
+/* La bulle principale */
+#search-instruction {
+
+  font-size: 0.8em;
+  line-height: 1.6;
+  color: #333;
+  position: relative;
+}
+
+#search-instruction ul {
+  padding-left: 0;
+  list-style-type: none;
+  /* Remove bullets */
+}
+
+#search-instruction li {
+  margin-bottom: 10px;
+}
+
+
+
+/* Zone contenant les logos */
+.splash #filters-column #logos {
+  display: none;
+}
+
+#filters-column #logos {
+  display: block;
+  position: absolute;
+  bottom: 30px;
+  left: 5vw;
+  font-size: 13px;
+  color: #000;
+  width: 75%;
+}
+
+#logos .logos-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  /* Repartit les elements */
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+
+/* Espacement entre logos */
+#logos a {
+  display: inline-block;
+}
+
+/* Taille et homogeneite des logos */
+#logos img {
+  width: clamp(60px, 5vw, 80px);
+  height: auto;
+}
+
+#logos img:hover {
+  opacity: 0.8;
+}
+
+#result-description .logos-label {
+  font-size: 0.8em;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+/* Taille et homogeneite des logos */
+#result-description #logos img {
+  width: clamp(60px, 8vw, 100px);
+  height: auto;
+}
+
+
+.tooltip-link {
+  position: relative;
+  text-decoration: underline dotted;
+  cursor: help;
+  color: black;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  max-width: 300px;
+  background-color: #ffffff;
+  color: #000000;
+  text-align: left;
+  font-size: 0.7em;
+  padding: 8px 10px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 10;
+  top: 0; /* au-dessus du lien */
+  left: 40%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+
+}
+
+.tooltip-link:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+/*credits SBP*/
+#credits {
+  display: none;
+}
+
+.splash #credits {
+  position: absolute;
+  bottom: 30px;
+  left: 5vw;
+  font-size: clamp(9px, 0.8vw, 12px);
+  line-height: 1.4em;
+  color: #000;
+  width: 75%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logosSBP {
+  width: 25%;
+}
+
+.logosSBP img {
+  width: 90%;
+}
+
+.textSBP {
+  width: 75%;
+}
+
+/* En dessous de 700px : on empile les colonnes */
+@media (max-width: 1000px) {
+  #credits {
+    flex-direction: column;
+  }
+
+  #credits .creditsSBP {
+    width: 100%;
+  }
+
+  .logosSBP img {
+    width: 100px;
+  }
+
+}
+
+
+/* Compteur des resultats */
+#result-count {
+  display: none;
+  font-size: 0.9em;
+  color: #aaaaaa;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+/* Conteneur de recherche */
+#search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Champ de recherche */
+#keywordFilter {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+#keywordFilter:focus {
+  border-color: #007bff;
+}
+
+/* Bouton pour effacer */
+#clear-search {
+  background-color: transparent;
+  color: #ccc;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+#clear-search:hover {
+  color: #777;
+}
+
+#filters-list h2 {
+  display: inline-block;
+
+
+}
+
+/* Bouton Clear selection */
+/* #clear-selection {
+    background-color: #e9ecef;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin-bottom: 15px;
+}
+
+#clear-selection:hover {
+    background-color: #d6d8db;
+    color: #333;
+} */
+
+#clear-selection {
+  color: #b6b6b6;
+  /* Gris doux pour le texte */
+  font-size: 0.85em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  display: inline-block;
+  margin: 25px;
+}
+
+#clear-selection.active:hover {
+  color: #333;
+  /* Texte plus fonce au survol */
+  text-decoration: underline;
+}
+
+#clear-selection.active {
+  color: #646464;
+}
+
+/* Conteneur des checkboxes */
+.checkbox-container {
+  padding: 5px;
+}
+
+.checkbox-container:hover {
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
+}
+
+/* Positionnement et style des numeros grâce a data-number */
+.checkbox-label::before {
+  content: attr(data-number);
+  /* Recupère l'attribut data-number */
+  font-family: monospace;
+  /* Police monospace pour largeur fixe */
+  font-size: 0.7em;
+  /* Taille reduite pour le numero */
+  display: inline-block;
+  /* Aligne correctement avec le texte */
+  vertical-align: baseline;
+  /* Aligne sur la ligne de base */
+  margin-right: 5px;
+  /* Espacement entre le numero et le texte */
+  min-width: 20px;
+  /* Largeur fixe pour les numeros, pour plus d'homogeneite */
+  text-align: right;
+  /* Alignement a droite dans l'espace reserve */
+}
+
+/* Alignement du texte avec Flexbox */
+.checkbox-label {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  /* Espacement entre la case a cocher et le texte */
+}
+
+/* Style pour la case a cocher */
+.checkbox {
+  margin-top: 3px;
+  /* Ajustement vertical pour la case */
+}
+
+
+#selected-keywords p {
+  font-size: 0.8em;
+  margin: 0;
+  color: #007bff;
+
+}
+
+
+/* Conteneur principal pour chaque resultat */
+
+/* Colonne des resultats */
+#results-column {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background-color: #F5F5F5;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+
+
+/* Logo sponsor */
+#logo-sponsor {
+  text-align: right;
+  margin-top: -20px;
+}
+
+#logo-sponsor img {
+  width: 250px;
+  max-width: 90%;
+  height: auto;
+}
+
+/* bloc scrollable */
+#results-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 5vh 4vw 4vh 5vw;
+}
+
+/* Contenu principal (cartes, etc.) prend l'espace */
+#ranking {
+  flex-grow: 1;
+}
+
+/* description avant recherche */
+#result-description {
+  display: none;
+}
+
+.splash #result-description {
+  display: block;
+  margin-bottom: 50px;
+  max-width: 700px;
+  color: #222;
+}
+
+
+#result-description h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+#result-description p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* footer */
+#result-footer {
+  margin-top: auto;
+  padding: 20px 0;
+  font-size: 0.9em;
+  color: #333;
+  line-height: 1.5;
+  background-color: transparent;
+  /* ou #F5F5F5 si tu veux le lier visuellement */
+}
+
+.service-result {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 4px;
+
+}
+
+.service-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+  /* utile pour que ça passe bien sur petit ecran */
+}
+
+.service-body {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  align-items: flex-start;
+}
+
+.service-header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.service-reginfra {
+  font-size: 1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.service-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.service-description {
+  font-size: 0.95rem;
+  line-height: 1.4em;
+  color: #333;
+  flex: 2;
+}
+
+.service-info {
+  font-size: 0.85rem;
+  color: #444;
+  margin-top: 5px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 250px;
+}
+
+.info-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-block .info-label {
+  font-weight: 400;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: #B7B7B7;
+  margin-bottom: 4px;
+  letter-spacing: 0.1em;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #D9D9D9;
+}
+
+.info-block .info-value {
+  word-break: break-word;
+  /* Coupe les mots trop longs */
+  overflow-wrap: anywhere;
+  /* Permet le retour a la ligne dans les URL */
+}
+
+
+.info-block .info-value a {
+  color: #617a9c;
+  word-break: break-word;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.info-block .info-value a:hover {
+  text-decoration: underline;
+}
+
+/* Style pour le pourcentage */
+.service-percentage {
+  display: none;
+  font-weight: bold;
+  font-size: 1.3em;
+  /* Taille legèrement agrandie */
+  color: #007bff;
+  /* Couleur bleue pour attirer l'œil */
+  text-align: center;
+}
+
+/* Conteneur pour ID et description */
+.service-content {
+  /*display: flex;
+    flex-direction: column;*/
+  /* Aligne ID et description en colonne */
+  gap: 4px;
+  /* Espacement vertical */
+}
+
+/* Style de l'ID */
+.service-id {
+  font-size: 0.8em;
+  color: #777;
+  /* Gris clair */
+}
+
+
+
+.service-type {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  /* Reduction de l’espacement entre les tags */
+  margin-bottom: 10px;
+}
+
+.service-type span {
+  display: inline-block;
+  background-color: #ffffff;
+  /* Fond blanc pour contraster */
+  color: #444;
+  /* Gris fonce mais pas trop marque */
+  font-size: 12px;
+  /* Reduction de la taille du texte */
+  padding: 3px 8px;
+  /* Reduction du padding pour un format plus compact */
+  border-radius: 3px;
+  /* Legèrement moins arrondi */
+  font-weight: 500;
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  /* Bordure fine pour la distinction */
+}
+
+.service-name {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+
+/* Style de la description */
+.service-description {
+  font-size: 1em;
+  color: #000000;
+  /* Noir plus doux pour la lisibilite */
+  line-height: 1.4;
+  /* Espacement vertical ameliore */
+  margin-bottom: 10px;
+
+}
+
+.service-output {
+  line-height: 1.4;
+  /* Aeration du texte */
+  font-size: 0.75em;
+}
+
+.service-url {
+  font-size: 0.75em;
+  color: #414141;
+  /* Noir legèrement adouci */
+  text-decoration: none;
+  font-style: italic;
+  /* Ajoute une touche differenciante sans ressembler a un bouton */
+  word-break: break-word;
+  text-decoration: underline;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  /* Aeration du texte */
+}
+
+.service-url:hover {
+  text-decoration: underline;
+  /* Souligne uniquement au survol */
+  color: black;
+  /* Bleu legèrement plus fonce au hover */
+}
+
+.service-url a {
+  color: black;
+  /* Bleu legèrement plus fonce au hover */
+}
+
+.service-url:empty {
+  display: none;
+}
+
+/* Masquer complètement l'element s'il est vide */
+.service-url:empty {
+  display: none;
+}
+
+.service-contact {
+  font-size: 0.75em;
+  /* Taille compacte pour le texte principal */
+  color: #000000;
+  /* Gris fonce pour une bonne lisibilite */
+  line-height: 1.4;
+  /* Aeration du texte */
+  margin-bottom: 10px;
+}
+
+.service-contact span {
+  display: block;
+  /* Passe sur une nouvelle ligne */
+  font-size: 10px;
+  /* Texte plus petit */
+  text-transform: uppercase;
+  /* Met en majuscules */
+  color: #000000;
+  /* Un peu plus clair que le texte principal */
+}
+
+.service-contact:empty {
+  display: none;
+}
+
+.service-explanation {
+  padding-top: 10px;
+  font-style: italic;
+  color: #9f9f9f;
+  border-top: 2px solid white;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
+.service-explanation:empty {
+  padding-top: 0;
+}
+
+.service-keywords .active {
+  color: #007bff;
+}
+
+
+
+.service-keywords {
+  margin-top: 10px;
+  font-size: 0.6em;
+  color: #9d9d9d;
+}
+
+
+/*menus deroulants*/
+
+/* Style general pour les menus deroulants */
+select {
+  appearance: none;
+  /* Supprime le style par defaut du navigateur */
+  background-color: #ffffff;
+  /* Fond blanc */
+  border: 1px solid #ccc;
+  /* Bordure grise */
+  border-radius: 4px;
+  /* Coins legèrement arrondis */
+  padding: 8px 12px;
+  /* Espacement interne */
+  font-size: 1em;
+  /* Taille de police */
+  color: #333;
+  /* Couleur du texte */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  /* Ombre legère */
+  outline: none;
+  /* Retire le contour bleu au focus */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  /* Effet au survol */
+  cursor: pointer;
+}
+
+/* Style au survol */
+select:hover {
+  border-color: #007bff;
+  /* Bordure bleue au survol */
+}
+
+/* Style au focus */
+select:focus {
+  border-color: #007bff;
+  /* Bordure bleue au focus */
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  /* Ombre bleue */
+}
+
+/* Style des options du menu deroulant */
+select option {
+  background-color: #ffffff;
+  /* Fond blanc */
+  color: #333;
+  /* Texte noir */
+  font-size: 1em;
+  padding: 5px;
+}
+
+/* Conteneur des menus pour un alignement propre */
+
+#request-selector label {
+  margin-right: 10px;
+  /* Espacement entre le label et le select */
+  white-space: nowrap;
+  /* Empeche le label de passer a la ligne */
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0.9em;
+}
+
+#request-selector select {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0.9em;
+  margin-right: 15px;
+}
+
+#infrastructures-selector select {
+  width: 100px;
+  /* Prend toute la largeur */
+}
+
+#infrastructures-selector h3 {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Label des menus pour coherence */
+/* label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+} */
+
+select {
+  position: relative;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23007bff' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+  padding-right: 30px;
+  /* Laisse de la place pour la flèche */
+}
+
+
+
+
+.infra-btn {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+  margin-right: 5px;
+}
+
+.infra-btn:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.infra-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+tspan.is-keyword {
+  color: #007bff;
+  /*text-decoration: underline;*/
+}
+
+/* switch toggle explanation */
+
+.explanationtoggle {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.explanationtoggle .togglelabel {
+  padding-right: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #0073e6;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #0073e6;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(17px);
+  -ms-transform: translateX(17px);
+  transform: translateX(17px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 22px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

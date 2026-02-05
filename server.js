@@ -8,7 +8,7 @@ const path = require('path');
 const { prisma } = require('./db');
 
 const bcrypt = require('bcrypt');
-const { embedQueries, embedPassages, toPgVectorLiteral } = require('./utils/embeddings');
+const { embedQueries, embedPassages, toPgVectorLiteral, expandAcronymsInline } = require('./utils/embeddings');
 
 // Resolve a safe log path for both local dev and Render
 const DEFAULT_LOG_DIR = process.env.LOG_DIR || (process.env.RENDER ? '/var/data' : path.join(__dirname, 'data'));
@@ -84,7 +84,7 @@ app.set('trust proxy', true);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || origin === 'null' || allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
       return callback(new Error('Not allowed by CORS'));
@@ -103,6 +103,9 @@ function noStore(res) {
 }
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
+});
 
 
 const session = require('express-session');
@@ -207,10 +210,12 @@ function buildEmbeddingText({ name, hidden, description, aliases }) {
 
   const text = parts.join('\n');
 
-  return text
+  const normalized = text
     .replace(/\r\n?|\u2028|\u2029/g, '\n')
     .replace(/\n{2,}/g, '\n')
     .trim();
+
+  return expandAcronymsInline(normalized);
 }
 async function upsertServiceEmbedding(serviceId, vector) {
   const model = process.env.EMBEDDING_MODEL_ID || 'intfloat/multilingual-e5-small';
@@ -529,43 +534,24 @@ app.post('/api/search', async (req, res) => {
 
     const vecLiteral = toPgVectorLiteral(embedding);
 
-    // If authenticated and not superadmin, restrict search to the user's organization
-    const userOrg = (req.session?.user && !isSuperAdmin(req)) ? getSessionOrgCode(req) : null;
 
     const topK = Math.min(Math.max(Number(req.body?.topK || 100), 1), 1000);
 
     // Use cosine distance operator (<=>) from pgvector. Smaller is better.
     // We convert to a similarity-like score for compatibility with the frontend: score = 1 - distance.
     // (This is a simple monotonic transform; you may later calibrate if desired.)
-    let rows;
-    if (userOrg) {
-      rows = await prisma.$queryRawUnsafe(
-        `
-        SELECT s.id, s.aliases, (e.embedding <=> $1::vector) AS distance
-        FROM service_embedding e
-        JOIN "Service" s ON s.id = e."serviceId"
-        WHERE s.active = true AND s."organizationCode" = $2
-        ORDER BY e.embedding <=> $1::vector
-        LIMIT $3;
-        `,
-        vecLiteral,
-        String(userOrg),
-        topK
-      );
-    } else {
-      rows = await prisma.$queryRawUnsafe(
-        `
-        SELECT s.id, s.aliases, (e.embedding <=> $1::vector) AS distance
-        FROM service_embedding e
-        JOIN "Service" s ON s.id = e."serviceId"
-        WHERE s.active = true
-        ORDER BY e.embedding <=> $1::vector
-        LIMIT $2;
-        `,
-        vecLiteral,
-        topK
-      );
-    }
+    const rows = await prisma.$queryRawUnsafe(
+      `
+      SELECT s.id, s.aliases, (e.embedding <=> $1::vector) AS distance
+      FROM service_embedding e
+      JOIN "Service" s ON s.id = e."serviceId"
+      WHERE s.active = true
+      ORDER BY e.embedding <=> $1::vector
+      LIMIT $2;
+      `,
+      vecLiteral,
+      topK
+    );
 
     const BONUS = 0.05; // small nudge for exact acronym hits in aliases
 
@@ -603,9 +589,9 @@ app.get('/api/services', async (req, res) => {
   try {
     const where = {};
     // If a user is authenticated and not superadmin, scope services to their org
-    if (req.session?.user && !isSuperAdmin(req)) {
+    /*if (req.session?.user && !isSuperAdmin(req)) {
       where.organizationCode = getSessionOrgCode(req);
-    }
+    }*/
 
     const services = await prisma.service.findMany({
       where,

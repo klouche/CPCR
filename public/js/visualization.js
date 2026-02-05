@@ -1,501 +1,82 @@
-let ORG = "SBP";
-let STEM = ORG;
+//let infrastructures = []
+//let services
+//let requests
+//let currentRequest
+let allResults = []
+let query
+const nMin = 5
+let n = nMin
+let allServices = []
+let cache = {}
 
-let me
-let services
-let organizations
-let users
-let currentService
-let currentOrganization
-let currentUser
-let serviceDraft = null
-let organizationDraft = null
-let userDraft = null
+
+let filters = {
+    "organization": [],
+    "research": [],
+    "phase": [],
+    "category": [],
+    "output": []
+}
+let outputs = ['consulting', 'datasets', 'IT infrastructure', 'IT tool', 'outsourced service', 'standards', 'templates', 'training']
+let researches = ['clinical trials', 'data collection', 'data reuse', 'sample collection', 'sample reuse']
 const phases = ["conception", "development", "execution", "completion"]
-const categories = ['ethics submission', 'regulatory and contracts', 'statistics and feasibility', 'PPI', 'study design', 'project management', 'monitoring and audit']
-const outputs = ['consulting', 'datasets', 'IT infrastructure', 'IT tool', 'outsourced service', 'standards', 'templates', 'training']
-const researches = ['clinical trials', 'data collection', 'data reuse', 'sample collection', 'sample reuse']
+let categories = ['ethics submission', 'regulatory and contracts', 'statistics and feasibility', 'PPI', 'study design', 'project management', 'quality, monitoring and audit']
+let organizations = ['SBP', 'Swiss Cancer Institute', 'SCTO', 'SPHN', 'swissethics']
+
 const rankingDiv = d3.select("#ranking")
 
-// --- AUTHENTICATION HANDLING ---
+const logos = {
+    "SBP": {
+        "url": "./images/logo_provider_sbp.png",
+        "link": "https://swissbiobanking.ch/"
+    },
+    "SCI": {
+        "url": "./images/logo_provider_sci.png",
+        "link": "https://www.swisscancerinstitute.ch/"
+    },
+    "SCTO": {
+        "url": "./images/logo_provider_scto.png",
+        "link": "https://scto.ch/"
+    },
+    "SPHN": {
+        "url": "./images/logo_provider_sphn.png",
+        "link": "https://sphn.ch/"
+    },
+    "SE": {
+        "url": "./images/logo_provider_swissethics.png",
+        "link": "https://swissethics.ch/"
+    },
+    "SwissPedNet": {
+        "url": "./images/logo_spd.png",
+        "link": "https://www.swisspednet.ch/"
+    },
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loginButton = document.getElementById('login-button');
-    const loginMessage = document.getElementById('login-message');
-    const loginFormContainer = document.getElementById('login-form');
-    const filtersColumn = document.getElementById('filters-column');
-    const headerUser = document.getElementById('header-user');
-    const headerLogout = document.getElementById('header-logout');
-    const organizationPanel = document.getElementById('organization-panel');
-    const userPanel = document.getElementById('user-panel');
-    const adminTabs = document.getElementById('admin-tabs');
-
-    // --- Force password change overlay (shown when user.forcePasswordChange === true) ---
-
-    // Ensure the correct admin UI is shown based on authentication/role
-    function applyAdminVisibility(user) {
-        const servicePanel = document.getElementById('service-panel');
-        const orgPanel = document.getElementById('organization-panel');
-        const usrPanel = document.getElementById('user-panel');
-
-        // Tabs: only superadmins can see and use them
-        if (adminTabs) {
-            adminTabs.style.display = (user && user.isSuperAdmin) ? 'flex' : 'none';
-        }
-
-        // Panels: regular admins should only see service management
-        if (orgPanel) orgPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
-        if (usrPanel) usrPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
-        if (servicePanel) servicePanel.style.display = 'inherit';
-
-        // Also enforce the active tab/panel CSS state
-        const tabs = Array.from(document.querySelectorAll('.admin-tab'));
-        const panels = Array.from(document.querySelectorAll('.admin-section'));
-
-        if (user && user.isSuperAdmin) {
-            // Leave existing tab logic to decide which panel is active (hash-based).
-            return;
-        }
-
-        // Non-superadmins: force service panel active
-        tabs.forEach(t => t.classList.remove('is-active'));
-        panels.forEach(p => p.classList.remove('is-active'));
-
-        const servicePanelEl = document.getElementById('service-panel');
-        const serviceTabBtn = document.querySelector('.admin-tab[data-tab="service-panel"]');
-        if (serviceTabBtn) serviceTabBtn.classList.add('is-active');
-        if (servicePanelEl) servicePanelEl.classList.add('is-active');
-
-        // Keep URL hash consistent
-        if (location.hash !== '#service-panel') {
-            history.replaceState(null, '', '#service-panel');
-        }
-    }
-    function showForcePasswordChangeOverlay() {
-        // Avoid duplicates
-        if (document.getElementById('force-password-overlay')) return;
-
-        const overlay = document.createElement('div');
-        overlay.id = 'force-password-overlay';
-        overlay.style.position = 'fixed';
-        overlay.style.inset = '0';
-        overlay.style.background = 'rgba(0, 0, 0, 0.65)';
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.zIndex = '9999';
-
-        overlay.innerHTML = `
-            <div style="background:#fff; padding:22px; border-radius:12px; max-width:460px; width:92%; box-shadow:0 10px 30px rgba(0,0,0,0.25);">
-                <h2 style="margin:0 0 8px 0; font-size:20px;">Change your password</h2>
-                <p style="margin:0 0 16px 0; line-height:1.4;">For security reasons, you must set a new password before continuing.</p>
-
-                <label style="display:block; font-weight:600; margin:12px 0 6px 0;">New password (min 8 chars)</label>
-                <input id="pw-new" type="password" autocomplete="new-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
-
-                <label style="display:block; font-weight:600; margin:12px 0 6px 0;">Confirm new password</label>
-                <input id="pw-confirm" type="password" autocomplete="new-password" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;" />
-
-                <div id="pw-error" style="color:#b00020; margin:12px 0 10px 0; min-height:18px;"></div>
-
-                <button id="pw-save" style="width:100%; padding:10px 12px; border:0; border-radius:10px; cursor:pointer; font-weight:700;">Save new password</button>
-
-                <p style="margin:12px 0 0 0; font-size:12px; opacity:0.8;"></p>
-            </div>
-        `;
-
-        document.body.appendChild(overlay);
-
-        const newEl = document.getElementById('pw-new');
-        const confirmEl = document.getElementById('pw-confirm');
-        const saveBtn = document.getElementById('pw-save');
-        const errEl = document.getElementById('pw-error');
-
-        const submit = async () => {
-            errEl.textContent = '';
-
-            const newPassword = newEl.value;
-            const confirm = confirmEl.value;
-
-            if (!newPassword || !confirm) {
-                errEl.textContent = 'Please fill all fields.';
-                return;
-            }
-            if (String(newPassword).length < 8) {
-                errEl.textContent = 'New password must be at least 8 characters.';
-                return;
-            }
-            if (newPassword !== confirm) {
-                errEl.textContent = 'New password and confirmation do not match.';
-                return;
-            }
-
-            // UI feedback
-            saveBtn.disabled = true;
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = 'Saving…';
-
-            try {
-                const res = await fetch('/api/change-password', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ newPassword })
-                });
-
-                let data = null;
-                try {
-                    data = await res.json();
-                } catch (_) {
-                    data = null;
-                }
-
-                if (!res.ok || !data || !data.success) {
-                    errEl.textContent = (data && (data.error || data.detail)) ? (data.error || data.detail) : 'Could not change password.';
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = originalText;
-                    return;
-                }
-
-                // Success: update local state and continue
-                if (me) me.forcePasswordChange = false;
-                if (window.currentUser) window.currentUser.forcePasswordChange = false;
-
-                overlay.remove();
-
-                // Ensure admin UI is visible
-                loginFormContainer.style.display = 'none';
-                filtersColumn.style.display = 'inherit';
-
-                // Restore org panel visibility for superadmins
-                if (organizationPanel) {
-                    organizationPanel.style.display = (me && me.isSuperAdmin) ? 'inherit' : 'none';
-                }
-                // Restore user panel visibility for superadmins
-                if (userPanel) {
-                    userPanel.style.display = (me && me.isSuperAdmin) ? 'inherit' : 'none';
-                }
-                applyAdminVisibility(me);
-
-
-                // Load data now that password has been updated
-                if (typeof loadServices === 'function') {
-                    loadServices();
-                }
-                if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
-                    loadOrganizations();
-                }
-            } catch (e) {
-                console.error('Password change failed:', e);
-                errEl.textContent = 'Server error. Please try again.';
-                saveBtn.disabled = false;
-                saveBtn.textContent = originalText;
-            }
-        };
-
-        // Submit on click
-        saveBtn.addEventListener('click', submit);
-
-        // Submit on Enter for any field
-        const onEnter = (ev) => {
-            if (ev.key === 'Enter') {
-                ev.preventDefault();
-                submit();
-            }
-        };
-        newEl.addEventListener('keydown', onEnter);
-        confirmEl.addEventListener('keydown', onEnter);
-
-        // Focus the new password field
-        setTimeout(() => newEl.focus(), 0);
-    }
-
-    async function checkSession() {
-        try {
-            const res = await fetch('/api/me', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            const data = await res.json();
-
-            if (!data.authenticated || !data.user) {
-                // No valid session → stay on login form
-                loginFormContainer.style.display = 'inherit';
-                filtersColumn.style.display = 'none';
-                if (headerUser) headerUser.textContent = 'Not logged in';
-                if (headerLogout) headerLogout.style.display = 'none';
-                if (organizationPanel) organizationPanel.style.display = 'none';
-                if (userPanel) userPanel.style.display = 'none';
-                if (adminTabs) adminTabs.style.display = 'none';
-                return;
-            }
-
-            // Restore user from session
-            me = data.user;
-            window.currentUser = data.user;
-            if (headerUser) headerUser.textContent = `${me.email}, ${me.organizationCode}`;
-            if (headerLogout) headerLogout.style.display = 'inherit';
-
-            // Show organization panel only for superadmins
-            if (organizationPanel) {
-                organizationPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
-            }
-            // Show user panel only for superadmins
-            if (userPanel) {
-                userPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
-            }
-            applyAdminVisibility(me);
-
-            // Set organization context from logged-in user (needed even if password change is forced)
-            if (me.organizationCode) {
-                currentOrganization = me.organization;
-                ORG = me.organizationCode;
-                if (me.organization && me.organization.idPrefix) {
-                    STEM = me.organization.idPrefix;
-                } else {
-                    STEM = me.organizationCode;
-                }
-            }
-
-            // If this account must change password, block access until done
-            if (me.forcePasswordChange) {
-                // Hide admin UI while forcing password change
-                loginFormContainer.style.display = 'none';
-                filtersColumn.style.display = 'none';
-                if (organizationPanel) organizationPanel.style.display = 'none';
-                if (userPanel) userPanel.style.display = 'none';
-                if (adminTabs) adminTabs.style.display = 'none';
-                showForcePasswordChangeOverlay();
-                return;
-            }
-
-            // Hide login, show admin UI
-            loginFormContainer.style.display = 'none';
-            filtersColumn.style.display = 'inherit';
-
-            // Load services for this user/org
-            if (typeof loadServices === 'function') {
-                loadServices();
-            }
-            if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
-                loadOrganizations();
-            }
-        } catch (err) {
-            console.error('Failed to restore session:', err);
-            // In case of error, fall back to login
-            loginFormContainer.style.display = 'inherit';
-            filtersColumn.style.display = 'none';
-        }
-    }
-
-    // Hide admin UI until logged in
-    filtersColumn.style.display = 'none';
-    // Hide organization panel by default; only superadmins can see it
-    if (organizationPanel) organizationPanel.style.display = 'none';
-    // Hide user panel by default; only superadmins can see it
-    if (userPanel) userPanel.style.display = 'none';
-    // Hide admin tabs by default; only superadmins can see them
-    if (adminTabs) adminTabs.style.display = 'none';
-
-    // Allow pressing Enter to submit login
-    const loginUsernameInput = document.getElementById('login-username');
-    const loginPasswordInput = document.getElementById('login-password');
-
-    function tryLoginOnEnter(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            loginButton.click(); // trigger the same login as the button
-        }
-    }
-
-    loginUsernameInput.addEventListener('keydown', tryLoginOnEnter);
-    loginPasswordInput.addEventListener('keydown', tryLoginOnEnter);
-
-    loginButton.addEventListener('click', async () => {
-        // Disable button for feedback and to prevent double-clicks
-        loginButton.disabled = true;
-        const originalLoginText = loginButton.textContent;
-        loginButton.textContent = 'Logging in…';
-        loginButton.classList.add('loading');
-
-        const username = document.getElementById('login-username').value.trim();
-        const password = document.getElementById('login-password').value;
-
-        loginMessage.textContent = '';
-
-        if (!username || !password) {
-            loginMessage.textContent = 'Please enter your email and password.';
-            loginMessage.style.color = 'red';
-            loginButton.disabled = false;
-            loginButton.textContent = originalLoginText;
-            loginButton.classList.remove('loading');
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ username, password })
-            });
-
-            const data = await res.json();
-
-            me = data.user
-
-            if (!res.ok || !data.success) {
-                loginMessage.textContent = data.error || 'Invalid credentials.';
-                loginMessage.style.color = 'red';
-                loginButton.disabled = false;
-                loginButton.textContent = originalLoginText;
-                loginButton.classList.remove('loading');
-                return;
-            }
-
-            // Success!
-            loginMessage.textContent = 'Login successful.';
-            loginMessage.style.color = 'green';
-
-            // Hide the login form and show the admin UI
-            loginFormContainer.style.display = 'none';
-            filtersColumn.style.display = 'inherit';
-
-            // Optionally keep current user in memoline 377ry
-            window.currentUser = data.user;
-            if (headerUser) headerUser.textContent = `${me.email} (${me.organizationCode})`;
-            if (headerLogout) headerLogout.style.display = 'inherit';
-
-            // Show organization panel only for superadmins
-            if (organizationPanel) {
-                organizationPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
-            }
-            // Show user panel only for superadmins
-            if (userPanel) {
-                userPanel.style.display = me.isSuperAdmin ? 'inherit' : 'none';
-            }
-            applyAdminVisibility(me);
-
-            // Set organization context from logged-in user (needed even if password change is forced)
-            if (me && me.organizationCode) {
-                currentOrganization = me.organization;
-                ORG = me.organizationCode;
-                // Prefer idPrefix if present, otherwise fall back to org code
-                if (me.organization && me.organization.idPrefix) {
-                    STEM = me.organization.idPrefix;
-                } else {
-                    STEM = me.organizationCode;
-                }
-            }
-
-            // If this account must change password, block access until done
-            if (me && me.forcePasswordChange) {
-                // Hide admin UI while forcing password change
-                loginFormContainer.style.display = 'none';
-                filtersColumn.style.display = 'none';
-                if (organizationPanel) organizationPanel.style.display = 'none';
-                if (userPanel) userPanel.style.display = 'none';
-                if (adminTabs) adminTabs.style.display = 'none';
-                showForcePasswordChangeOverlay();
-                // Re-enable login button for future attempts (overlay handles next step)
-                loginButton.disabled = false;
-                loginButton.textContent = originalLoginText;
-                loginButton.classList.remove('loading');
-                return;
-            }
-
-            // Now load the services for the admin UI
-            if (typeof loadServices === 'function') {
-                loadServices();
-            }
-
-            if (me && me.isSuperAdmin && typeof loadOrganizations === 'function' && typeof loadUsers === 'function') {
-                loadOrganizations();
-            }
-
-            // Restore login button state (in case UI remains visible later)
-            loginButton.disabled = false;
-            loginButton.textContent = originalLoginText;
-            loginButton.classList.remove('loading');
-
-        } catch (err) {
-            console.error('Login failed:', err);
-            loginMessage.textContent = 'Server error. Please try again.';
-            loginMessage.style.color = 'red';
-            loginButton.disabled = false;
-            loginButton.textContent = originalLoginText;
-            loginButton.classList.remove('loading');
-        }
-    });
-    // On page load, try to restore existing session from cookie
-    checkSession();
-});
-
-async function logout() {
-    try {
-        const res = await fetch('/api/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-            console.log("Logged out.");
-
-            // Clear local user state
-            me = null;
-            window.currentUser = null;
-            const headerUser = document.getElementById('header-user');
-            if (headerUser) {
-                headerUser.textContent = 'Not logged in';
-            }
-
-            // Reset org context to default
-            ORG = null;
-            STEM = null;
-
-            // Hide admin UI
-            document.getElementById('filters-column').style.display = 'none';
-            const organizationPanel = document.getElementById('organization-panel');
-            if (organizationPanel) organizationPanel.style.display = 'none';
-            const userPanel = document.getElementById('user-panel');
-            if (userPanel) userPanel.style.display = 'none';
-            const adminTabs = document.getElementById('admin-tabs');
-            if (adminTabs) adminTabs.style.display = 'none';
-            const overlay = document.getElementById('force-password-overlay');
-            if (overlay) overlay.remove();
-
-            // Show login form
-            document.getElementById('login-form').style.display = 'inherit';
-
-            // Reset login UI state
-            const loginMessage = document.getElementById('login-message');
-            if (loginMessage) {
-                loginMessage.textContent = '';
-                loginMessage.style.color = '';
-            }
-            const loginUsernameInput = document.getElementById('login-username');
-            const loginPasswordInput = document.getElementById('login-password');
-            if (loginUsernameInput) loginUsernameInput.value = '';
-            if (loginPasswordInput) loginPasswordInput.value = '';
-
-            // Re-enable and visually reset the login button
-            const loginButton = document.getElementById('login-button');
-            if (loginButton) {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Login';
-                loginButton.classList.remove('loading');
-            }
-        } else {
-            console.warn("Logout failed:", data.error);
-        }
-    } catch (err) {
-        console.error("Logout error:", err);
-    }
 }
 
+const requestField = d3.select("#request-text").on("keydown", function (e) {
+    if (e.key == "Enter") {
+        this.blur()
+        serviceSearch()
+    }
+})
+/*.on("input", function (e) {
+    let request = d3.select(this).text().trim()
+    d3.select("#search-button").property("disabled", request === "")
+})*/
+
+requestField.node().focus()
+setTimeout(() => { requestField.node().blur() }, "5")
+
+function shuffle(array) {
+    let i = array.length, j, temp;
+    while (--i > 0) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = array[j];
+        array[j] = array[i];
+        array[i] = temp;
+    }
+    return array
+}
 
 async function loadServices() {
     fetch("/api/services?t=" + Date.now(), {
@@ -507,546 +88,303 @@ async function loadServices() {
     })
         .then((response) => response.json())
         .then((json) => {
-            let fetched = json.services || [];
+            allServices = shuffle(json.services)
+            console.log("All services", allServices)
+        });
+}
 
-            // If a user is logged in and is not superadmin, restrict services to their organization
-            /*if (me && me.organizationCode && !me.isSuperAdmin) {
-                const orgCode = me.organizationCode;
-                fetched = fetched.filter(s => s.organizationCode === orgCode);
-            } else {
-                console.log("current organisation", currentOrganization)
-                const orgCode = currentOrganization.code;
-                fetched = fetched.filter(s => s.organizationCode === orgCode);
-            }*/
+function serviceSearch() {
+    query = d3.select("#request-text").text()
+    query = stripHtml(query).trim()
 
-            services = fetched;
+    if (query && query.length > 0) {
+        n = nMin
+        d3.select("#layout-container").classed("splash", false)
+        d3.select("#result-title").html("Fetching results...")
+        requestField.attr("contenteditable", false)
+        d3.select(".load-more").style("display", "none")
+        rankingDiv.html(""); // Efface les résultats précédents
 
-            d3.select("#service-export").style("display", "inherit")
-            d3.select("#service-create").style("display", "inherit")
-
-            services.sort(function (a, b) {
-                if (a.id < b.id) {
-                    return -1;
-                }
-                if (a.id > b.id) {
-                    return 1;
-                }
-                return 0;
+        if (cache[query]) {
+            console.log("Using cache for query:", query)
+            allResults = cache[query].map(result => allServices.find(service => service.id == result.id)).filter(service => service.active)
+            requestField.attr("contenteditable", true)
+            d3.select("#layout-container").classed("splash", false)
+            update(filterAllResults(allResults))
+            return
+        }
+        fetch("/api/search", {
+            method: "POST",
+            body: JSON.stringify({ "query": query }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+            .then((response) => response.json())
+            .then(async (json) => {
+                cache[query] = json.results
+                requestField.attr("contenteditable", true)
+                d3.select("#layout-container").classed("splash", false)
+                allResults = json.results.map(result => allServices.find(service => service.id == result.id)).filter(service => service.active)
+                update(filterAllResults(allResults))
             });
-            console.log("Services", services)
-            enterServices()
-        })
-}
-
-
-async function loadOrganizations() {
-    fetch("/api/organizations", {
-        cache: "no-store",
-        method: "GET",
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            let fetched = json.organizations || [];
-            organizations = fetched
-
-            d3.select("#organization-create").style("display", "inherit")
-
-            console.log("Organizations", organizations)
-            enterOrganizations()
-            loadUsers();
-        })
-}
-
-async function loadUsers() {
-    fetch("/api/users", {
-        cache: "no-store",
-        method: "GET",
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            let fetched = json.users || [];
-            users = fetched
-
-            d3.select("#user-create").style("display", "inherit")
-
-            console.log("Users", users)
-            enterUsers()
-        })
-}
-
-function getNewID() {
-    let num = 1
-    let id = STEM + "-" + ("0" + num).slice(-2)
-    let serviceIds = services.map(service => service.id)
-    while (serviceIds.includes(id)) {
-        num++
-        id = STEM + "-" + ("0" + num).slice(-2)
+    } else {
+        n = allServices.length
+        d3.select("#layout-container").classed("splash", false)
+        d3.select(".load-more").style("display", "none")
+        rankingDiv.html(""); // Efface les résultats précédents
+        d3.select("#layout-container").classed("splash", false)
+        allResults = allServices
+        update(filterAllResults(allResults))
     }
-    return id
+}
+
+function loadMore() {
+    n += nMin
+    update(filterAllResults(allResults))
+}
+
+function filterAllResults(results) {
+    let filteredResults = filterResults(results, "research")
+    filteredResults = filterResults(filteredResults, "phase")
+    filteredResults = filterResults(filteredResults, "category")
+    filteredResults = filterResults(filteredResults, "output")
+    filteredResults = filterResults(filteredResults, "organization")
+    return filteredResults
+}
+
+function filterResults(results, filter) {
+    //console.log(filters[filter])
+    return results
+        .filter(result => {
+            if (filters[filter].length == 0) return true
+            let flag = false
+            filters[filter].forEach(option => {
+                if (filter == "organization") {
+                    if (result.organization.label == option) {
+                        flag = true
+                        return
+                    }
+                } else {
+                    if (result[filter].includes(option)) {
+                        flag = true
+                        return
+                    }
+                }
+            })
+            return flag
+        })
+}
+
+function clearFilter(filter) {
+    filters[filter] = []
+    console.log(filters)
+    update(filterAllResults(allResults))
+}
+
+function enterFilters() {
+    d3.select(".chips").html("")
+    addChips("organization", "Infrastructure", organizations)
+    addChips("research", "Type of research", researches)
+    addChips("phase", "Project phase", phases)
+    addChips("category", "Service category", categories)
+    addChips("output", "Type of service", outputs)
+}
+
+function addChips(filter, name, options) {
+    //console.log(name, options)
+    const chipWrapper = d3.select(".chips").append("div").attr("class", "chip-wrapper").attr("filter", filter)
+    const chipButton = chipWrapper.append("button").attr("class", "chip").attr("data-default", name)
+    chipButton.append("span").attr("class", "chip-label").text(name)
+    chipButton.append("span").attr("class", "chip-arrow").text("▾")
+    chipWrapper.append("button").attr("class", "chip-clear").attr("aria-label", "Clear this filter").style("display", "none").text("×")
+    const chipMenu = chipWrapper.append("div").attr("class", "chip-menu")
+    const menuHeader = chipMenu.append("div").attr("class", "menu-header")
+    menuHeader.append("span").attr("class", "menu-title").text(name)
+    menuHeader.append("button").attr("class", "menu-reset").text("Clear")
+    options.forEach(option => {
+        const label = chipMenu.append("label")
+        label.append("input").attr("type", "checkbox").attr("filter", filter).attr("value", option)
+            .on("change", function (e) {
+                const node = d3.select(this)
+                const filter = node.attr("filter")
+                const option = node.attr("value")
+                const checked = e.target.checked
+                //console.log(filter + ": " + option, checked)
+                if (checked && !filters[filter].includes(option)) filters[filter].push(option)
+                if (!checked && filters[filter].includes(option)) {
+                    var index = filters[filter].indexOf(option);
+                    if (index !== -1) {
+                        filters[filter].splice(index, 1);
+                    }
+                }
+                console.log("Filters", filters)
+                console.log("Query", query)
+                if (query && query.length > 0){
+                    n = nMin
+                    update(filterAllResults(allResults))
+                }else{
+                    n = allServices.length
+                    serviceSearch()
+                }
+            })
+        label.append("span").text(" " + option)
+    })
 }
 
 // Mettre à jour les résultats
-function enterServices() {
-    //Requests selector
-    d3.select("#services").html("")
-    //d3.select("#services").append("option").attr("value", "").attr("disabled", true).attr("hidden", true).property("selected", true).text("Select service")
-    console.log("User", me)
-    services//.filter(service => service.organizationCode == ORG)
-    .forEach(service => {
-        let name = service.id + ": " + service.name
-        let length = 50
-        if (name.length > length) {
-            name = name.substring(0, length - 1) + "…"
+function update(results) {
+
+    console.log("Results", results)
+    d3.select("#result-title").html(d => {
+        if (results) {
+            return results.length > 0 ? "Matching services" : "No matching services"
         }
-        d3.select("#services").append("option").attr("value", service.id).property("selected", currentService?.id == service.id)
-            .text(name)
-    })
-    d3.select("#services").on("change", e => {
-        serviceSelect(e.target.value)
-    })
-    if (currentService) serviceSelect(currentService.id)
-    else serviceSelect()
-}
-
-async function updateService() {
-
-    d3.select("#service-message").html("Uploading changes...")
-    let text = d3.select("#service-description").html()
-    text = stripHtml(text)
-    if (currentService) {
-
-        let serviceOutput = []
-        outputs.forEach((output, i) => {
-            if (d3.select("#cbo" + i).property("checked")) serviceOutput.push(output)
-        })
-        let serviceResearch = []
-        researches.forEach((research, i) => {
-            if (d3.select("#cbr" + i).property("checked")) serviceResearch.push(research)
-        })
-        let servicePhase = []
-        phases.forEach((phase, i) => {
-            if (d3.select("#cbp" + i).property("checked")) servicePhase.push(phase)
-        })
-        let serviceCategory = []
-        categories.forEach((category, i) => {
-            if (d3.select("#cbc" + i).property("checked")) serviceCategory.push(category)
-        })
-
-        let uri = 'update-service'
-        if (serviceDraft && currentService.id == serviceDraft.id) {
-            uri = 'create-service'
+        else {
+            return ""
         }
-
-        await fetch(`/api/${uri}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include', // IMPORTANT: send cookies
-            body: JSON.stringify({
-                id: currentService.id,
-                active: d3.select("#service-active").node().checked,
-                name: d3.select("#service-name").html(),
-                organizationCode: ORG,
-                regional: d3.select("#service-regional").text().split(",").map(d => d.trim()).filter(d => d.length),
-                research: serviceResearch,
-                phase: servicePhase,
-                category: serviceCategory,
-                output: serviceOutput,
-                hidden: d3.select("#service-hidden").html(),
-                description: text,
-                complement: d3.select("#service-complement").html(),
-                contact: getLinesFromEditablePre(d3.select("#service-contacts").node()),
-                url: getLinesFromEditablePre(d3.select("#service-urls").node()),
-                docs: getLinesFromEditablePre(d3.select("#service-docs").node())
-            })
-        }).then((response) => response.json())
-            .then(async json => {
-                console.log(json)
-                serviceDraft = null
-                d3.select("#service-message").html(json.message)
-                await loadServices()
-            })
     }
-}
+    )
+    const resultsUpdate = rankingDiv.selectAll(".service-wrapper").data(results.slice(0, n), d => d.id)
+    resultsUpdate.exit().remove()
+    const resultsEnter = resultsUpdate.enter().append("div").attr("class", "service-wrapper")
 
-function newService() {
-    if (serviceDraft) {
-        const index = d3.select("#new-service-option").node().index
-        d3.select("#services").node().selectedIndex = index
-        serviceSelect(serviceDraft.id)
-    } else {
-        service = {
-            id: getNewID(),
-            name: "My new service",
-            organization: ORG,
-            regional: [],
-            research: [],
-            phase: [],
-            category: [],
-            output: [],
-            hidden: "",
-            description: "",
-            complement: "",
-            contact: [],
-            url: [],
-            docs: [],
-            active: false
+    //console.log(resultsEnter)
+
+    const serviceTag = resultsEnter.append("div").attr("class", "service-result").html("")
+    const explanation = resultsEnter.append("div").attr("class", "explanation").classed("loading", true)
+    explanation.append("div").attr("class", "loader-label").text("Generating explanation... (it can take a minute)")
+    explanation.append("div").attr("class", "skeleton-line").classed("line1", true)
+    explanation.append("div").attr("class", "skeleton-line").classed("line2", true)
+    explanation.append("div").attr("class", "skeleton-line").classed("line3", true)
+
+
+    serviceTag.append("div").attr("class", "explanation-btn").classed("active", true)
+    const header = serviceTag.append("div").attr("class", "service-header")
+    const reginfra = header.append("div").attr("class", "service-reginfra")
+    reginfra.append("a").attr("href", service => logos?.[service.organizationCode]?.link).append("img").attr("src", service => logos?.[service.organizationCode]?.url).attr("class", "logo_infra").style("display", service => logos?.[service.organizationCode] ? "block" : "none")
+    reginfra.append("div").text(service => {
+        let regional = service?.regional
+        if (regional.includes(service.organization.label)) {
+            regional.splice(regional.indexOf(service.organizationCode), 1)
         }
-        services.push(service)
-        serviceDraft = service
-        currentService = service
-        d3.select("#service").style("display", "inherit")
-        d3.select("#services").append("option").attr("id", "new-service-option").attr("value", service.id).property("selected", true).text(service.id + ": " + service.name + " (draft)")
-        displayService(service)
-    }
-}
-
-function getLinesFromEditablePre(preEl) {
-    const html = preEl.innerHTML
-    const withNewlines = html
-        .replace(/<div>/gi, '\n')
-        .replace(/<\/div>/gi, '')
-        .replace(/<br\s*\/?>/gi, '\n');
-    const tmp = document.createElement('div')
-    tmp.innerHTML = withNewlines;
-    let text = tmp.textContent || ''
-    text = text.replace(/\r\n?|\u2028|\u2029/g, '\n');
-    let lines = text.split('\n')
-    lines = lines.map(l => l.trim()).filter(l => l.length)
-    return lines
-}
-
-function serviceSelect(id = null) {
-    console.log("current service", currentService)
-    //if (id != currentService?.id) d3.select("#service-message").html("")
-    d3.select("#service").style("display", "inherit")
-    if (id) currentService = services.find(service => service.id == id)
-    else currentService = services[0]
-    console.log("service id", id)
-    console.log("Services 0", services[0])
-    console.log("Service selected", currentService)
-    if (!services[0]) newService()
-    else displayService(currentService)
-}
-
-function displayService(service) {
-
-    d3.select("#service-update").text("Update service")
-    if (serviceDraft && serviceDraft.id == service.id)
-        d3.select("#service-update").text("Save service")
-
-    d3.select("#service-active").node().checked = service?.active
-    d3.select("#service-name").html(service.name)
-    d3.select("#service-organization").html(service.organization)
-    d3.select("#service-regional").html(Array.isArray(service.regional) ? service.regional.join(", ") : (currentService.regional || ""))
-    d3.select("#service-hidden").html(service?.hidden ? service.hidden : "")
-    d3.select("#service-description").html(service.description)
-    d3.select("#service-complement").html(service?.complement ? service.complement : "")
-
-    d3.select("#service-contacts").html("")
-    d3.select("#service-urls").html("")
-    d3.select("#service-docs").html("")
-
-    if (service?.contact) {
-        service.contact.forEach((item, i) => {
-            const pre = d3.select("#service-contacts")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
-        })
-    }
-
-
-    if (service?.url) {
-        service.url.forEach((item, i) => {
-            const pre = d3.select("#service-urls")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
-        })
-    }
-
-    if (service?.docs) {
-        service.docs.forEach((item, i) => {
-            const pre = d3.select("#service-docs")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
-        })
-    }
-
-    const outputDiv = d3.select("#service-output").html("")
-    outputs.forEach((output, i) => {
-        const hasOutput = Array.isArray(service?.output) && service.output.includes(output)
-        outputDiv.append("input").attr("type", "checkbox").attr("name", "cbo" + i).attr("id", "cbo" + i).property("checked", hasOutput)
-        outputDiv.append("label").attr("for", "cbo" + i).text(output)
+        if (!logos?.[service.organizationCode]) regional.unshift(service.organizationCode)
+        return Array.isArray(regional) && regional.length > 0 ? "with " + regional.join(", ") : ""
     })
-
-    const researchDiv = d3.select("#service-research").html("")
-    researches.forEach((research, i) => {
-        const hasResearch = Array.isArray(service?.research) && service.research.includes(research)
-        researchDiv.append("input").attr("type", "checkbox").attr("name", "cbr" + i).attr("id", "cbr" + i).property("checked", hasResearch)
-        researchDiv.append("label").attr("for", "cbr" + i).text(research)
-    })
-
-    const phaseDiv = d3.select("#service-phase").html("")
-    phases.forEach((phase, i) => {
-        const hasPhase = Array.isArray(service?.phase) && service.phase.find(p => p.toLowerCase() == phase.toLowerCase())
-        phaseDiv.append("input").attr("type", "checkbox").attr("name", "cbp" + i).attr("id", "cbp" + i).property("checked", hasPhase)
-        phaseDiv.append("label").attr("for", "cbp" + i).text(phase)
-    })
-
-    const categoryDiv = d3.select("#service-category").html("")
-    categories.forEach((category, i) => {
-        const hasCategory = Array.isArray(service?.category) && service.category.includes(category)
-        categoryDiv.append("input").attr("type", "checkbox").attr("name", "cbc" + i).attr("id", "cbc" + i).property("checked", hasCategory)
-        categoryDiv.append("label").attr("for", "cbc" + i).text(category == "project management" ? category + " (including data, sample, participant management)" : category)
-    })
-}
-
-
-function exportServices() {
-    if (services) {
-        let rows = [["ID", "Name", "Organization", "Regional infrastructures", "Hidden description", "Description", "Complementary description", "Research", "Output", "Contact", "Links", "Documents"]];
-        services.forEach(service => {
-            const escapeCsv = (str) => `"${String(str).replace(/"/g, '""')}"`;
-            rows.push([
-                service.id,
-                escapeCsv(service.name),
-                escapeCsv(service.organization),
-                escapeCsv(service.regional.join(";")),
-                escapeCsv(service.hidden ? service.hidden : ""),
-                escapeCsv(service.description),
-                escapeCsv(service.complement ? service.complement : ""),
-                escapeCsv(service.research.join(";")),
-                escapeCsv(service.output.join(";")),
-                escapeCsv(service.contact.join(";")),
-                escapeCsv(service.url.join(";")),
-                escapeCsv(service.docs.join(";"))
-            ]);
-        });
-
-        let csvContent = rows.map(r => r.join(",")).join("\r\n");
-        let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        let url = URL.createObjectURL(blob);
-
-
-        let link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "CPCR services " + getTime() + ".csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-}
-
-function enterOrganizations() {
-    //Requests selector
-    d3.select("#organizations").html("")
-    console.log("User", me)
-    organizations.forEach(organization => {
-        let label = organization.fullName + (organization.fullName != organization.label ? " (" + organization.label + ")" : "")
-        let length = 50
-        if (label.length > length) {
-            label = label.substring(0, length - 1) + "…"
+    header.append("div").attr("class", "service-name").text(service => service.name)
+    const main = serviceTag.append("div").attr("class", "service-main")
+    main.append("div").attr("class", "service-description").text(service => {
+        const description = service.description
+        const maxChar = 600
+        let expanded = false
+        if (description.length > maxChar) {
+            let short = description.substr(0, maxChar)
+            short = short.substr(0, short.lastIndexOf(" "))
+            short = short + "(…)"
+            let visible = expanded ? description : short
+            return visible
+        } else {
+            return description
         }
-        d3.select("#organizations").append("option").attr("value", organization.code).property("selected", currentOrganization?.code == organization.code)
-            .text(label)
     })
-    d3.select("#organizations").on("change", e => {
-        organizationSelect(e.target.value)
-    })
-    console.log("current organization", currentOrganization)
-    if (currentOrganization) organizationSelect(currentOrganization.code)
-}
+    const maxChar = 600
+    main.append("a").attr("href", "#").attr("class", "toggle").text("Read more")
+        .on("click", function (e, service) {
+            e.preventDefault();
+            const button = d3.select(this)
+            const description = d3.select(this.parentNode).select(".service-description")
+            const expanded = button.classed("expanded")
+            if (expanded) {
+                button.html("Read more").classed("expanded", !expanded)
+                let short = service.description.substr(0, maxChar)
+                short = short.substr(0, short.lastIndexOf(" "))
+                short = short + "(…)"
+                description.html(short)
+            } else {
+                button.html("Show less").classed("expanded", !expanded)
+                description.html(service.description)
+            }
+        })
+        .style("display", service => service.description.length > maxChar ? "block" : "none")
 
-async function organizationSelect(code) {
-    //if (code != currentOrganization?.code) d3.select("#organization-message").html("")
-    d3.select("#organization").style("display", "inherit")
-    currentOrganization = organizations.find(organization => organization.code == code)
-    ORG = currentOrganization.code
-    STEM = currentOrganization.idPrefix
-    currentService = null
-    serviceDraft = null
-    console.log("Organization selected", currentOrganization)
-    displayOrganization(currentOrganization)
-    await loadServices()
-}
+    main.append("div").attr("class", "service-info").each(function (service) {
 
-function displayOrganization(organization) {
-
-    d3.select("#organization-update").text("Update organization")
-    if (organizationDraft && organizationDraft.code == organization.code)
-        d3.select("#organization-update").text("Save organization")
-
-    d3.select("#organization-code").html(organization.code)
-    d3.select("#organization-label").html(organization.label)
-    d3.select("#organization-full-name").html(organization.fullName)
-    d3.select("#organization-id-prefix").html(organization.idPrefix)
-}
-
-async function updateOrganization() {
-
-    d3.select("#organization-message").html("Uploading changes...")
-    if (currentOrganization) {
-
-        let uri = 'update-organization'
-        if (organizationDraft && currentOrganization.code == organizationDraft.code) {
-            uri = 'create-organization'
+        function appendInfoBlock(node, valueArray, name, newLine = true) {
+            if (Array.isArray(valueArray) && valueArray.filter(item => item).length > 0) {
+                const block = node.append("div").attr("class", "info-block").classed(name.toLowerCase().replaceAll(" ", "-"), true)
+                block.append("div").attr("class", "info-label").text(name)
+                const valueDiv = block.append("div").attr("class", "info-value")
+                if (newLine) {
+                    valueArray.forEach((value, i) => {
+                        let container = valueDiv
+                        if (value.length > 0) {
+                            value = value.split(",")
+                            let link = value[0]
+                            let text = value[0]
+                            //console.log(text)
+                            if (i > 0) container = valueDiv.append("div")
+                            if (value.length > 1) {
+                                link = value[1]
+                            } else {
+                                if (text.length > 40) text = text.substring(0, 39) + "…"
+                            }
+                            container.append("a").attr("class", "itemLink").attr("target", "_blank")
+                                .attr("href", link.includes("@") ? "mailto:" + link : link).text(text)
+                        }
+                    })
+                } else {
+                    valueDiv.text(valueArray.join(", "))
+                }
+            }
         }
 
-        await fetch(`/api/${uri}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include', // IMPORTANT: send cookies
-            body: JSON.stringify({
-                code: d3.select("#organization-code").html(),
-                label: d3.select("#organization-label").html(),
-                fullName: d3.select("#organization-full-name").html(),
-                idPrefix: d3.select("#organization-id-prefix").html(),
-            })
+        const node = d3.select(this)
+        //console.log("node", node)
+        //console.log("service", service)
+        appendInfoBlock(node, service.docs, "Documents")
+        appendInfoBlock(node, service.url, "Link")
+        appendInfoBlock(node, service.output, "Type of service", false)
+        appendInfoBlock(node, service.contact, "Contact")
+    })
+
+
+    //serviceTag.append("div").attr("class", "explanation")
+
+    serviceTag.select(".service-keywords").append("span").html(service => service.id + ": " + Math.round(100 * service.score) + "%")
+    serviceTag.select(".explanation-btn")
+        .on("click", async function (e, service) {
+            if (d3.select(this).classed("active")) {
+                d3.select(this).classed("active", false)
+                const explanation = d3.select(this.parentNode.parentNode).select(".explanation")
+                explanation.classed("open", true)
+                let query = d3.select("#request-text").html()
+                query = stripHtml(query)
+                await fetch("/api/explain-match", {
+                    method: "POST",
+                    body: JSON.stringify({ query: query, match: service }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                })
+                    .then((response) => response.json())
+                    .then(async (json) => {
+                        console.log("Explanation", json)
+                        explanation.classed("loading", false).select(".loader-label").html("Why this result?")
+                        explanation.selectAll(".skeleton-line").remove()
+                        explanation.append("div").attr("class", "explanation-text").text(json.text)
+                    })
+            }
         })
-            .then((response) => response.json())
-            .then(async json => {
-                organizationDraft = null
-                d3.select("#organization-message").html(json.message)
-                await loadOrganizations()
-            })
-    }
+
+    d3.select(".load-more").style("display", n + nMin <= results.length ? "block" : "none")
+
+
 }
 
-function newOrganization() {
-    if (organizationDraft) {
-        const index = d3.select("#new-organization-option").node().index
-        d3.select("#organizations").node().selectedIndex = index
-        organizationSelect(organizationDraft.code)
-    } else {
-        organization = {
-            code: "",
-            label: "",
-            fullName: "",
-            idPrefix: ""
-        }
-        organizations.push(organization)
-        organizationDraft = organization
-        currentOrganization = organization
-        d3.select("#organization").style("display", "inherit")
-        d3.select("#organizations").append("option").attr("id", "new-organization-option").attr("value", organization.code).property("selected", true).text("New organization")
-        displayOrganization(organization)
-    }
-}
+enterFilters()
+d3.select(".load-more").on("click", (e, d) => { loadMore() })
+loadServices()
 
-
-function enterUsers() {
-    //Requests selector
-    d3.select("#users").html("")
-    users.forEach(user => {
-        d3.select("#users").append("option").attr("value", user.id).property("selected", currentUser ? currentUser.id == user.id : me.id == user.id)
-            .text(user.email)
-    })
-    d3.select("#users").on("change", e => {
-        userSelect(e.target.value)
-    })
-    if (currentUser) userSelect(currentUser.id)
-    else userSelect()
-}
-
-async function userSelect(id = null) {
-    if (!id) id = me.id
-    d3.select("#user").style("display", "inherit")
-    currentUser = users.find(user => user.id == id)
-    console.log("User selected", currentUser)
-    displayUser(currentUser)
-}
-
-function displayUser(user) {
-
-    d3.select("#user-update").text("Update user")
-    if (!user?.id)
-        d3.select("#user-update").text("Save user")
-
-    d3.select("#user-id").html(user.id)
-    d3.select("#user-email").html(user.email)
-    d3.select("#user-password").html("")
-    d3.select("#user-force-password-change").node().checked = user.forcePasswordChange
-    d3.select("#user-is-superadmin").node().checked = user.isSuperAdmin
-    d3.select("#user-organization").html("")
-    organizations.forEach(organization => {
-        let label = organization.fullName + (organization.fullName != organization.label ? " (" + organization.label + ")" : "")
-        let length = 50
-        if (label.length > length) {
-            label = label.substring(0, length - 1) + "…"
-        }
-        d3.select("#user-organization").append("option").attr("value", organization.code).property("selected", organization.code == user.organizationCode)
-            .text(label)
-    })
-}
-
-async function updateUser() {
-
-    const passwordValue = d3.select("#user-password").text().trim();
-
-    const userUpdate = {
-        id: currentUser.id,
-        email: d3.select("#user-email").text().trim(),
-        isSuperAdmin: d3.select("#user-is-superadmin").property("checked"),
-        organization: d3.select("#user-organization").property("value"),
-        organizationCode: d3.select("#user-organization").property("value"),
-        forcePasswordChange: d3.select("#user-force-password-change").property("checked")
-    };
-
-    // Only send password if non-empty
-    if (passwordValue.length) {
-        userUpdate.password = passwordValue;
-    }
-
-    if (currentUser) {
-        d3.select("#user-message").html("Uploading changes...")
-
-        let uri = 'update-user'
-        if (!currentUser.id) {
-            uri = 'create-user'
-        }
-
-        await fetch(`/api/${uri}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include', // IMPORTANT: send cookies
-            body: JSON.stringify(userUpdate)
-        }).then((response) => response.json())
-            .then(async json => {
-                userDraft = null
-                d3.select("#user-message").html(json.message)
-                await loadUsers()
-            })
-    }
-}
-
-function newUser() {
-
-    user = {
-        email: "",
-        password: "",
-        organization: ORG,
-        organizationCode: ORG,
-        isSuperAdmin: false,
-        forcePasswordChange: true
-    }
-    currentUser = user
-    d3.select("#user").style("display", "inherit")
-    displayUser(user)
-}
-
-
-
-function getTime() {
-    const d = new Date();
-    const datetime = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " at "
-        + ("0" + d.getHours()).slice(-2) + "." + ("0" + d.getMinutes()).slice(-2) + "." + ("0" + d.getSeconds()).slice(-2)
-    return datetime
-}
 
 function stripHtml(html) {
     let tmp = document.createElement("DIV");
@@ -1063,47 +401,94 @@ jQuery(function ($) {
     });
 });
 
-d3.select("#services").append("option").attr("value", "").property("selected", true).text("Loading...")
-d3.select("#service-update").on("click", updateService)
-d3.select("#service-revert").on("click", enterServices)
-d3.select("#service-create").on("click", newService)
-d3.select("#service-export").on("click", exportServices)
+(function () {
+    const MAX_LABEL_CHARS = 36; // tronque l’affichage quand plusieurs items
 
-d3.select("#organization-update").on("click", updateOrganization)
-d3.select("#organization-revert").on("click", enterOrganizations)
-d3.select("#organization-create").on("click", newOrganization)
+    // met à jour le texte du chip selon les cases cochées
+    function updateChipLabel(wrapper) {
+        const button = wrapper.querySelector('.chip');
+        const defaultLabel = button.dataset.default || 'Filter';
+        const selected = [...wrapper.querySelectorAll('.chip-menu input[type="checkbox"]:checked')]
+            .map(cb => cb.value);
 
-d3.select("#user-update").on("click", updateUser)
-d3.select("#user-revert").on("click", enterUsers)
-d3.select("#user-create").on("click", newUser)
+        const arrow = button.querySelector('.chip-arrow');
+        const clearBtn = wrapper.querySelector('.chip-clear');
 
-d3.select("#header-logout").on("click", logout)
-
-document.addEventListener('DOMContentLoaded', () => {
-    const tabs = Array.from(document.querySelectorAll('.admin-tab'));
-    const panels = Array.from(document.querySelectorAll('.admin-section'));
-
-    if (!tabs.length || !panels.length) return;
-
-    function activate(id) {
-        const panelExists = panels.some(p => p.id === id);
-        const safeId = panelExists ? id : panels[0].id;
-
-        tabs.forEach(t => t.classList.toggle('is-active', t.dataset.tab === safeId));
-        panels.forEach(p => p.classList.toggle('is-active', p.id === safeId));
-
-        history.replaceState(null, '', '#' + safeId);
-    }
-
-    tabs.forEach(t => t.addEventListener('click', () => {
-        // Non-superadmins are forced to the service panel only
-        if (window.currentUser && !window.currentUser.isSuperAdmin) {
-            activate('service-panel');
+        if (selected.length === 0) {
+            button.classList.remove('active');
+            if (arrow) arrow.style.display = '';
+            if (clearBtn) clearBtn.style.display = 'none';
+            button.querySelector('.chip-label').textContent = defaultLabel;
             return;
         }
-        activate(t.dataset.tab);
-    }));
 
-    const initial = (location.hash || '').slice(1) || tabs[0].dataset.tab;
-    activate(initial);
-});
+        // états visuels
+        button.classList.add('active');
+        if (arrow) arrow.style.display = 'none';
+        if (clearBtn) clearBtn.style.display = 'block';
+
+        // texte
+        if (selected.length === 1) {
+            button.querySelector('.chip-label').textContent = `${selected[0]}`;
+        } else {
+            const joined = selected.join(', ');
+            const truncated = joined.length > MAX_LABEL_CHARS ? joined.slice(0, MAX_LABEL_CHARS) + '…' : joined;
+            button.querySelector('.chip-label').textContent = truncated;
+        }
+    }
+
+    // ouvre/ferme un menu, ferme les autres
+    function toggleMenu(wrapper) {
+        const menu = wrapper.querySelector('.chip-menu');
+        const isOpen = menu.classList.contains('open');
+        document.querySelectorAll('.chip-menu.open').forEach(m => m.classList.remove('open'));
+        if (!isOpen) menu.classList.add('open');
+    }
+
+    // init pour chaque chip
+    document.querySelectorAll('.chip-wrapper').forEach(wrapper => {
+        const chipBtn = wrapper.querySelector('.chip');
+        const menu = wrapper.querySelector('.chip-menu');
+        const clearInChip = wrapper.querySelector('.chip-clear');
+        const resetInMenu = wrapper.querySelector('.menu-reset');
+
+        // ouverture/fermeture au clic sur le chip
+        chipBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu(wrapper);
+        });
+
+        // clic en dehors => fermer
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) menu.classList.remove('open');
+        });
+
+        // cocher/décocher => mettre à jour label
+        menu.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', () => updateChipLabel(wrapper));
+        });
+
+        // bouton "Clear" dans le menu (celui qui ne marche pas chez toi)
+        resetInMenu?.addEventListener('click', (e) => {
+            e.preventDefault();
+            // décocher toutes les cases
+            menu.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => cb.checked = false);
+            // maj label + état
+            updateChipLabel(wrapper);
+            const filter = d3.select(wrapper).attr("filter")
+            clearFilter(filter)
+        });
+
+        // croix à droite du chip (reset global de ce filtre)
+        clearInChip?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => cb.checked = false);
+            updateChipLabel(wrapper);
+            const filter = d3.select(wrapper).attr("filter")
+            clearFilter(filter)
+        });
+
+        // init label au chargement
+        updateChipLabel(wrapper);
+    });
+})();
