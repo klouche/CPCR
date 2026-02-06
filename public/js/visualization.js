@@ -89,7 +89,7 @@ async function loadServices() {
         .then((response) => response.json())
         .then((json) => {
             allServices = shuffle(json.services)
-            console.log("All services", allServices)
+            //console.log("All services", allServices)
         });
 }
 
@@ -106,7 +106,7 @@ function serviceSearch() {
         rankingDiv.html(""); // Efface les résultats précédents
 
         if (cache[query]) {
-            console.log("Using cache for query:", query)
+            //console.log("Using cache for query:", query)
             allResults = cache[query].map(result => allServices.find(service => service.id == result.id)).filter(service => service.active)
             requestField.attr("contenteditable", true)
             d3.select("#layout-container").classed("splash", false)
@@ -178,7 +178,7 @@ function filterResults(results, filter) {
 
 function clearFilter(filter) {
     filters[filter] = []
-    console.log(filters)
+    //console.log(filters)
     update(filterAllResults(allResults))
 }
 
@@ -218,8 +218,8 @@ function addChips(filter, name, options) {
                         filters[filter].splice(index, 1);
                     }
                 }
-                console.log("Filters", filters)
-                console.log("Query", query)
+                //console.log("Filters", filters)
+                //console.log("Query", query)
                 if (query && query.length > 0){
                     n = nMin
                     update(filterAllResults(allResults))
@@ -235,7 +235,7 @@ function addChips(filter, name, options) {
 // Mettre à jour les résultats
 function update(results) {
 
-    console.log("Results", results)
+    //console.log("Results", results)
     d3.select("#result-title").html(d => {
         if (results) {
             return results.length > 0 ? "Matching services" : "No matching services"
@@ -368,7 +368,7 @@ function update(results) {
                 })
                     .then((response) => response.json())
                     .then(async (json) => {
-                        console.log("Explanation", json)
+                        //console.log("Explanation", json)
                         explanation.classed("loading", false).select(".loader-label").html("Why this result?")
                         explanation.selectAll(".skeleton-line").remove()
                         explanation.append("div").attr("class", "explanation-text").text(json.text)

@@ -442,7 +442,7 @@ async function logout() {
         const data = await res.json();
 
         if (data.success) {
-            console.log("Logged out.");
+            //console.log("Logged out.");
 
             // Clear local user state
             me = null;
@@ -514,7 +514,7 @@ async function loadServices() {
                 const orgCode = me.organizationCode;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
             } else {
-                console.log("current organisation", currentOrganization)
+                //console.log("current organisation", currentOrganization)
                 const orgCode = currentOrganization.code;
                 fetched = fetched.filter(s => s.organizationCode === orgCode);
             }
@@ -533,7 +533,7 @@ async function loadServices() {
                 }
                 return 0;
             });
-            console.log("Services", services)
+            //console.log("Services", services)
             enterServices()
         })
 }
@@ -554,7 +554,7 @@ async function loadOrganizations() {
 
             d3.select("#organization-create").style("display", "inherit")
 
-            console.log("Organizations", organizations)
+            //console.log("Organizations", organizations)
             enterOrganizations()
             loadUsers();
         })
@@ -575,7 +575,7 @@ async function loadUsers() {
 
             d3.select("#user-create").style("display", "inherit")
 
-            console.log("Users", users)
+            //console.log("Users", users)
             enterUsers()
         })
 }
@@ -596,7 +596,7 @@ function enterServices() {
     //Requests selector
     d3.select("#services").html("")
     //d3.select("#services").append("option").attr("value", "").attr("disabled", true).attr("hidden", true).property("selected", true).text("Select service")
-    console.log("User", me)
+    //console.log("User", me)
     services//.filter(service => service.organizationCode == ORG)
     .forEach(service => {
         let name = service.id + ": " + service.name
@@ -666,7 +666,7 @@ async function updateService() {
             })
         }).then((response) => response.json())
             .then(async json => {
-                console.log(json)
+                //console.log(json)
                 serviceDraft = null
                 d3.select("#service-message").html(json.message)
                 await loadServices()
@@ -722,14 +722,14 @@ function getLinesFromEditablePre(preEl) {
 }
 
 function serviceSelect(id = null) {
-    console.log("current service", currentService)
+    //console.log("current service", currentService)
     //if (id != currentService?.id) d3.select("#service-message").html("")
     d3.select("#service").style("display", "inherit")
     if (id) currentService = services.find(service => service.id == id)
     else currentService = services[0]
-    console.log("service id", id)
-    console.log("Services 0", services[0])
-    console.log("Service selected", currentService)
+    //console.log("service id", id)
+    //console.log("Services 0", services[0])
+    //console.log("Service selected", currentService)
     if (!services[0]) newService()
     else displayService(currentService)
 }
@@ -845,7 +845,7 @@ function exportServices() {
 function enterOrganizations() {
     //Requests selector
     d3.select("#organizations").html("")
-    console.log("User", me)
+    //console.log("User", me)
     organizations.forEach(organization => {
         let label = organization.fullName + (organization.fullName != organization.label ? " (" + organization.label + ")" : "")
         let length = 50
@@ -858,7 +858,7 @@ function enterOrganizations() {
     d3.select("#organizations").on("change", e => {
         organizationSelect(e.target.value)
     })
-    console.log("current organization", currentOrganization)
+    //console.log("current organization", currentOrganization)
     if (currentOrganization) organizationSelect(currentOrganization.code)
 }
 
@@ -870,7 +870,7 @@ async function organizationSelect(code) {
     STEM = currentOrganization.idPrefix
     currentService = null
     serviceDraft = null
-    console.log("Organization selected", currentOrganization)
+    //console.log("Organization selected", currentOrganization)
     displayOrganization(currentOrganization)
     await loadServices()
 }
@@ -957,7 +957,7 @@ async function userSelect(id = null) {
     if (!id) id = me.id
     d3.select("#user").style("display", "inherit")
     currentUser = users.find(user => user.id == id)
-    console.log("User selected", currentUser)
+    //console.log("User selected", currentUser)
     displayUser(currentUser)
 }
 

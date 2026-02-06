@@ -21,12 +21,14 @@ services:
     container_name: cpcr-embeddings
     command: ["--model-id", "intfloat/multilingual-e5-small"]
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:80/health || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 30
+    volumes:
+      - hfdata:/data
 
   app:
     build: .
@@ -54,13 +56,10 @@ services:
       EMBEDDING_DIM: "384"
 
       # Keep these for now if you still use them elsewhere
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      PINECONE_API_KEY: ${PINECONE_API_KEY:-}
-      PINECONE_INDEX: ${PINECONE_INDEX:-}
       CROSS_SITE_COOKIES: ${CROSS_SITE_COOKIES:-false}
 
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
 
 volumes:
   pgdata:
