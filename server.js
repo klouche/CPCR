@@ -73,27 +73,34 @@ function logRequest(req, resBody, meta = {}) {
 const recentUpdates = new Map(); // id -> { metadata, updatedAt }
 
 const app = express();
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
-  .split(',')
-  .map(s => s.trim())
-  .filter(Boolean);
+const allowedOrigins = new Set([
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
 
-allowedOrigins.push('https://swissbiobanking.ch', 'https://cpcr.onrender.com');
+  "http://86.119.81.100",
+  "http://86.119.81.100:3000",
+  "https://86.119.81.100",
+
+  "http://192.168.3.234",
+  "http://192.168.3.234:3000",
+
+  "https://www.swissbiobanking.ch",
+  "https://swissbiobanking.ch",
+]);
 
 app.set('trust proxy', true);
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === 'null' || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
+  origin: (origin, cb) => {
+    console.log("[CORS] Origin:", origin);
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.has(origin)) return cb(null, true);
+    console.warn("[CORS] Blocked origin:", origin);
+    return cb(null, false);
   },
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true
+  credentials: true,
 }));
+
 app.use(express.json());
 
 function noStore(res) {
