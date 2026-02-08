@@ -16,5 +16,4 @@ dumps
 *.openssh
 *.dump
 *.inetloc
-*.sql
 *.log
