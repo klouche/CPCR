@@ -866,12 +866,12 @@ async function refreshStats() {
 
             const byDayHtml = `
                 <h3 style="margin:14px 0 6px 0;">Clicks by day</h3>
-                ${byDayRows.length ? renderTable(['Day', 'Count'], byDayRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+                ${byDayRows.length ? renderTable(['day', 'count'], byDayRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
             `;
 
             const topHtml = `
                 <h3 style="margin:14px 0 6px 0;">Top assets</h3>
-                ${topRows.length ? renderTable(['Service ID', 'Type', 'Label', 'Count'], topRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+                ${topRows.length ? renderTable(['serviceId', 'assetType', 'assetLabel', 'count'], topRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
             `;
 
             out.innerHTML = summaryHtml + byDayHtml + topHtml;
