@@ -598,15 +598,15 @@ function enterServices() {
     //d3.select("#services").append("option").attr("value", "").attr("disabled", true).attr("hidden", true).property("selected", true).text("Select service")
     //console.log("User", me)
     services//.filter(service => service.organizationCode == ORG)
-    .forEach(service => {
-        let name = service.id + ": " + service.name
-        let length = 50
-        if (name.length > length) {
-            name = name.substring(0, length - 1) + "…"
-        }
-        d3.select("#services").append("option").attr("value", service.id).property("selected", currentService?.id == service.id)
-            .text(name)
-    })
+        .forEach(service => {
+            let name = service.id + ": " + service.name
+            let length = 50
+            if (name.length > length) {
+                name = name.substring(0, length - 1) + "…"
+            }
+            d3.select("#services").append("option").attr("value", service.id).property("selected", currentService?.id == service.id)
+                .text(name)
+        })
     d3.select("#services").on("change", e => {
         serviceSelect(e.target.value)
     })
@@ -660,9 +660,9 @@ async function updateService() {
                 hidden: d3.select("#service-hidden").html(),
                 description: text,
                 complement: d3.select("#service-complement").html(),
-                contact: getLinesFromEditablePre(d3.select("#service-contacts").node()),
-                url: getLinesFromEditablePre(d3.select("#service-urls").node()),
-                docs: getLinesFromEditablePre(d3.select("#service-docs").node())
+                links: readLinksFromEditor(),
+                documents: readDocumentsFromEditor(),
+                contacts: readContactsFromEditor()
             })
         }).then((response) => response.json())
             .then(async json => {
@@ -692,9 +692,9 @@ function newService() {
             hidden: "",
             description: "",
             complement: "",
-            contact: [],
-            url: [],
-            docs: [],
+            links: [],
+            documents: [],
+            contacts: [],
             active: false
         }
         services.push(service)
@@ -704,6 +704,129 @@ function newService() {
         d3.select("#services").append("option").attr("id", "new-service-option").attr("value", service.id).property("selected", true).text(service.id + ": " + service.name + " (draft)")
         displayService(service)
     }
+}
+
+function readLinksFromEditor() {
+    return Array.from(document.querySelectorAll('#service-links-editor .link-row'))
+        .map(row => {
+            const label = (row.querySelector('.link-label')?.value || '').trim();
+            const url = (row.querySelector('.link-url')?.value || '').trim();
+            return { label: label || url, url };
+        })
+        .filter(l => l.url);
+}
+
+function readDocumentsFromEditor() {
+    return Array.from(document.querySelectorAll('#service-docs-editor .doc-row'))
+        .map(row => {
+            const title = (row.querySelector('.doc-title')?.value || '').trim();
+            const url = (row.querySelector('.doc-url')?.value || '').trim();
+            return { title: title || url, url };
+        })
+        .filter(d => d.url);
+}
+
+function readContactsFromEditor() {
+    return Array.from(document.querySelectorAll('#service-contacts-editor .contact-row'))
+        .map(row => {
+            const type = (row.querySelector('.contact-type')?.value || '').trim();
+            const label = (row.querySelector('.contact-label')?.value || '').trim();
+            const value = (row.querySelector('.contact-value')?.value || '').trim();
+            if (!type || !value) return null;
+            return { type, label, value };
+        })
+        .filter(Boolean);
+}
+
+function renderRowEditor({
+    rootSelector,       // e.g. "#service-urls"
+    editorId,           // e.g. "service-links-editor"
+    rowClass,           // e.g. "link-row"
+    addButtonText,      // e.g. "+ Add link"
+    initialRows,        // array of row objects
+    fields,             // [{ cls, placeholder, type, flex, get, set }]
+    getRowObject,       // (rowEl) => object
+    onChange            // optional (obj, index) callback
+}) {
+    const root = d3.select(rootSelector).html('');
+    const editor = root.append('div').attr('id', editorId);
+
+    const addRow = (obj = {}) => {
+        const row = editor.append('div')
+            .attr('class', rowClass)
+            .style('display', 'flex')
+            .style('gap', '8px')
+            .style('margin', '6px 0');
+
+        // inputs
+        fields.forEach(f => {
+            if (f.kind === 'select') {
+                const sel = row.append('select')
+                    .attr('class', f.cls)
+                    .style('flex', f.flex || '0 0 120px');
+
+                (f.options || []).forEach(opt => {
+                    sel.append('option').attr('value', opt).text(opt);
+                });
+
+                sel.property('value', f.get ? f.get(obj) : (obj[f.key] || ''));
+            } else {
+                row.append('input')
+                    .attr('class', f.cls)
+                    .attr('type', f.type || 'text')
+                    .attr('placeholder', f.placeholder || '')
+                    .style('flex', f.flex || '1')
+                    .property('value', f.get ? f.get(obj) : (obj[f.key] || ''));
+            }
+        });
+
+        // reorder + delete
+        row.append('button')
+            .attr('type', 'button')
+            .text('↑')
+            .style('min-width', '36px')
+            .on('click', () => {
+                const n = row.node();
+                const prev = n.previousElementSibling;
+                if (prev) prev.before(n);
+            });
+
+        row.append('button')
+            .attr('type', 'button')
+            .text('↓')
+            .style('min-width', '36px')
+            .on('click', () => {
+                const n = row.node();
+                const next = n.nextElementSibling;
+                if (next) next.after(n);
+            });
+
+        row.append('button')
+            .attr('type', 'button')
+            .text('✕')
+            .style('min-width', '40px')
+            .on('click', () => row.remove());
+
+        // optional onChange
+        if (typeof onChange === 'function') {
+            row.selectAll('input,select').on('input', () => {
+                const obj = getRowObject(row.node());
+                const idx = Array.from(document.querySelectorAll(`#${editorId} .${rowClass}`)).indexOf(row.node());
+                onChange(obj, idx);
+            });
+        }
+    };
+
+    if (Array.isArray(initialRows) && initialRows.length) initialRows.forEach(addRow);
+    else addRow({}); // at least one row
+
+    root.append('button')
+        .attr('type', 'button')
+        .style('margin-top', '8px')
+        .text(addButtonText)
+        .on('click', () => addRow({}));
+
+    return { editorId, rowClass };
 }
 
 function getLinesFromEditablePre(preEl) {
@@ -742,7 +865,7 @@ function displayService(service) {
 
     d3.select("#service-active").node().checked = service?.active
     d3.select("#service-name").html(service.name)
-    d3.select("#service-organization").html(service.organization)
+    d3.select("#service-organization").html(service.organization?.fullName || service.organizationCode || '')
     d3.select("#service-regional").html(Array.isArray(service.regional) ? service.regional.join(", ") : (currentService.regional || ""))
     d3.select("#service-hidden").html(service?.hidden ? service.hidden : "")
     d3.select("#service-description").html(service.description)
@@ -752,30 +875,145 @@ function displayService(service) {
     d3.select("#service-urls").html("")
     d3.select("#service-docs").html("")
 
-    if (service?.contact) {
-        service.contact.forEach((item, i) => {
-            const pre = d3.select("#service-contacts")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
-        })
+    // LINKS
+    let links = [];
+    if (Array.isArray(service?.links) && service.links.length) {
+        links = service.links.map(l => ({ label: l.label || l.url, url: l.url }));
+    } else if (Array.isArray(service?.url) && service.url.length) {
+        // legacy fallback: ["Label, https://..."]
+        links = service.url
+            .map(line => String(line || '').trim())
+            .filter(Boolean)
+            .map(line => {
+                const parts = line.split(',');
+                const url = (parts.length >= 2) ? parts.slice(1).join(',').trim() : line;
+                const label = (parts.length >= 2) ? (parts[0].trim() || url) : url;
+                return { label, url };
+            })
+            .filter(x => x.url);
     }
 
-
-    if (service?.url) {
-        service.url.forEach((item, i) => {
-            const pre = d3.select("#service-urls")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
+    renderRowEditor({
+        rootSelector: '#service-urls',
+        editorId: 'service-links-editor',
+        rowClass: 'link-row',
+        addButtonText: '+ Add link',
+        initialRows: links,
+        fields: [
+            { cls: 'link-label', placeholder: 'Label', type: 'text', flex: '1', key: 'label' },
+            { cls: 'link-url', placeholder: 'https://...', type: 'url', flex: '2', key: 'url' }
+        ],
+        getRowObject: (rowEl) => ({
+            label: (rowEl.querySelector('.link-label')?.value || '').trim(),
+            url: (rowEl.querySelector('.link-url')?.value || '').trim()
         })
+    });
+
+    // DOCUMENTS
+    let documents = [];
+    if (Array.isArray(service?.documents) && service.documents.length) {
+        documents = service.documents.map(d => ({ title: d.title || d.url, url: d.url }));
+    } else if (Array.isArray(service?.docs) && service.docs.length) {
+        // legacy fallback: ["Title, https://..."]
+        documents = service.docs
+            .map(line => String(line || '').trim())
+            .filter(Boolean)
+            .map(line => {
+                const parts = line.split(',');
+                const url = (parts.length >= 2) ? parts.slice(1).join(',').trim() : line;
+                const title = (parts.length >= 2) ? (parts[0].trim() || url) : url;
+                return { title, url };
+            })
+            .filter(x => x.url);
     }
 
-    if (service?.docs) {
-        service.docs.forEach((item, i) => {
-            const pre = d3.select("#service-docs")
-            if (i == 0) pre.text(item)
-            else pre.append("div").text(item)
+    renderRowEditor({
+        rootSelector: '#service-docs',
+        editorId: 'service-docs-editor',
+        rowClass: 'doc-row',
+        addButtonText: '+ Add document',
+        initialRows: documents,
+        fields: [
+            { cls: 'doc-title', placeholder: 'Title', type: 'text', flex: '1', key: 'title' },
+            { cls: 'doc-url', placeholder: 'https://...', type: 'url', flex: '2', key: 'url' }
+        ],
+        getRowObject: (rowEl) => ({
+            title: (rowEl.querySelector('.doc-title')?.value || '').trim(),
+            url: (rowEl.querySelector('.doc-url')?.value || '').trim()
         })
+    });
+
+    // CONTACTS
+    let contacts = [];
+    if (Array.isArray(service?.contacts) && service.contacts.length) {
+        contacts = service.contacts.map(c => ({ type: c.type, label: c.label || '', value: c.value }));
+    } else if (Array.isArray(service?.contact) && service.contact.length) {
+        // legacy fallback examples:
+        // "EMAIL, Support, info@example.org"
+        // "Support, info@example.org"
+        contacts = service.contact
+            .map(line => String(line || '').trim())
+            .filter(Boolean)
+            .map(line => {
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length >= 3) return { type: parts[0] || 'EMAIL', label: parts[1] || '', value: parts.slice(2).join(',').trim() };
+                if (parts.length === 2) return { type: 'EMAIL', label: parts[0] || '', value: parts[1] || '' };
+                return { type: 'EMAIL', label: '', value: line };
+            })
+            .filter(c => c.type && c.value);
     }
+
+    const contactTypes = ['EMAIL', 'PHONE', 'URL', 'OTHER'];
+
+    renderRowEditor({
+        rootSelector: '#service-contacts',
+        editorId: 'service-contacts-editor',
+        rowClass: 'contact-row',
+        addButtonText: '+ Add contact',
+        initialRows: contacts,
+        fields: [
+            {
+                kind: 'select', cls: 'contact-type', flex: '0 0 120px', options: contactTypes, key: 'type',
+                get: (o) => o.type || 'EMAIL'
+            },
+            { cls: 'contact-label', placeholder: 'Label (optional)', type: 'text', flex: '1', key: 'label' },
+            { cls: 'contact-value', placeholder: 'Value (email/phone/url)', type: 'text', flex: '2', key: 'value' }
+        ],
+        getRowObject: (rowEl) => ({
+            type: (rowEl.querySelector('.contact-type')?.value || '').trim(),
+            label: (rowEl.querySelector('.contact-label')?.value || '').trim(),
+            value: (rowEl.querySelector('.contact-value')?.value || '').trim()
+        })
+    });
+
+    /*
+        if (service?.contact) {
+            service.contact.forEach((item, i) => {
+                const pre = d3.select("#service-contacts")
+                if (i == 0) pre.text(item)
+                else pre.append("div").text(item)
+            })
+        }
+    
+    
+        if (service?.url) {
+            service.url.forEach((item, i) => {
+                const pre = d3.select("#service-urls")
+                if (i == 0) pre.text(item)
+                else pre.append("div").text(item)
+            })
+        }
+    
+        if (service?.docs) {
+            service.docs.forEach((item, i) => {
+                const pre = d3.select("#service-docs")
+                if (i == 0) pre.text(item)
+                else pre.append("div").text(item)
+            })
+        }
+            */
+
+
 
     const outputDiv = d3.select("#service-output").html("")
     outputs.forEach((output, i) => {
