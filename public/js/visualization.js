@@ -6,8 +6,40 @@ let allResults = []
 let query
 const nMin = 5
 let n = nMin
+
 let allServices = []
 let cache = {}
+
+// ---------------------------------------------------------------------------
+// Click logging (public search UI)
+// ---------------------------------------------------------------------------
+// Sends best-effort analytics to the backend without blocking navigation.
+// Backend: POST /api/log-click  (always returns 204)
+function logServiceClick(serviceId, assetType, assetId, assetLabel) {
+    const payload = {
+        serviceId: String(serviceId),
+        assetType: String(assetType),
+        assetId: String(assetId),
+    };
+
+    if (assetLabel != null && String(assetLabel).trim().length) {
+        payload.assetLabel = String(assetLabel).trim();
+    }
+
+    if (navigator && typeof navigator.sendBeacon === 'function') {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        navigator.sendBeacon('/api/log-click', blob);
+        return;
+    }
+
+    fetch('/api/log-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+        credentials: 'include',
+    }).catch(() => { });
+}
 
 
 let filters = {
@@ -220,10 +252,10 @@ function addChips(filter, name, options) {
                 }
                 //console.log("Filters", filters)
                 //console.log("Query", query)
-                if (query && query.length > 0){
+                if (query && query.length > 0) {
                     n = nMin
                     update(filterAllResults(allResults))
-                }else{
+                } else {
                     n = allServices.length
                     serviceSearch()
                 }
@@ -356,6 +388,11 @@ function update(results) {
                 .attr("rel", "noopener")
                 .attr("href", href)
                 .text(title)
+                .on("click", function () {
+                    const aid = doc?.id || href || title;
+                    const lbl = title || href || aid;
+                    if (aid) logServiceClick(service.id, "document", aid, lbl);
+                });
         })
 
         // NEW: links: [{ label, url, order }]
@@ -372,6 +409,11 @@ function update(results) {
                 .attr("rel", "noopener")
                 .attr("href", href)
                 .text(label)
+                .on("click", function () {
+                    const aid = link?.id || href || label;
+                    const lbl = label || href || aid;
+                    if (aid) logServiceClick(service.id, "link", aid, lbl);
+                });
         })
 
         // existing: output is still a string[]
@@ -399,6 +441,11 @@ function update(results) {
                 .attr("rel", (type === 'EMAIL' || type === 'PHONE') ? null : "noopener")
                 .attr("href", href)
                 .text(label)
+                .on("click", function () {
+                    const aid = c?.id || href || label || c?.value;
+                    const lbl = label || c?.value || href || aid;
+                    if (aid) logServiceClick(service.id, "contact", aid, lbl);
+                });
         })
 
         // TEMP fallback for legacy fields (optional):

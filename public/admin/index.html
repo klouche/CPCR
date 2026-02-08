@@ -43,6 +43,7 @@
             <nav id="admin-tabs" class="admin-tabs" aria-label="Admin sections">
                 <button class="admin-tab" type="button" data-tab="organization-panel">Organization management</button>
                 <button class="admin-tab" type="button" data-tab="service-panel">Service management</button>
+                <button class="admin-tab" type="button" data-tab="statistics-panel">Statistics</button>
                 <button class="admin-tab" type="button" data-tab="user-panel">User management</button>
             </nav>
 
@@ -122,6 +123,24 @@
                         <button id="service-update" name="service-update">Update service</button>
                         <p id="service-message" class="message"></p>
                     </div>
+                </div>
+            </div>
+
+            <div id="statistics-panel" class="panel admin-section">
+                <h3 class="SectionTitle">Statistics</h3>
+                <p class="field-info">View click analytics for your services over a selected time period.</p>
+
+                <div class="panel-detail" style="display: inherit;">
+                    <label class="field-label" for="stats-from">From</label>
+                    <input id="stats-from" type="date" />
+
+                    <label class="field-label" for="stats-to">To</label>
+                    <input id="stats-to" type="date" />
+
+                    <button id="stats-refresh" type="button" style="margin-top: 10px;">Refresh</button>
+                    <p id="stats-message" class="message"></p>
+
+                    <div id="stats-output" class="editable-field" style="margin-top: 12px; white-space: pre-wrap;"></div>
                 </div>
             </div>
 

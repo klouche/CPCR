@@ -706,6 +706,159 @@ app.get('/api/logs', (req, res) => {
 });
 
 // ============================================================================
+// CLICK LOGGING ROUTE
+// ============================================================================
+// POST /api/log-click
+// Logs a click on a service asset (link/document/contact).
+// This endpoint must NEVER break the UX: it always responds 204.
+// Body: { serviceId, assetType, assetId }
+app.post('/api/log-click', async (req, res) => {
+  noStore(res);
+  try {
+    const { serviceId, assetType, assetId, assetLabel } = req.body || {};
+
+    // Silent fail (analytics must never block)
+    if (!serviceId || !assetType || !assetId) {
+      return res.sendStatus(204);
+    }
+
+    const type = String(assetType).trim().toLowerCase();
+    const allowed = new Set(['link', 'document', 'contact']);
+    if (!allowed.has(type)) {
+      return res.sendStatus(204);
+    }
+
+    // Fetch service org for denormalization
+    const service = await prisma.service.findUnique({
+      where: { id: String(serviceId) },
+      select: { organizationCode: true },
+    });
+    if (!service) return res.sendStatus(204);
+
+    const user = req.session?.user || null;
+
+    const safeAssetLabel =
+      assetLabel == null ? null : String(assetLabel).trim().slice(0, 300) || null;
+
+    await prisma.serviceClick.create({
+      data: {
+        serviceId: String(serviceId),
+        assetType: type,
+        assetId: String(assetId),
+        assetLabel: safeAssetLabel,
+        organizationCode: service.organizationCode,
+        userOrganizationCode: user?.organizationCode || null,
+        isAuthenticated: !!user,
+        referrer: req.get('referer') || null,
+        userAgent: req.get('user-agent')?.slice(0, 200) || null,
+        // createdAt handled by Prisma default(now())
+      },
+    });
+
+    return res.sendStatus(204);
+  } catch (e) {
+    // analytics must never error
+    return res.sendStatus(204);
+  }
+});
+
+// ============================================================================
+// CLICK ANALYTICS ROUTE (ADMIN)
+// ============================================================================
+// GET /api/service-clicks?from=YYYY-MM-DD&to=YYYY-MM-DD&serviceId=...&assetType=...
+// - Superadmins can optionally pass `organizationCode=XX` to filter.
+// - Regular org admins are always scoped to their own organization.
+// Returns aggregated counts by day and a top-assets breakdown.
+app.get('/api/service-clicks', requireAuth, async (req, res) => {
+  noStore(res);
+  try {
+    const { from, to, serviceId, assetType, organizationCode } = req.query || {};
+
+    // Date bounds (inclusive start, exclusive end)
+    const fromDate = from ? new Date(String(from)) : new Date(Date.now() - 1000 * 60 * 60 * 24 * 30);
+    const toDate = to ? new Date(String(to)) : new Date();
+
+    if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) {
+      return res.status(400).json({ error: 'Invalid from/to date. Use YYYY-MM-DD.' });
+    }
+
+    const where = {
+      createdAt: {
+        gte: fromDate,
+        lt: toDate,
+      },
+    };
+
+    // Org scoping
+    if (isSuperAdmin(req)) {
+      if (organizationCode) where.organizationCode = String(organizationCode).trim();
+    } else {
+      const org = getSessionOrgCode(req);
+      if (!org) return res.status(401).json({ error: 'Authentication required' });
+      where.organizationCode = org;
+    }
+
+    if (serviceId) where.serviceId = String(serviceId).trim();
+    if (assetType) where.assetType = String(assetType).trim().toLowerCase();
+
+    // Aggregate by day using SQL date_trunc for performance
+    const byDay = await prisma.$queryRawUnsafe(
+      `
+      SELECT date_trunc('day', "createdAt") AS day, COUNT(*)::int AS count
+      FROM "ServiceClick"
+      WHERE "createdAt" >= $1 AND "createdAt" < $2
+        ${where.organizationCode ? 'AND "organizationCode" = $3' : ''}
+        ${where.serviceId ? (where.organizationCode ? 'AND "serviceId" = $4' : 'AND "serviceId" = $3') : ''}
+        ${where.assetType ? (
+        (where.organizationCode && where.serviceId) ? 'AND "assetType" = $5'
+          : (where.organizationCode || where.serviceId) ? 'AND "assetType" = $4'
+            : 'AND "assetType" = $3'
+      ) : ''}
+      GROUP BY 1
+      ORDER BY 1 ASC;
+      `,
+      ...(function buildArgs() {
+        const args = [fromDate, toDate];
+        if (where.organizationCode) args.push(where.organizationCode);
+        if (where.serviceId) args.push(where.serviceId);
+        if (where.assetType) args.push(where.assetType);
+        return args;
+      })()
+    );
+
+    // Top assets (serviceId + assetType + assetId)
+    // Count by `id` (works across Prisma versions; equivalent to row count)
+    const topAssets = await prisma.serviceClick.groupBy({
+      by: ['serviceId', 'assetType', 'assetId', 'assetLabel'],
+      where,
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 200,
+    });
+
+    return res.json({
+      success: true,
+      window: {
+        from: fromDate.toISOString(),
+        to: toDate.toISOString(),
+      },
+      scopedOrganizationCode: where.organizationCode || null,
+      byDay: (byDay || []).map(r => ({ day: r.day, count: r.count })),
+      topAssets: (topAssets || []).map(r => ({
+        serviceId: r.serviceId,
+        assetType: r.assetType,
+        assetId: r.assetId,
+        assetLabel: r.assetLabel || null,
+        count: r._count.id,
+      })),
+    });
+  } catch (err) {
+    console.error('🔥 Failed to fetch click analytics:', err);
+    return res.status(500).json({ error: 'Could not fetch click analytics', detail: err.message });
+  }
+});
+
+// ============================================================================
 // SEARCH ROUTE
 // ============================================================================
 // POST /api/search
@@ -788,41 +941,41 @@ app.get('/api/services', async (req, res) => {
     }*/
 
     const services = await prisma.service.findMany({
-  where,
-  orderBy: { name: 'asc' },
-  select: {
-    id: true,
-    active: true,
-    name: true,
-    organizationCode: true,
-    regional: true,
-    hidden: true,
-    description: true,
-    complement: true,
-    aliases: true,
-    research: true,
-    phase: true,
-    category: true,
-    output: true,
-    createdAt: true,
-    updatedAt: true,
+      where,
+      orderBy: { name: 'asc' },
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        organizationCode: true,
+        regional: true,
+        hidden: true,
+        description: true,
+        complement: true,
+        aliases: true,
+        research: true,
+        phase: true,
+        category: true,
+        output: true,
+        createdAt: true,
+        updatedAt: true,
 
-    organization: true,
+        organization: true,
 
-    links: {
-      orderBy: { order: 'asc' },
-      select: { id: true, label: true, url: true, order: true },
-    },
-    documents: {
-      orderBy: { order: 'asc' },
-      select: { id: true, title: true, url: true, order: true },
-    },
-    contacts: {
-      orderBy: { order: 'asc' },
-      select: { id: true, type: true, label: true, value: true, order: true },
-    },
-  },
-});
+        links: {
+          orderBy: { order: 'asc' },
+          select: { id: true, label: true, url: true, order: true },
+        },
+        documents: {
+          orderBy: { order: 'asc' },
+          select: { id: true, title: true, url: true, order: true },
+        },
+        contacts: {
+          orderBy: { order: 'asc' },
+          select: { id: true, type: true, label: true, value: true, order: true },
+        },
+      },
+    });
 
     res.json({ services });
   } catch (err) {
@@ -1449,8 +1602,8 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
     const normArr = v =>
       Array.isArray(v)
         ? v
-            .filter(x => typeof x === 'string' && x.trim().length)
-            .map(x => x.trim())
+          .filter(x => typeof x === 'string' && x.trim().length)
+          .map(x => x.trim())
         : [];
 
     const normStr = v => (v == null ? null : String(v));

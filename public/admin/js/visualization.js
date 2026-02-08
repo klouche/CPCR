@@ -11,6 +11,7 @@ let currentUser
 let serviceDraft = null
 let organizationDraft = null
 let userDraft = null
+let lastStats = null; // cached response from /api/service-clicks for CSV export
 const phases = ["conception", "development", "execution", "completion"]
 const categories = ['ethics submission', 'regulatory and contracts', 'statistics and feasibility', 'PPI', 'study design', 'project management', 'quality, monitoring and audit']
 const outputs = ['consulting', 'datasets', 'IT infrastructure', 'IT tool', 'outsourced service', 'standards', 'templates', 'training']
@@ -38,37 +39,55 @@ document.addEventListener('DOMContentLoaded', () => {
         const orgPanel = document.getElementById('organization-panel');
         const usrPanel = document.getElementById('user-panel');
 
-        // Tabs: only superadmins can see and use them
+        // Tabs:
+        // - Superadmins: see all tabs
+        // - Regular admins: see only Service + Statistics
         if (adminTabs) {
-            adminTabs.style.display = (user && user.isSuperAdmin) ? 'flex' : 'none';
+            adminTabs.style.display = (user ? 'flex' : 'none');
+
+            const tabButtons = Array.from(adminTabs.querySelectorAll('.admin-tab'));
+            tabButtons.forEach(btn => {
+                const tab = btn.dataset.tab;
+                if (user && user.isSuperAdmin) {
+                    btn.style.display = 'inline-flex';
+                } else {
+                    btn.style.display = (tab === 'service-panel' || tab === 'statistics-panel') ? 'inline-flex' : 'none';
+                }
+            });
         }
 
-        // Panels: regular admins should only see service management
+        // Panels: regular admins should only see service management and statistics
         if (orgPanel) orgPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
         if (usrPanel) usrPanel.style.display = (user && user.isSuperAdmin) ? 'inherit' : 'none';
         if (servicePanel) servicePanel.style.display = 'inherit';
+        const statsPanel = document.getElementById('statistics-panel');
+        if (statsPanel) statsPanel.style.display = 'inherit';
 
         // Also enforce the active tab/panel CSS state
         const tabs = Array.from(document.querySelectorAll('.admin-tab'));
         const panels = Array.from(document.querySelectorAll('.admin-section'));
 
         if (user && user.isSuperAdmin) {
-            // Leave existing tab logic to decide which panel is active (hash-based).
+            // Superadmins: leave existing tab logic to decide which panel is active (hash-based).
             return;
         }
 
-        // Non-superadmins: force service panel active
+        // Regular admins: allow only service + statistics
         tabs.forEach(t => t.classList.remove('is-active'));
         panels.forEach(p => p.classList.remove('is-active'));
 
-        const servicePanelEl = document.getElementById('service-panel');
-        const serviceTabBtn = document.querySelector('.admin-tab[data-tab="service-panel"]');
-        if (serviceTabBtn) serviceTabBtn.classList.add('is-active');
-        if (servicePanelEl) servicePanelEl.classList.add('is-active');
+        const allowed = new Set(['service-panel', 'statistics-panel']);
+        const requested = (location.hash || '').replace('#', '');
+        const targetId = allowed.has(requested) ? requested : 'service-panel';
+
+        const tabBtn = document.querySelector(`.admin-tab[data-tab="${targetId}"]`);
+        const panelEl = document.getElementById(targetId);
+        if (tabBtn) tabBtn.classList.add('is-active');
+        if (panelEl) panelEl.classList.add('is-active');
 
         // Keep URL hash consistent
-        if (location.hash !== '#service-panel') {
-            history.replaceState(null, '', '#service-panel');
+        if (location.hash !== `#${targetId}`) {
+            history.replaceState(null, '', `#${targetId}`);
         }
     }
     function showForcePasswordChangeOverlay() {
@@ -578,6 +597,265 @@ async function loadUsers() {
             //console.log("Users", users)
             enterUsers()
         })
+}
+
+// --- STATISTICS (render tables + CSV export) ---
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function isoDay(d) {
+    try {
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return String(d ?? '');
+        return dt.toISOString().slice(0, 10);
+    } catch (_) {
+        return String(d ?? '');
+    }
+}
+
+function setDefaultStatsDatesIfEmpty() {
+    const fromEl = document.getElementById('stats-from');
+    const toEl = document.getElementById('stats-to');
+    if (!fromEl || !toEl) return;
+
+    // If already set, don't override
+    if (fromEl.value && toEl.value) return;
+
+    const yyyyMmDd = (d) => {
+        const dt = new Date(d);
+        const y = dt.getFullYear();
+        const m = String(dt.getMonth() + 1).padStart(2, '0');
+        const day = String(dt.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+
+    const today = new Date();
+    const from = yyyyMmDd(today);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const to = yyyyMmDd(tomorrow);
+
+    if (!fromEl.value) fromEl.value = from;
+    if (!toEl.value) toEl.value = to;
+}
+
+function ensureStatsButtons() {
+    const refreshBtn = document.getElementById('stats-refresh');
+    if (!refreshBtn) return;
+
+    // Create Export button if the HTML doesn't have one yet
+    let exportBtn = document.getElementById('stats-export');
+    if (!exportBtn) {
+        exportBtn = document.createElement('button');
+        exportBtn.id = 'stats-export';
+        exportBtn.type = 'button';
+        exportBtn.textContent = 'Export CSV (top assets)';
+        exportBtn.style.marginLeft = '8px';
+        refreshBtn.parentElement?.appendChild(exportBtn);
+    }
+
+    // Create Export (by day) button if desired
+    let exportDayBtn = document.getElementById('stats-export-byday');
+    if (!exportDayBtn) {
+        exportDayBtn = document.createElement('button');
+        exportDayBtn.id = 'stats-export-byday';
+        exportDayBtn.type = 'button';
+        exportDayBtn.textContent = 'Export CSV (clicks by day)';
+        exportDayBtn.style.marginLeft = '8px';
+        refreshBtn.parentElement?.appendChild(exportDayBtn);
+    }
+
+    // Wire once
+    if (!exportBtn.dataset.wired) {
+        exportBtn.dataset.wired = '1';
+        exportBtn.addEventListener('click', exportTopAssetsCsv);
+    }
+    if (!exportDayBtn.dataset.wired) {
+        exportDayBtn.dataset.wired = '1';
+        exportDayBtn.addEventListener('click', exportByDayCsv);
+    }
+}
+
+function downloadCsv(filename, rows) {
+    const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const csv = rows.map(r => r.map(escape).join(',')).join('\r\n');
+
+    // Add UTF-8 BOM so Excel opens UTF-8 correctly (fixes “‚Äî” / encoding issues)
+    const withBom = '\ufeff' + csv;
+
+    const blob = new Blob([withBom], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportTopAssetsCsv() {
+    const msg = document.getElementById('stats-message');
+    if (!lastStats || !lastStats.success) {
+        if (msg) msg.textContent = 'Run Refresh first.';
+        return;
+    }
+
+    const from = lastStats.window?.from || '';
+    const to = lastStats.window?.to || '';
+    const org = lastStats.scopedOrganizationCode || '';
+
+    const rows = [
+        ['from', 'to', 'organizationCode', 'serviceId', 'assetType', 'assetLabel', 'assetId', 'count']
+    ];
+
+    (lastStats.topAssets || []).forEach(a => {
+        rows.push([
+            from,
+            to,
+            org,
+            a.serviceId,
+            a.assetType,
+            a.assetLabel || '',
+            a.assetId,
+            a.count
+        ]);
+    });
+
+    downloadCsv(`service-clicks_top-assets_${new Date().toISOString().slice(0, 10)}.csv`, rows);
+}
+
+function exportByDayCsv() {
+    const msg = document.getElementById('stats-message');
+    if (!lastStats || !lastStats.success) {
+        if (msg) msg.textContent = 'Run Refresh first.';
+        return;
+    }
+
+    const from = lastStats.window?.from || '';
+    const to = lastStats.window?.to || '';
+    const org = lastStats.scopedOrganizationCode || '';
+
+    const rows = [
+        ['from', 'to', 'organizationCode', 'day', 'count']
+    ];
+
+    (lastStats.byDay || []).forEach(r => {
+        rows.push([
+            from,
+            to,
+            org,
+            isoDay(r.day),
+            r.count
+        ]);
+    });
+
+    downloadCsv(`service-clicks_by-day_${new Date().toISOString().slice(0, 10)}.csv`, rows);
+}
+
+async function refreshStats() {
+    ensureStatsButtons();
+    setDefaultStatsDatesIfEmpty();
+
+    const msg = document.getElementById('stats-message');
+    const out = document.getElementById('stats-output');
+    if (msg) msg.textContent = '';
+    if (out) out.innerHTML = '';
+
+    const fromEl = document.getElementById('stats-from');
+    const toEl = document.getElementById('stats-to');
+    const from = fromEl?.value || '';
+    const to = toEl?.value || '';
+
+    try {
+        const qs = new URLSearchParams();
+        if (from) qs.set('from', from);
+        if (to) qs.set('to', to);
+
+        const res = await fetch(`/api/service-clicks?${qs.toString()}`, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store'
+        });
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data || !data.success) {
+            if (msg) msg.textContent = (data && (data.error || data.detail)) ? (data.error || data.detail) : 'Could not load statistics.';
+            lastStats = null;
+            return;
+        }
+
+        // Cache for export
+        lastStats = data;
+
+        // Render summary + tables
+        const windowFrom = data.window?.from ? isoDay(data.window.from) : '';
+        const windowTo = data.window?.to ? isoDay(data.window.to) : '';
+        const scopedOrg = data.scopedOrganizationCode || '';
+        const totalClicks = (data.byDay || []).reduce((acc, r) => acc + (Number(r.count) || 0), 0);
+
+        const byDayRows = (data.byDay || []).map(r => ({
+            day: isoDay(r.day),
+            count: Number(r.count) || 0
+        }));
+
+        const topRows = (data.topAssets || []).map(r => ({
+            serviceId: r.serviceId,
+            assetType: r.assetType,
+            assetLabel: r.assetLabel || '',
+            assetId: r.assetId,
+            count: Number(r.count) || 0
+        }));
+
+        const renderTable = (headers, rows) => {
+            const thead = `<thead><tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`;
+            const tbody = `<tbody>${rows.map(row => {
+                return `<tr>${headers.map(h => `<td>${escapeHtml(row[h])}</td>`).join('')}</tr>`;
+            }).join('')}</tbody>`;
+            return `<table class="stats-table" style="width:100%; border-collapse:collapse; margin:10px 0;">${thead}${tbody}</table>`;
+        };
+
+        if (out) {
+            const summaryHtml = `
+                <div class="stats-summary" style="padding:10px; border:1px solid #ddd; border-radius:8px; margin:8px 0;">
+                    <div><strong>Total clicks:</strong> ${escapeHtml(totalClicks)}</div>
+                    <div><strong>Window:</strong> ${escapeHtml(windowFrom)} → ${escapeHtml(windowTo)}</div>
+                    <div><strong>Org scope:</strong> ${escapeHtml(scopedOrg || 'ALL')}</div>
+                </div>
+            `;
+
+            const byDayHtml = `
+                <h3 style="margin:14px 0 6px 0;">Clicks by day</h3>
+                ${byDayRows.length ? renderTable(['day', 'count'], byDayRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+            `;
+
+            const topHtml = `
+                <h3 style="margin:14px 0 6px 0;">Top assets</h3>
+                ${topRows.length ? renderTable(['serviceId', 'assetType', 'assetLabel', 'assetId', 'count'], topRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+            `;
+
+            out.innerHTML = summaryHtml + byDayHtml + topHtml;
+        }
+
+        // Enable export buttons now that we have data
+        const exportBtn = document.getElementById('stats-export');
+        const exportDayBtn = document.getElementById('stats-export-byday');
+        if (exportBtn) exportBtn.disabled = false;
+        if (exportDayBtn) exportDayBtn.disabled = false;
+
+    } catch (e) {
+        lastStats = null;
+        if (msg) msg.textContent = 'Server error while loading statistics.';
+    }
 }
 
 function getNewID() {
@@ -1315,7 +1593,18 @@ d3.select("#user-update").on("click", updateUser)
 d3.select("#user-revert").on("click", enterUsers)
 d3.select("#user-create").on("click", newUser)
 
+// Header logout
 d3.select("#header-logout").on("click", logout)
+
+// Wire statistics refresh button
+const statsRefreshBtn = document.getElementById('stats-refresh');
+if (statsRefreshBtn) statsRefreshBtn.addEventListener('click', refreshStats);
+ensureStatsButtons();
+setDefaultStatsDatesIfEmpty();
+const exportBtn = document.getElementById('stats-export');
+const exportDayBtn = document.getElementById('stats-export-byday');
+if (exportBtn) exportBtn.disabled = true;
+if (exportDayBtn) exportDayBtn.disabled = true;
 
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = Array.from(document.querySelectorAll('.admin-tab'));
@@ -1334,12 +1623,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tabs.forEach(t => t.addEventListener('click', () => {
-        // Non-superadmins are forced to the service panel only
+        const tab = t.dataset.tab;
+        // Regular admins can access only Service + Statistics
         if (window.currentUser && !window.currentUser.isSuperAdmin) {
-            activate('service-panel');
+            if (tab === 'service-panel' || tab === 'statistics-panel') {
+                activate(tab);
+            } else {
+                activate('service-panel');
+            }
             return;
         }
-        activate(t.dataset.tab);
+        activate(tab);
     }));
 
     const initial = (location.hash || '').slice(1) || tabs[0].dataset.tab;

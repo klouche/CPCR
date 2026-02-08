@@ -15,3 +15,6 @@ dumps
 *.ppk
 *.openssh
 *.dump
+*.inetloc
+*.sql
+*.log
