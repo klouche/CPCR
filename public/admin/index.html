@@ -107,21 +107,16 @@
                     <div class="read-only-field" id="service-output"></div>
 
                     <label class="field-label" for="service-contacts">Contacts</label>
-                    <pre id="service-contacts" class="editable-field" placeholder="Optional"
-                        contenteditable="true"></pre>
-                    <div class="field-info">Format: "a.muster@website.ch" or "Alex Muster, a.muster@website.ch". One
-                        email address per line</div>
+                    <div id="service-contacts" class="editable-field" aria-label="Contacts editor"></div>
+                    <div class="field-info">Add one or more contacts (email / phone / url). You can reorder items and remove them.</div>
 
                     <label class="field-label" for="service-urls">Links</label>
-                    <pre id="service-urls" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
-                    <div class="field-info">Format: "www.website.ch" or "My website, www.website.ch". One url per
-                        line
-                    </div>
+                    <div id="service-urls" class="editable-field" aria-label="Links editor"></div>
+                    <div class="field-info">Add one or more links (label + URL). You can reorder items and remove them.</div>
 
                     <label class="field-label" for="service-docs">Documents</label>
-                    <pre id="service-docs" class="editable-field" placeholder="Optional" contenteditable="true"></pre>
-                    <div class="field-info">Format: "www.website.ch/document.pdf" or "My document,
-                        www.infra.ch/document.pdf". One document url per line</div>
+                    <div id="service-docs" class="editable-field" aria-label="Documents editor"></div>
+                    <div class="field-info">Add one or more documents (title + URL). You can reorder items and remove them.</div>
                     <div class="endbuttons">
                         <button id="service-revert" name="service-revert">Cancel changes</button>
                         <button id="service-update" name="service-update">Update service</button>
