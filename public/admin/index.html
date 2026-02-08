@@ -14,7 +14,7 @@
 <body>
 
     <div id="header">
-        <img src="./images/logo_horiz.png" alt="Research Hub" id="header-logo">
+        <a href="/" class="link-logo"><img src="./images/logo_horiz.png" alt="CPCR Service Finder" id="header-logo"></a>
         <div id="header-user"></div>
         <button type="button" id="header-logout">Logout</button>
     </div>
@@ -131,16 +131,16 @@
                 <p class="field-info">View click analytics for your services over a selected time period.</p>
 
                 <div class="panel-detail" style="display: inherit;">
-                    <label class="field-label" for="stats-from">From</label>
+                    <label class="field-label timeperiod" for="stats-from">From</label>
                     <input id="stats-from" type="date" />
 
-                    <label class="field-label" for="stats-to">To</label>
+                    <label class="field-label timeperiod" for="stats-to">To</label>
                     <input id="stats-to" type="date" />
 
                     <button id="stats-refresh" type="button" style="margin-top: 10px;">Refresh</button>
                     <p id="stats-message" class="message"></p>
 
-                    <div id="stats-output" class="editable-field" style="margin-top: 12px; white-space: pre-wrap;"></div>
+                    <div id="stats-output" class="editable-field" style="margin-top: 12px;"></div>
                 </div>
             </div>
 

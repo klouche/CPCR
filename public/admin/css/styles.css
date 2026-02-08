@@ -433,8 +433,9 @@ select {
   height:40px;          
   width:auto;
   display:block;
-  
 }
+
+#header a.link-logo {margin-right:auto;}
 
 .MainTitle 
 {display: none;}
@@ -547,3 +548,29 @@ select {
 .stats-table td {
   word-break: break-word;
 }
+
+/* --- Statistics output container tweaks --- */
+#stats-output {
+  /* We render HTML inside; do NOT preserve whitespace/newlines */
+  white-space: normal !important;
+  padding: 14px;
+}
+
+#stats-output h3,
+#stats-output h4 {
+  margin: 18px 0 10px;
+}
+
+#stats-output p {
+  margin: 8px 0;
+}
+
+#stats-output .stats-summary {
+  margin: 10px 0;
+}
+
+.field-label.timeperiod {display: inline; margin-right: 10px; margin-left: 10px;}
+
+#stats-refresh {margin-left: 20px;}
+
+#stats-output h3 {margin-top:30px !important;}

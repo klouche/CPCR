@@ -121,7 +121,7 @@ async function loadServices() {
         .then((response) => response.json())
         .then((json) => {
             allServices = shuffle(json.services)
-            console.log("All services", allServices)
+            //console.log("All services", allServices)
         });
 }
 

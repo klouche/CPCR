@@ -714,11 +714,42 @@ function exportTopAssetsCsv() {
     const to = lastStats.window?.to || '';
     const org = lastStats.scopedOrganizationCode || '';
 
+    // Try to resolve the full URL/value for the clicked asset, when possible.
+    // This uses the currently loaded `services` array (which includes links/documents/contacts relations).
+    const resolveAssetUrl = (serviceId, assetType, assetId) => {
+        try {
+            const svc = (services || []).find(s => String(s.id) === String(serviceId));
+            if (!svc) return '';
+
+            const type = String(assetType || '').toLowerCase();
+            const id = String(assetId);
+
+            if (type === 'link') {
+                const a = (svc.links || []).find(x => String(x.id) === id);
+                return a?.url || '';
+            }
+            if (type === 'document') {
+                const a = (svc.documents || []).find(x => String(x.id) === id);
+                return a?.url || '';
+            }
+            if (type === 'contact') {
+                const a = (svc.contacts || []).find(x => String(x.id) === id);
+                // For contacts, the most relevant "full" value is the contact value (email/phone/url)
+                return a?.value || '';
+            }
+
+            return '';
+        } catch (_) {
+            return '';
+        }
+    };
+
     const rows = [
-        ['from', 'to', 'organizationCode', 'serviceId', 'assetType', 'assetLabel', 'assetId', 'count']
+        ['from', 'to', 'organizationCode', 'serviceId', 'assetType', 'assetLabel', 'assetId', 'assetUrl', 'count']
     ];
 
     (lastStats.topAssets || []).forEach(a => {
+        const assetUrl = resolveAssetUrl(a.serviceId, a.assetType, a.assetId);
         rows.push([
             from,
             to,
@@ -727,6 +758,7 @@ function exportTopAssetsCsv() {
             a.assetType,
             a.assetLabel || '',
             a.assetId,
+            assetUrl,
             a.count
         ]);
     });
@@ -812,7 +844,6 @@ async function refreshStats() {
             serviceId: r.serviceId,
             assetType: r.assetType,
             assetLabel: r.assetLabel || '',
-            assetId: r.assetId,
             count: Number(r.count) || 0
         }));
 
@@ -827,20 +858,20 @@ async function refreshStats() {
         if (out) {
             const summaryHtml = `
                 <div class="stats-summary" style="padding:10px; border:1px solid #ddd; border-radius:8px; margin:8px 0;">
+                    <div><strong>Organization:</strong> ${escapeHtml(scopedOrg || 'ALL')}</div>
+                    <div><strong>Time period:</strong> ${escapeHtml(windowFrom)} → ${escapeHtml(windowTo)}</div>
                     <div><strong>Total clicks:</strong> ${escapeHtml(totalClicks)}</div>
-                    <div><strong>Window:</strong> ${escapeHtml(windowFrom)} → ${escapeHtml(windowTo)}</div>
-                    <div><strong>Org scope:</strong> ${escapeHtml(scopedOrg || 'ALL')}</div>
                 </div>
             `;
 
             const byDayHtml = `
                 <h3 style="margin:14px 0 6px 0;">Clicks by day</h3>
-                ${byDayRows.length ? renderTable(['day', 'count'], byDayRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+                ${byDayRows.length ? renderTable(['Day', 'Count'], byDayRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
             `;
 
             const topHtml = `
                 <h3 style="margin:14px 0 6px 0;">Top assets</h3>
-                ${topRows.length ? renderTable(['serviceId', 'assetType', 'assetLabel', 'assetId', 'count'], topRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
+                ${topRows.length ? renderTable(['Service ID', 'Type', 'Label', 'Count'], topRows) : '<div style="opacity:0.8;">No data for this period.</div>'}
             `;
 
             out.innerHTML = summaryHtml + byDayHtml + topHtml;

@@ -92,10 +92,10 @@ app.set('trust proxy', true);
 
 app.use(cors({
   origin: (origin, cb) => {
-    console.log("[CORS] Origin:", origin);
+    //console.log("[CORS] Origin:", origin);
     if (!origin) return cb(null, true);
     if (allowedOrigins.has(origin)) return cb(null, true);
-    console.warn("[CORS] Blocked origin:", origin);
+    //console.warn("[CORS] Blocked origin:", origin);
     return cb(null, false);
   },
   credentials: true,
