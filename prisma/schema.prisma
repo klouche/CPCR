@@ -33,11 +33,67 @@ model Service {
   url          String[] @default([])
   docs         String[] @default([])
   contact      String[] @default([])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  embedding    ServiceEmbedding?
+  
+  links     ServiceLink[]
+  documents ServiceDocument[]
+  contacts  ServiceContact[]
 
-  @@index([organizationCode])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  embedding ServiceEmbedding?
+}
+
+model ServiceLink {
+  id        String   @id @default(cuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  label     String
+  url       String
+  order     Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, order])
+}
+
+model ServiceDocument {
+  id        String   @id @default(cuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  title     String
+  url       String
+  order     Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, order])
+}
+
+enum ContactType {
+  EMAIL
+  PHONE
+  URL
+  OTHER
+}
+
+model ServiceContact {
+  id        String      @id @default(cuid())
+  serviceId String
+  service   Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  type      ContactType @default(EMAIL)
+  value     String      // "info@..." or "+41..." or "https://..."
+  label     String?     // optional: "General contact"
+  order     Int         @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, order])
 }
 
 model Organization {

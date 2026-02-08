@@ -263,6 +263,193 @@ function arraysEqual(a, b) {
 
 
 // ============================================================================
+// SERVICE ASSETS (links / documents / contacts)
+// Supports BOTH:
+//   - new structured payloads: links[], documents[], contacts[]
+//   - legacy string arrays: url[], docs[], contact[]
+// ============================================================================
+
+function parseLabelUrlLegacy(entry) {
+  const raw = String(entry || "").trim();
+  if (!raw) return null;
+
+  // Bare URL
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const host = new URL(raw).hostname.replace(/^www\./, "");
+      return { label: host || "Website", url: raw };
+    } catch (_) {
+      return { label: "Website", url: raw };
+    }
+  }
+
+  // Prefer split on ", "
+  let idx = raw.indexOf(", ");
+
+  // Also support "Label,https://..." (no space)
+  if (idx === -1) {
+    const m2 = raw.match(/,https?:\/\//i);
+    if (m2) idx = m2.index;
+  }
+
+  if (idx !== -1) {
+    const left = raw.slice(0, idx).trim();
+    const right = raw.slice(idx + 1).replace(/^\s+/, "").trim();
+    if (/^https?:\/\//i.test(right)) return { label: left || "Website", url: right };
+  }
+
+  // Fallback: locate an http(s) substring
+  const m = raw.match(/https?:\/\/\S+/i);
+  if (m) {
+    const url = m[0].trim();
+    const label = raw.replace(url, "").replace(/^[,\s]+|[,\s]+$/g, "").trim();
+    return { label: label || "Website", url };
+  }
+
+  return null;
+}
+
+function normalizeLinksInput(body) {
+  // New: links: [{label,url,order?}]
+  if (Array.isArray(body?.links)) {
+    return body.links
+      .map((l, i) => ({
+        label: String(l?.label || "").trim(),
+        url: String(l?.url || "").trim(),
+        order: Number.isFinite(Number(l?.order)) ? Number(l.order) : i,
+      }))
+      .filter((l) => l.label && l.url);
+  }
+
+  // Legacy: url: ["Label, https://...", "https://..."]
+  if (Array.isArray(body?.url)) {
+    return body.url
+      .map(parseLabelUrlLegacy)
+      .filter(Boolean)
+      .map((x, i) => ({ label: x.label, url: x.url, order: i }));
+  }
+
+  return [];
+}
+
+function normalizeDocumentsInput(body) {
+  // New: documents: [{title,url,order?}]
+  if (Array.isArray(body?.documents)) {
+    return body.documents
+      .map((d, i) => ({
+        title: String(d?.title || "").trim(),
+        url: String(d?.url || "").trim(),
+        order: Number.isFinite(Number(d?.order)) ? Number(d.order) : i,
+      }))
+      .filter((d) => d.title && d.url);
+  }
+
+  // Legacy: docs: ["Title,https://..."]
+  if (Array.isArray(body?.docs)) {
+    return body.docs
+      .map(parseLabelUrlLegacy)
+      .filter(Boolean)
+      .map((x, i) => ({ title: x.label, url: x.url, order: i }));
+  }
+
+  return [];
+}
+
+function looksLikeEmail(s) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || "").trim());
+}
+function looksLikePhone(s) {
+  return /^[+()0-9][0-9\s\-()]{5,}$/.test(String(s || "").trim());
+}
+
+function normalizeContactsInput(body) {
+  // New: contacts: [{type,value,label?,order?}]
+  if (Array.isArray(body?.contacts)) {
+    return body.contacts
+      .map((c, i) => ({
+        type: String(c?.type || "OTHER").trim().toUpperCase(),
+        value: String(c?.value || "").trim(),
+        label: c?.label == null ? null : String(c.label).trim(),
+        order: Number.isFinite(Number(c?.order)) ? Number(c.order) : i,
+      }))
+      .filter((c) => c.value)
+      .map((c) => {
+        const t = ["EMAIL", "PHONE", "URL", "OTHER"].includes(c.type) ? c.type : "OTHER";
+        return { ...c, type: t };
+      });
+  }
+
+  // Legacy: contact: ["Label,email@...", "email@..."]
+  if (Array.isArray(body?.contact)) {
+    return body.contact
+      .map((entry, i) => {
+        const raw = String(entry || "").trim();
+        if (!raw) return null;
+
+        let label = null;
+        let value = raw;
+
+        // split on ", " then ","
+        let idx = raw.indexOf(", ");
+        let sepLen = 2;
+        if (idx === -1) {
+          idx = raw.indexOf(",");
+          sepLen = 1;
+        }
+        if (idx !== -1) {
+          const left = raw.slice(0, idx).trim();
+          const right = raw.slice(idx + sepLen).trim();
+          if (right) {
+            label = left || null;
+            value = right;
+          }
+        }
+
+        let type = "OTHER";
+        if (looksLikeEmail(value)) type = "EMAIL";
+        else if (/^https?:\/\//i.test(value)) type = "URL";
+        else if (looksLikePhone(value)) type = "PHONE";
+
+        return { type, value, label, order: i };
+      })
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+async function replaceServiceAssets(tx, serviceId, { links, documents, contacts }) {
+  await tx.serviceLink.deleteMany({ where: { serviceId } });
+  await tx.serviceDocument.deleteMany({ where: { serviceId } });
+  await tx.serviceContact.deleteMany({ where: { serviceId } });
+
+  if (links?.length) {
+    await tx.serviceLink.createMany({
+      data: links.map((l) => ({ serviceId, label: l.label, url: l.url, order: l.order })),
+    });
+  }
+
+  if (documents?.length) {
+    await tx.serviceDocument.createMany({
+      data: documents.map((d) => ({ serviceId, title: d.title, url: d.url, order: d.order })),
+    });
+  }
+
+  if (contacts?.length) {
+    await tx.serviceContact.createMany({
+      data: contacts.map((c) => ({
+        serviceId,
+        type: c.type,
+        value: c.value,
+        label: c.label,
+        order: c.order,
+      })),
+    });
+  }
+}
+
+
+// ============================================================================
 // AUTH ROUTES
 // ============================================================================
 
@@ -601,12 +788,41 @@ app.get('/api/services', async (req, res) => {
     }*/
 
     const services = await prisma.service.findMany({
-      where,
-      orderBy: { name: 'asc' },
-      include: {
-        organization: true,
-      },
-    });
+  where,
+  orderBy: { name: 'asc' },
+  select: {
+    id: true,
+    active: true,
+    name: true,
+    organizationCode: true,
+    regional: true,
+    hidden: true,
+    description: true,
+    complement: true,
+    aliases: true,
+    research: true,
+    phase: true,
+    category: true,
+    output: true,
+    createdAt: true,
+    updatedAt: true,
+
+    organization: true,
+
+    links: {
+      orderBy: { order: 'asc' },
+      select: { id: true, label: true, url: true, order: true },
+    },
+    documents: {
+      orderBy: { order: 'asc' },
+      select: { id: true, title: true, url: true, order: true },
+    },
+    contacts: {
+      orderBy: { order: 'asc' },
+      select: { id: true, type: true, label: true, value: true, order: true },
+    },
+  },
+});
 
     res.json({ services });
   } catch (err) {
@@ -1025,13 +1241,10 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       hidden,
       description,
       complement,
-      contact,
       research,
       phase,
       category,
       output,
-      url,
-      docs,
       organization,
       regional,
       active
@@ -1060,6 +1273,10 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       }
     }
 
+    const links = normalizeLinksInput(req.body);
+    const documents = normalizeDocumentsInput(req.body);
+    const contacts = normalizeContactsInput(req.body);
+
     // Detect acronyms/expansions present in the provided fields
     const aliases = buildAliasesForFields({ name, organization: existing.organizationCode, hidden, description });
 
@@ -1086,13 +1303,10 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       hidden: normStr(hidden),
       description: normStr(description),
       complement: normStr(complement),
-      contact: normArr(contact),
       research: normArr(research),
       phase: normArr(phase),
       category: normArr(category),
       output: normArr(output),
-      url: normArr(url),
-      docs: normArr(docs),
       aliases,
       active: typeof active === 'boolean' ? active : existing.active
     };
@@ -1105,9 +1319,10 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       !arraysEqual(existing.aliases || [], aliases || []);
 
     // Always update DB first (source of truth)
-    const updatedService = await prisma.service.update({
-      where: { id },
-      data: newData
+    const updatedService = await prisma.$transaction(async (tx) => {
+      const svc = await tx.service.update({ where: { id }, data: newData });
+      await replaceServiceAssets(tx, id, { links, documents, contacts });
+      return svc;
     });
 
     let embeddingUpdated = false;
@@ -1144,11 +1359,21 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
       { type: 'service-change' }
     );
 
+    const serviceWithAssets = await prisma.service.findUnique({
+      where: { id },
+      include: {
+        organization: true,
+        links: { orderBy: { order: 'asc' } },
+        documents: { orderBy: { order: 'asc' } },
+        contacts: { orderBy: { order: 'asc' } },
+      },
+    });
+
     noStore(res);
     res.json({
       success: true,
       message: `Service ${id} updated.`,
-      service: updatedService,
+      service: serviceWithAssets,
       embeddingUpdated
     });
   } catch (err) {
@@ -1162,61 +1387,70 @@ app.post('/api/update-service', requireAuth, async (req, res) => {
 // CREATE SERVICE ROUTE
 // ============================================================================
 // POST /api/create-service
-// Creates a new service in Postgres and indexes it in Pinecone with a fresh
-// embedding and metadata derived from the service fields.
+// Creates a service in Postgres, creates related assets (links/docs/contacts),
+// and writes/updates its embedding in service_embedding.
 app.post('/api/create-service', requireAuth, async (req, res) => {
   noStore(res);
   try {
     const {
       id,
       name,
-      organizationCode,
-      regional,
       hidden,
       description,
       complement,
-      contact,
       research,
       phase,
       category,
       output,
-      url,
-      docs,
+      organizationCode,  // optional (superadmin), enforced for regular org admins
+      regional,
       active
-    } = req.body;
+    } = req.body || {};
 
-    // Minimal required fields
-    if (!id || !name || !organizationCode) {
-      return res.status(400).json({
-        error: "Missing 'id', 'name', or 'organizationCode'."
-      });
+    if (!id || !name) {
+      return res.status(400).json({ error: "Missing 'id' or 'name'." });
     }
 
-    // Org scoping: non-superadmins can only create services in their own organization
-    if (!isSuperAdmin(req)) {
-      const userOrg = getSessionOrgCode(req);
-      if (!userOrg) {
+    // Determine org code:
+    // - superadmin can provide organizationCode (or default to their org)
+    // - regular admins are forced to their session org
+    let finalOrgCode = null;
+
+    if (isSuperAdmin(req)) {
+      finalOrgCode = String(organizationCode || getSessionOrgCode(req) || '').trim();
+      if (!finalOrgCode) {
+        return res.status(400).json({ error: "Missing 'organizationCode'." });
+      }
+    } else {
+      finalOrgCode = getSessionOrgCode(req);
+      if (!finalOrgCode) {
         return res.status(401).json({ error: 'Authentication required' });
       }
-      if (String(organizationCode || '') !== String(userOrg)) {
-        return res.status(403).json({ error: 'Forbidden: cannot create service outside your organization' });
-      }
     }
 
-    // Check if service already exists in DB
+    // Ensure org exists
+    const org = await prisma.organization.findUnique({ where: { code: finalOrgCode } });
+    if (!org) {
+      return res.status(400).json({ error: `Organization '${finalOrgCode}' not found.` });
+    }
+
+    // Check duplicate id
     const existing = await prisma.service.findUnique({ where: { id } });
     if (existing) {
-      return res.status(400).json({
-        error: `Service with ID '${id}' already exists in database.`,
-      });
+      return res.status(400).json({ error: `Service '${id}' already exists.` });
     }
 
-    // Normalization helpers (same spirit as in /update-service)
+    // Build assets from body (supports new + legacy)
+    const links = normalizeLinksInput(req.body);
+    const documents = normalizeDocumentsInput(req.body);
+    const contacts = normalizeContactsInput(req.body);
+
+    // Normalizers (match update-service style)
     const normArr = v =>
       Array.isArray(v)
         ? v
-          .filter(x => typeof x === 'string' && x.trim().length)
-          .map(x => x.trim())
+            .filter(x => typeof x === 'string' && x.trim().length)
+            .map(x => x.trim())
         : [];
 
     const normStr = v => (v == null ? null : String(v));
@@ -1227,84 +1461,78 @@ app.post('/api/create-service', requireAuth, async (req, res) => {
         ? regional.split(',').map(s => s.trim()).filter(Boolean)
         : []);
 
-    const contactArray = normArr(contact);
-    const researchArray = normArr(research);
-    const phaseArray = normArr(phase);
-    const categoryArray = normArr(category);
-    const outputArray = normArr(output);
-    const urlArray = normArr(url);
-    const docsArray = normArr(docs);
-
-    // Detect aliases from the provided text fields
+    // IMPORTANT: for create-service, we can generate aliases from the provided fields
+    // Use the org code string as the “organization” field for acronym detection.
     const aliases = buildAliasesForFields({
       name,
-      organization: organizationCode,
+      organization: finalOrgCode,
       hidden,
       description
     });
 
-    // Create in DB (source of truth)
-    const newService = await prisma.service.create({
-      data: {
-        id,
-        name,
-        organizationCode: isSuperAdmin(req) ? normStr(organizationCode) : getSessionOrgCode(req),
-        regional: regionalArray,
-        hidden: normStr(hidden),
-        description: normStr(description),
-        complement: normStr(complement),
-        contact: contactArray,
-        research: researchArray,
-        phase: phaseArray,
-        category: categoryArray,
-        output: outputArray,
-        url: urlArray,
-        docs: docsArray,
-        aliases,
-        active: typeof active === 'boolean' ? active : true
-      }
+    // Create Service + assets atomically
+    await prisma.$transaction(async (tx) => {
+      await tx.service.create({
+        data: {
+          id,
+          name,
+          organizationCode: finalOrgCode,
+          regional: regionalArray,
+          hidden: normStr(hidden),
+          description: normStr(description),
+          complement: normStr(complement),
+          research: normArr(research),
+          phase: normArr(phase),
+          category: normArr(category),
+          output: normArr(output),
+          aliases,
+          active: typeof active === 'boolean' ? active : true,
+        },
+      });
+
+      await replaceServiceAssets(tx, id, { links, documents, contacts });
     });
 
-    // Build text for embedding (same formatting as backfill)
-    const embeddingInput = buildEmbeddingText({
-      name,
-      hidden,
-      description,
-      aliases
-    });
-
-    const vecs = await embedPassages([embeddingInput]);
+    // Create embedding (must match server.js buildEmbeddingText)
+    const embeddingText = buildEmbeddingText({ name, hidden, description, aliases });
+    const vecs = await embedPassages([embeddingText]);
     const embedding = vecs?.[0];
+    if (!Array.isArray(embedding) || embedding.length === 0) {
+      return res.status(500).json({ error: 'Embedding failed (empty vector).' });
+    }
     await upsertServiceEmbedding(id, embedding);
 
-    console.log(`✨ Created new service '${id}' in DB and pgvector embedding`);
+    // Return full created object with relations
+    const serviceWithAssets = await prisma.service.findUnique({
+      where: { id },
+      include: {
+        organization: true,
+        links: { orderBy: { order: 'asc' } },
+        documents: { orderBy: { order: 'asc' } },
+        contacts: { orderBy: { order: 'asc' } },
+      },
+    });
 
-    // Log the service creation in the same log file as searches
+    // Optional logging (no vectors)
     logRequest(
       req,
       {
         action: 'create-service',
         id,
-        data: newService,
-        embeddingUpdated: true,
-        user: req.session?.user?.email || null
+        organizationCode: finalOrgCode,
       },
       { type: 'service-change' }
     );
 
-    res.json({
+    return res.json({
       success: true,
-      message: `Service ${id} saved.`,
-      service: newService,
-      embeddingUpdated: true
+      message: `Service ${id} created.`,
+      service: serviceWithAssets,
     });
 
   } catch (err) {
-    console.error("🔥 Failed to create service:", err);
-    res.status(500).json({
-      error: "Could not create service",
-      detail: err.message
-    });
+    console.error('🔥 Failed to create service:', err);
+    return res.status(500).json({ error: 'Could not create service', detail: err.message });
   }
 });
 
@@ -1340,7 +1568,7 @@ app.post('/api/delete-service', requireAuth, async (req, res) => {
     // Delete from DB (source of truth)
     await prisma.service.delete({ where: { id } });
 
-console.log(`🧹 Deleted service '${id}' from DB (embedding row should cascade)`);
+    console.log(`🧹 Deleted service '${id}' from DB (embedding row should cascade)`);
 
     // Log the service deletion in the same log file as searches
     logRequest(

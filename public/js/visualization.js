@@ -89,7 +89,7 @@ async function loadServices() {
         .then((response) => response.json())
         .then((json) => {
             allServices = shuffle(json.services)
-            //console.log("All services", allServices)
+            console.log("All services", allServices)
         });
 }
 
@@ -309,42 +309,104 @@ function update(results) {
 
     main.append("div").attr("class", "service-info").each(function (service) {
 
-        function appendInfoBlock(node, valueArray, name, newLine = true) {
-            if (Array.isArray(valueArray) && valueArray.filter(item => item).length > 0) {
-                const block = node.append("div").attr("class", "info-block").classed(name.toLowerCase().replaceAll(" ", "-"), true)
-                block.append("div").attr("class", "info-label").text(name)
-                const valueDiv = block.append("div").attr("class", "info-value")
-                if (newLine) {
-                    valueArray.forEach((value, i) => {
-                        let container = valueDiv
-                        if (value.length > 0) {
-                            value = value.split(",")
-                            let link = value[0]
-                            let text = value[0]
-                            //console.log(text)
-                            if (i > 0) container = valueDiv.append("div")
-                            if (value.length > 1) {
-                                link = value[1]
-                            } else {
-                                if (text.length > 40) text = text.substring(0, 39) + "…"
-                            }
-                            container.append("a").attr("class", "itemLink").attr("target", "_blank")
-                                .attr("href", link.includes("@") ? "mailto:" + link : link).text(text)
-                        }
-                    })
-                } else {
-                    valueDiv.text(valueArray.join(", "))
-                }
-            }
+        const node = d3.select(this)
+
+        function truncateLabel(text, max = 60) {
+            if (!text) return ""
+            const t = String(text)
+            return t.length > max ? t.slice(0, max - 1) + "…" : t
         }
 
-        const node = d3.select(this)
-        //console.log("node", node)
-        //console.log("service", service)
-        appendInfoBlock(node, service.docs, "Documents")
-        appendInfoBlock(node, service.url, "Link")
-        appendInfoBlock(node, service.output, "Type of service", false)
-        appendInfoBlock(node, service.contact, "Contact")
+        function appendListBlock(node, items, name, renderItem) {
+            if (!Array.isArray(items) || items.length === 0) return
+            const filtered = items.filter(x => x)
+            if (filtered.length === 0) return
+
+            const block = node.append("div").attr("class", "info-block").classed(name.toLowerCase().replaceAll(" ", "-"), true)
+            block.append("div").attr("class", "info-label").text(name)
+            const valueDiv = block.append("div").attr("class", "info-value")
+
+            filtered.forEach((item, i) => {
+                const row = (i === 0) ? valueDiv : valueDiv.append("div")
+                renderItem(row, item)
+            })
+        }
+
+        function appendTextBlock(node, valueArray, name) {
+            if (!Array.isArray(valueArray) || valueArray.length === 0) return
+            const filtered = valueArray.filter(x => typeof x === 'string' && x.trim().length)
+            if (filtered.length === 0) return
+
+            const block = node.append("div").attr("class", "info-block").classed(name.toLowerCase().replaceAll(" ", "-"), true)
+            block.append("div").attr("class", "info-label").text(name)
+            block.append("div").attr("class", "info-value").text(filtered.join(", "))
+        }
+
+        // NEW: documents: [{ title, url, order }]
+        appendListBlock(node, (service.documents || []), "Documents", (row, doc) => {
+            const title = truncateLabel(doc?.title || doc?.label || doc?.url || "Document")
+            const href = String(doc?.url || "").trim()
+            if (!href) {
+                row.text(title)
+                return
+            }
+            row.append("a")
+                .attr("class", "itemLink")
+                .attr("target", "_blank")
+                .attr("rel", "noopener")
+                .attr("href", href)
+                .text(title)
+        })
+
+        // NEW: links: [{ label, url, order }]
+        appendListBlock(node, (service.links || []), "Links", (row, link) => {
+            const label = truncateLabel(link?.label || link?.url || "Link")
+            const href = String(link?.url || "").trim()
+            if (!href) {
+                row.text(label)
+                return
+            }
+            row.append("a")
+                .attr("class", "itemLink")
+                .attr("target", "_blank")
+                .attr("rel", "noopener")
+                .attr("href", href)
+                .text(label)
+        })
+
+        // existing: output is still a string[]
+        appendTextBlock(node, service.output, "Type of service")
+
+        // NEW: contacts: [{ type, value, label, order }]
+        appendListBlock(node, (service.contacts || []), "Contact", (row, c) => {
+            const type = String(c?.type || "OTHER").toUpperCase()
+            const value = String(c?.value || "").trim()
+            const label = truncateLabel(c?.label || value)
+
+            if (!value) {
+                row.text(label)
+                return
+            }
+
+            let href = value
+            if (type === 'EMAIL') href = 'mailto:' + value
+            else if (type === 'PHONE') href = 'tel:' + value
+            else if (type === 'URL' && !/^https?:\/\//i.test(value)) href = 'https://' + value
+
+            row.append("a")
+                .attr("class", "itemLink")
+                .attr("target", (type === 'EMAIL' || type === 'PHONE') ? null : "_blank")
+                .attr("rel", (type === 'EMAIL' || type === 'PHONE') ? null : "noopener")
+                .attr("href", href)
+                .text(label)
+        })
+
+        // TEMP fallback for legacy fields (optional):
+        // If your backend still returns legacy arrays for some services, you can uncomment these.
+        // appendListBlock(node, (service.docs || []), "Documents", (row, s) => row.text(String(s)))
+        // appendListBlock(node, (service.url || []), "Links", (row, s) => row.text(String(s)))
+        // appendListBlock(node, (service.contact || []), "Contact", (row, s) => row.text(String(s)))
+
     })
 
 
