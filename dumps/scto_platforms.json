@@ -1,0 +1,83 @@
+{
+    "Auditing": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+            "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch",
+        "name": "Expert Auditing for Quality-Driven Clinical Research",
+        "description": "The SCTO Auditing Platform ensures that Swiss clinical trials and SCTO Clinical Research Centre services consistently meet the highest regulatory and operational standards. Through expert audits, sharing of best practices, and harmonisation of processes across CRCs, we support sponsors and sponsor-investigators in strengthening quality systems and maintaining GCP compliance."
+    },
+    "Education & Training": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+            "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch",
+        "name": "Empowering Excellence in Clinical Research Education",
+        "description": "Shaping the future of academic clinical research in Switzerland, the SCTO Education Platform makes high-quality training more visible, accessible, and harmonised."
+    },
+    "Research on Research": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/research-on-research/",
+            "title": "SCTO Research on Research Platform"
+        },
+        "contact": "ror@scto.ch",
+        "name": "Research on Research – Evidence-based Improvements to Clinical Research Infrastructure",
+        "description": "The Research on Research (RoR) initiative funds SCTO Network projects that strengthen Switzerland’s clinical research infrastructure and promote evidence-based improvements."
+    },
+    "Safety": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+            "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch",
+        "name": "Driving Safety, Supporting Investigators.",
+        "description": "The SCTO Safety Platform promotes effective safety management in clinical research by offering expert guidance, training, practical tools, and reporting templates. We empower clinical teams to navigate complex safety requirements, strengthen safety oversight, ensure compliance with Swiss regulations, and prioritise participant safety."
+    },
+    "Data Management": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/data-management/",
+            "title": "SCTO Data Management Platform"
+        },
+        "contact": "datamanagement@scto.ch",
+        "name": "Data Management – Trusted Clinical Data - Innovative, Secure, Standardised, and Compliant",
+        "description": "The SCTO Data Management Platform is building a strong foundation for clinical data management in Switzerland. Its goal is simple: To ensure that researchers can rely on high-quality data for trustworthy results.\n\nTo achieve this, the Platform is developing secure, standardised, and compliant solutions based on globally used standards. It is also creating innovative tools that keep pace with technological advances. By harmonising processes across institutions, the Platform makes it possible to compare, combine, and use data collected in different settings to deliver reliable results.\n\nFocusing on data excellence, the Platform lays the foundation for a future-ready research infrastructure that advances patient care in Switzerland."
+    },
+    "Monitoring": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+            "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch",
+        "name": "Monitoring Conduct for Clinical Trial Excellence",
+        "description": "The SCTO Monitoring Platform promotes harmonised coordination, data-driven tools, and regulatory alignment by developing monitoring templates, central data monitoring tools, and updated guidelines. These resources support efficient, risk-based oversight in line with Swiss law and ICH E6 and ISO 14155."
+    },
+    "Project Management": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+            "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch",
+        "name": "Supporting High Quality Clinical Research with Innovative Tools and Expert Guidance",
+        "description": "The SCTO Project Management Platform offers practical tools, and expert guidance for clinical study planning and conduct. One of the key projects is the Easy Guide to Clinical Studies (Easy-GCS), an online tool that makes the complex world of clinical research easier to understand, more efficient to navigate, and more accessible to everyone."
+    },
+    "Regulatory Affairs": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+            "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch",
+        "name": "Navigating Complexity. Ensuring Compliance.",
+        "description": "The SCTO Regulatory Affairs Platform supports compliance, efficiency, and transparency in academic clinical research in Switzerland. Through cross-institutional collaboration and expert working groups, it provides practical tools and clear guidance to help researchers navigate evolving regulatory requirements and apply them effectively in their projects. Acting as the natural point-of-contact with the regulatory authorities, the platform strengthens communication, fosters alignment and promotes harmonised approach across the SCTO Network."
+    },
+    "Statistic and Methodology": {
+        "link": {
+            "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+            "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch",
+        "name": "Transforming Data into Insightful Results",
+        "description": "A national network of expert statisticians supporting clinical research with advanced methods, tools, and training for better data analysis, visualisation, and reporting."
+    }
+}

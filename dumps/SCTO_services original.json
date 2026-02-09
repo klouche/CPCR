@@ -1,0 +1,4327 @@
+{
+  "meta": {
+    "totalMatches": null,
+    "parsedAt": "2026-02-04T11:40:48.896Z"
+  },
+  "items": [
+    {
+      "title": "Planning, Tracking, and Evaluating Patient and Public Involvement (PPI) Activities Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37977",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Document Management",
+        "type": "Quality Documents",
+        "path": [
+          "Document Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This template helps researchers plan and track public and patient involvement (PPI) activities in an initiative or a research project.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Planning tracking EN v1.0",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Planning-tracking_EN_v1.0.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (57.42 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Planning tracking EN v1.0 Download XLSX (57.42 KB)"
+      }
+    },
+    {
+      "title": "Written Agreement for Patient and Public Involvement (PPI) Activities Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37976",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Document Management",
+        "type": "Quality Documents",
+        "path": [
+          "Document Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This template helps define key aspects of the partnership, including objectives, confidentiality, and potential conflicts of interest.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Agreement EN v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Agreement_EN_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (64.48 KB)"
+          },
+          {
+            "title": "SCTO PPI Agreement DE v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Agreement_DE_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (58.72 KB)"
+          },
+          {
+            "title": "SCTO PPI Agreement IT v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Agreement_IT_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (56.57 KB)"
+          },
+          {
+            "title": "SCTO PPI Agreement FR v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Agreement_FR_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (56.81 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Agreement EN v1 Download DOCX (64.48 KB) SCTO PPI Agreement DE v1 Download DOCX (58.72 KB) SCTO PPI Agreement IT v1 Download DOCX (56.57 KB) SCTO PPI Agreement FR v1 Download DOCX (56.81 KB)"
+      }
+    },
+    {
+      "title": "Participation Request for Patient and Public Involvement (PPI) Activities Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37975",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Document Management",
+        "type": "Quality Documents",
+        "path": [
+          "Document Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This template supports researchers in identifying suitable PPI contributors for their projects. It offers guidance on describing PPI activities and outlines the desired skills, experience, and knowledge.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Participation EN V1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Participation_EN_V1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (63.57 KB)"
+          },
+          {
+            "title": "SCTO PPI Participation DE V1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Participation_DE_V1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (64.20 KB)"
+          },
+          {
+            "title": "SCTO PPI Participation IT V1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Participation_IT_V1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (60.88 KB)"
+          },
+          {
+            "title": "SCTO PPI Participation FR",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Participation_FR.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (60.36 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Participation EN V1 Download DOCX (63.57 KB) SCTO PPI Participation DE V1 Download DOCX (64.20 KB) SCTO PPI Participation IT V1 Download DOCX (60.88 KB) SCTO PPI Participation FR Download DOCX (60.36 KB)"
+      }
+    },
+    {
+      "title": "SCTO Remuneration Policy for Patient and Public Involvement (PPI) Activities",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37974",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Study Management",
+        "type": "Publications",
+        "path": [
+          "Study Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This policy helps research projects fairly remunerate PPI contributors and includes guidance on reimbursing expenses.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Remuneration Policy V1 2 EN",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Remuneration-Policy_V1_2_EN.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (272.88 KB)"
+          },
+          {
+            "title": "SCTO PPI Remuneration Policy V1 2 DE",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Remuneration-Policy_V1_2_DE.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (268.41 KB)"
+          },
+          {
+            "title": "SCTO PPI Remuneration Policy V1 2 IT",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Remuneration-Policy_V1_2_IT.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (271.14 KB)"
+          },
+          {
+            "title": "SCTO PPI Remuneration Policy V1 2 FR",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Remuneration-Policy_V1_2_FR.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (280.31 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Remuneration Policy V1 2 EN Download PDF (272.88 KB) SCTO PPI Remuneration Policy V1 2 DE Download PDF (268.41 KB) SCTO PPI Remuneration Policy V1 2 IT Download PDF (271.14 KB) SCTO PPI Remuneration Policy V1 2 FR Download PDF (280.31 KB)"
+      }
+    },
+    {
+      "title": "Guide for researchers to address patient and public involvement (PPI) in clinical trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37973",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Study Management",
+        "type": "Publications",
+        "path": [
+          "Study Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This guide helps researchers identify meaningful opportunities to involve patients and the public in their studies.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Guide Researchers",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Guide-Researchers.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (346.82 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Guide Researchers Download PDF (346.82 KB)"
+      }
+    },
+    {
+      "title": "FACT SHEET Patient and public involvement (PPI)",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37972",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Study Management",
+        "type": "Publications",
+        "path": [
+          "Study Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This Fact Sheet explains where and when PPI is possible and who should be involved.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI FactSheet EN V1 2",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_FactSheet_EN_V1_2.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (246.36 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI FactSheet EN V1 2 Download PDF (246.36 KB)"
+      }
+    },
+    {
+      "title": "Discover Patient and Public Involvement (PPI). Introductory video",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37971",
+      "taxonomy": {
+        "category": "Patient and public involvement (PPI)",
+        "section": "Study Management",
+        "type": "E-learning",
+        "path": [
+          "Study Management",
+          "E-learning"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/",
+          "title": "SCTO Platforms"
+        },
+        "contact": "info@scto.ch"
+      },
+      "excerpt": "This video introduces patient and public involvement in academic clinical research. It shows how trust and open communication help build strong partnerships.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PPI Video EN",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Video_EN.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (18.28 MB)"
+          },
+          {
+            "title": "SCTO PPI Video FR",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Video_FR.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (19.68 MB)"
+          },
+          {
+            "title": "SCTO PPI Video DE",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Video_DE.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (18.20 MB)"
+          },
+          {
+            "title": "SCTO PPI Video IT",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PPI_Video_IT.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (11.98 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PPI Video EN Download MP4 (18.28 MB) SCTO PPI Video FR Download MP4 (19.68 MB) SCTO PPI Video DE Download MP4 (18.20 MB) SCTO PPI Video IT Download MP4 (11.98 MB)"
+      }
+    },
+    {
+      "title": "practical tutorials to support the training of researchers and statisticians.",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37970",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "Practical tutorials on a variety of statistical topics to support the training of researchers and statisticians. They are targeted at different audiences depending on the content.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://swissclinicaltrialorganisation.github.io/stats_platform/tutorials.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "randotools package",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37969",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "randotools contains functions for creating randomisation lists, and other related tasks, in R.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://cran.r-project.org/web/packages/randotools/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Statistical Analysis Plan (SAP) for Observational Studies",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37968",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "A standardized template for documenting the statistical analysis of observational studies.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO STAT TEM 01 SAP v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_STAT_TEM-01_SAP_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.26 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO STAT TEM 01 SAP v1 Download DOCX (1.26 MB)"
+      }
+    },
+    {
+      "title": "Statistics and Methodology - tools and support website",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37967",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "Website developed by the Stat Platform to support agile updates, new code, and other developments. It provides access to tools and expert advice from statisticians of the SCTO Statistics & Methodology Platform.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://swissclinicaltrialorganisation.github.io/stats_platform/baselinetables.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Statistics and Methodology - Github",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37966",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "SCTO GitHub, an online platform where all codes developed by the STAT Platform are stored This platform is for storing, sharing and collaborating on code.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://github.com/SwissClinicalTrialOrganisation",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "summarySCI package",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37965",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "An R Package that produces Publication-Ready Summary Tables with descriptive statistics for continuous, categorical and dichotomous variables.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://cran.r-project.org/web/packages/summarySCI/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "survSAKK: Publication-Ready Kaplan-Meier Plot (in R)",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37964",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "The survSAKK R package provides the surv.plot function, facilitating Kaplan-Meier survival analysis. Designed with user-friendliness and efficiency in mind. Offering a robust tool for analysing survival data.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://sakk-statistics.github.io/survSAKK/",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "secuTrialR: a package to import secuTrial datasets to R",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37963",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "This R package provides functions for importing and handling secuTrial CDMS data in R, streamlining repetitive tasks to focus more on the unique aspects of each dataset.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://cran.r-project.org/web/packages/secuTrialR/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "redcaptools: A package for working with REDCap",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37962",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Clinical Data Management System",
+        "type": "R package & statistical code",
+        "path": [
+          "Clinical Data Management System",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "redcaptools is an R package that automatically exports a REDCap database into single forms for easier use. It labels variables, and prepares dates and factors. Designed for use with the REDCap API, it enables easy scripted exports.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://ctu-bern.github.io/redcaptools/",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "sts_graph_landmark: Landmark analysis graphs for avoiding survival bias",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37961",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Clinical Data Management System",
+        "type": "R package & statistical code",
+        "path": [
+          "Clinical Data Management System",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "Survival (immortal time) bias arises from misanalyzing time-dependent events, creating artificial periods of immunity. Landmark analysis addresses this by resetting analysis time at specified points and comparing only survivors, ensuring fair comparison. The Stata package sts_graph_landmark implements this approach.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://github.com/CTU-Bern/sts_graph_landmark",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "selcorr: Post-Selection Inference for Generalized Linear Models",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37960",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "Applying standard statistical methods after variable selection is common in medical research but can cause severe bias. The R package selcorr enables correct post-selection inference",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://cran.r-project.org/web/packages/selcorr/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "powerGrid: Power Analysis Across a Grid of Assumptions",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37959",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "R package & statistical code",
+        "path": [
+          "Human Research Act - HRA",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "An R package for evaluating user defined functions across parameter grids, then visualising and comparing the output. It assists in estimating trial power, sample size, and other design considerations.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://cran.r-project.org/web/packages/powergrid/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "presize: An R-package for precision-based sample size calculation in clinical research",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37958",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "Publications",
+        "path": [
+          "Human Research Act - HRA",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "Scientific Publication on \"presize \", an R Package providing a range of functions for performing precision-based sample size calculations",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO STAT presize R package",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_STAT_presize_R-package.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (139.73 KB)"
+          }
+        ],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://shiny.ctu.unibe.ch/presize/",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more Downloadable Documents: SCTO STAT presize R package Download PDF (139.73 KB)"
+      }
+    },
+    {
+      "title": "White Paper: SCTO statisticians in Independent Data Monitoring Committees of academic studies",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37957",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Human Research Act - HRA",
+        "type": "Publications",
+        "path": [
+          "Human Research Act - HRA",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "This position paper describes the role of an SCTO-affiliated statistician serving as an independent statistician on an Independent Data Monitoring Committee (IDMC) for a study involving an SCTO network partner.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO STAT white paper",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_STAT_white-paper.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (407.70 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO STAT white paper Download PDF (407.70 KB)"
+      }
+    },
+    {
+      "title": "Sharing of Data from Clinical Research Projects: Guidance from the SCTO’s Clinical Trial Unit Network",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37956",
+      "taxonomy": {
+        "category": "Statistic and Methodology",
+        "section": "Data sharing",
+        "type": "Publications",
+        "path": [
+          "Data sharing",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/statistics-and-methodology/",
+          "title": "SCTO Statistics & Methodology Platform"
+        },
+        "contact": "stats@scto.ch"
+      },
+      "excerpt": "The guidance document provides practical recommendations for all relevant aspects of data sharing in accordance with legislation in Switzerland",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO STAT data sharing",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_STAT_data-sharing.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (839.42 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO STAT data sharing Download PDF (839.42 KB)"
+      }
+    },
+    {
+      "title": "Guidelines on safety reporting for Cat A trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37955",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Guideline",
+        "path": [
+          "Document Management",
+          "Guideline"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This guidance document provides practical recommendations for fulfilling the regulatory requirements and safety reporting obligations applicable to Category A clinical trials on Investigational Medicinal Products (IMPs) in Switzerland.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF CatA Safety Reporting",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_CatA_Safety_Reporting.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (307.80 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF CatA Safety Reporting Download PDF (307.80 KB)"
+      }
+    },
+    {
+      "title": "SE Form for research projects not involving clinical trials (HRO)",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37954",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Form",
+        "path": [
+          "Document Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This document can be used for Serious Event (SE) notifications in Human Research Ordinance (HRO) research projects.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF SE Form",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_SE-Form.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.25 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF SE Form Download DOCX (1.25 MB)"
+      }
+    },
+    {
+      "title": "SAE or Device Deficiency Report Form for IVDs",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37953",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Form",
+        "path": [
+          "Document Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This document can be used for Serious Adverse Event (SAE) or Device Deficiency (DD) reporting in Clinical Trials with an In Vitro Diagnostic Medical Device (IVD).",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF SAE IVDs",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_SAE-IVDs.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.26 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF SAE IVDs Download DOCX (1.26 MB)"
+      }
+    },
+    {
+      "title": "SAE or Device Deficiency Report Form for IMDs",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37952",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Form",
+        "path": [
+          "Document Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This document can be used for Serious Adverse Event (SAE) or Device Deficiency (DD) reporting in Clinical Trials with an Investigational Medical Device (IMD).",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF SAE IMDs",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_SAE-IMDs.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.26 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF SAE IMDs Download DOCX (1.26 MB)"
+      }
+    },
+    {
+      "title": "SAE Report Form for Other Clinical Trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37951",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Form",
+        "path": [
+          "Document Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This document can be used for Serious Adverse Event (SAE) notifications in Other Clinical Trials.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF SAE Other",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_SAE-Other.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.26 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF SAE Other Download DOCX (1.26 MB)"
+      }
+    },
+    {
+      "title": "SAE Report Form for IMPs",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37950",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Document Management",
+        "type": "Form",
+        "path": [
+          "Document Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This document can be used for Serious Adverse Event (SAE) notifications in Clinical Trials with an Investigational Medicinal Product (IMP).",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO SAF SAE Report IMPs",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_SAF_SAE-Report-IMPs.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.27 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO SAF SAE Report IMPs Download DOCX (1.27 MB)"
+      }
+    },
+    {
+      "title": "Safety Expert Finder for Safety Support",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37949",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Human Research Act - HRA",
+        "type": "Online tools",
+        "path": [
+          "Human Research Act - HRA",
+          "Online tools"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "The finder connects you directly to skilled safety experts throughout Switzerland and provides an overview of all aspects that are relevant for safety management in a clinical study.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "Safety Expert Finder",
+            "url": null,
+            "fileType": null,
+            "sizeLabel": "Download FILE ()"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: Safety Expert Finder Download FILE ()"
+      }
+    },
+    {
+      "title": "Oline training 2. Safety Management in Clinical Research - Medical Devices (2025)",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37948",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This online training will provide you with an overview of definitions, requirements, and procedures related to safety management in clinical research.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://www.sctoplatforms.ch/en/tools/online-safety-training-57.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Online training 1. Safety Management in Clinical Research - Medicinal Products, Other Clinical Trials, Human Research Projects (2025)",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37947",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "This online training will provide you with an overview of definitions, requirements, and procedures related to safety management in clinical research.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://www.sctoplatforms.ch/en/tools/online-safety-training-57.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Revision of the Human Research Act (HRA) ordinances – Impact on projects approved before 1 November 2024",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37946",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "The revised HRA ordinances came into force on 1 November 2024, with the new transparency rules taking effect on 1 March 2025. This document, prepared by the SCTO Regulatory Affairs Platform, outlines the impact of the revised ordinances on projects approved prior to 1 November 2024.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Revision HRA",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_Revision-HRA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (334.94 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Revision HRA Download PDF (334.94 KB)"
+      }
+    },
+    {
+      "title": "Online seminar: HRA ordinances - what has changed?",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37945",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Presentation by swissmedic and Swissethic on the overview of the most significant changes in the new HRA ordinances in 2024 with a particular focus on the Clinical Trials Ordinance (ClinO) and Human Research Ordinance (HRO).",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA SeminarSE sm HRA presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_SeminarSE_sm_HRA-presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (664.34 KB)"
+          },
+          {
+            "title": "SCTO RA Seminar SCTO HRApresentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_Seminar-SCTO_HRApresentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (963.89 KB)"
+          },
+          {
+            "title": "SCTO RA Seminar SCTO HRA video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_Seminar-SCTO_HRA-video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (389.05 MB)"
+          },
+          {
+            "title": "SCTO RA Seminar SCTO HRA Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_Seminar-SCTO_HRA-Q_and_A.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (168.45 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA SeminarSE sm HRA presentation Download PDF (664.34 KB) SCTO RA Seminar SCTO HRApresentation Download PDF (963.89 KB) SCTO RA Seminar SCTO HRA video Download MP4 (389.05 MB) SCTO RA Seminar SCTO HRA Q & A Download PDF (168.45 KB)"
+      }
+    },
+    {
+      "title": "The new Federal Act on Data Protection (nFADP): Guidance for clinical trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37944",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Data protection",
+        "type": "Publications",
+        "path": [
+          "Data protection",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Short guide explaining whether the new Federal law on data protection (FADP) is relevant for your clinical research project and what the most important changes are as compared to the old FDAP.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA nFADP",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA_nFADP.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (273.01 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA nFADP Download PDF (273.01 KB)"
+      }
+    },
+    {
+      "title": "RA Watch 10 – ICH GCP E6(R3): How it impacts clinical research in Switzerland",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37943",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Document Management",
+        "type": "Article",
+        "path": [
+          "Document Management",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Impacts of the new ICH GCP E6(R3) on clinical research in Switzerland",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 10 ICH GCP E6 R3",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-10-ICH-GCP-E6-R3.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.14 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 10 ICH GCP E6 R3 Download PDF (2.14 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 9 – Innovation in clinical research: Decentralised and complex trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37942",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Study Management",
+        "type": "Article",
+        "path": [
+          "Study Management",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "DECENTRALISED AND COMPLEX CLINICAL TRIALS: SHAPING THE FUTURE OF CLINICAL RESEARCH. Opportunities and challenges",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 9 Innovation in clinical research Decentralised and complex trials",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-9-Innovation-in-clinical-research-Decentralised-and-complex-trials.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.46 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 9 Innovation in clinical research Decentralised and complex trials Download PDF (2.46 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 8 – Experiences with 2021 changes to MD regulatory framework",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37941",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "NAVIGATING THE 2021 CHANGES TO THE MEDICAL DEVICE REGULATORY FRAMEWORK",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 8 Experiences with 2021 changes to MD regulatory framework",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-8-Experiences-with-2021-changes-to-MD-regulatory-framework.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.61 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 8 Experiences with 2021 changes to MD regulatory framework Download PDF (2.61 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 7 – Data privacy and data sharing in clinical research",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37940",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Data protection",
+        "type": "Article",
+        "path": [
+          "Data protection",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "DATA PRIVACY AND DATA SHARING WITHIN THE REGULATORY FRAMEWORK GOVERNING HUMAN, HEALTH-RELATED RESEARCH IN SWITZERLAND",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 7 Data privacy and data sharing in clinical research",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-7-Data-privacy-and-data-sharing-in-clinical-research.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (3.44 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 7 Data privacy and data sharing in clinical research Download PDF (3.44 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 6 – PPI",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37939",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Overview of active Swiss stakeholders on PPI and how PPI is promoted in clinical research.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 6 PPI",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-6-PPI.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (7.60 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 6 PPI Download PDF (7.60 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 5 – COVID-19",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37938",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Reviews on how SCTO Network, SNSF, Swissmedic, and swissethics, responded to the COVID-19 crisis, supported studies, protected patient rights, and what lasting lessons and innovations may shape the post-pandemic future.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 5 COVID 19",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-5-COVID-19.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (3.88 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 5 COVID 19 Download PDF (3.88 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 4 – Medical Registries",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37937",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "medical registries (MRs) as a research tool what are the opportunities and the challenges",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 4 Medical Registries",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-4-Medical-Registries.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (892.61 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 4 Medical Registries Download PDF (892.61 KB)"
+      }
+    },
+    {
+      "title": "RA Watch 3 – General Consent",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37936",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Consent",
+        "type": "Article",
+        "path": [
+          "Consent",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Deep dive in the general consent implementation in Switzerland and the challenges around it",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 3 General Consent",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-3-General-Consent.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (1.04 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 3 General Consent Download PDF (1.04 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 2 – Medical Devices",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37935",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Issue on Regulatory changes coming from the EU and the ongoing revisions of Swiss laws regarding medical devices.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 2 Medical Devices",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-2-Medical-Devices.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (1.17 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 2 Medical Devices Download PDF (1.17 MB)"
+      }
+    },
+    {
+      "title": "RA Watch 1 - EU GDPR",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37934",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Data protection",
+        "type": "Article",
+        "path": [
+          "Data protection",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Issue on data protection in human research",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO RA Watch 1 EU GDPR",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_RA-Watch-1-EU-GDPR.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (597.50 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO RA Watch 1 EU GDPR Download PDF (597.50 KB)"
+      }
+    },
+    {
+      "title": "Easy-GCS user instructions",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37933",
+      "taxonomy": {
+        "category": "Project Management",
+        "section": "Human Research Act - HRA",
+        "type": "Online tools",
+        "path": [
+          "Human Research Act - HRA",
+          "Online tools"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+          "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "User instructions for the easy-GCS",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://www.easy-gcs.ch/user-instructions.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "easy-GCS_grid",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37932",
+      "taxonomy": {
+        "category": "Project Management",
+        "section": "Human Research Act - HRA",
+        "type": "Online tools",
+        "path": [
+          "Human Research Act - HRA",
+          "Online tools"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+          "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "The interactive Easy GCS provides relevant information and practical guidance on how to plan and conduct a clinical study in compliance with regulations.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://www.easy-gcs.ch/grid/yecs.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "IFAP Newsletter Article (pg6): Easy Guide to Clinical Studies – A Practical Tool for Young Clinical Research Professionals",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37931",
+      "taxonomy": {
+        "category": "Project Management",
+        "section": "Human Research Act - HRA",
+        "type": "Article",
+        "path": [
+          "Human Research Act - HRA",
+          "Article"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+          "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "Article in the IFAPP newsletter about the easy-GCS",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO PM IFAPP newsletter",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_PM_IFAPP-newsletter.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (6.53 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO PM IFAPP newsletter Download PDF (6.53 MB)"
+      }
+    },
+    {
+      "title": "Easy Guide to Clinical Studies - Easy-GCS study guide",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37930",
+      "taxonomy": {
+        "category": "Project Management",
+        "section": "Human Research Act - HRA",
+        "type": "Online tools",
+        "path": [
+          "Human Research Act - HRA",
+          "Online tools"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+          "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "The interactive Easy GCS provides relevant information and practical guidance on how to plan and conduct a clinical study in compliance with regulations.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://www.easy-gcs.ch/entrypage.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "SIV Attendance Training Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37929",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Documents SIV agendas and attendees along with their training status. Verifies site readiness and staff preparedness before trial start.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 10b v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-10b_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (91.25 KB)"
+          },
+          {
+            "title": "SCTO MON tem 10b IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-10b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.68 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 10b v1 Download DOCX (91.25 KB) SCTO MON tem 10b IFU Download PDF (52.68 KB)"
+      }
+    },
+    {
+      "title": "SIV Agenda. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37928",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Documents SIV agendas and attendees along with their training status. Verifies site readiness and staff preparedness before trial start.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 10a v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-10a_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.27 MB)"
+          },
+          {
+            "title": "SCTO MON tem 10a IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-10a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (46.34 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 10a v1 Download DOCX (1.27 MB) SCTO MON tem 10a IFU Download PDF (46.34 KB)"
+      }
+    },
+    {
+      "title": "Participant Identification Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37927",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks participant screening outcomes, enrolment status, and identifiers. Supports recruitment tracking and subject confidentiality.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 9b",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9b.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (48.90 KB)"
+          },
+          {
+            "title": "SCTO MON tem 9b IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.60 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 9b Download XLSX (48.90 KB) SCTO MON tem 9b IFU Download PDF (52.60 KB)"
+      }
+    },
+    {
+      "title": "Screening & Enrolment Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37926",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks participant screening outcomes, enrolment status, and identifiers. Supports recruitment tracking and subject confidentiality.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 9a",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9a.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (49.63 KB)"
+          },
+          {
+            "title": "SCTO MON tem 9a IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.97 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 9a Download XLSX (49.63 KB) SCTO MON tem 9a IFU Download PDF (52.97 KB)"
+      }
+    },
+    {
+      "title": "Screening & Enrolment & Identification Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37925",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks participant screening outcomes, enrolment status, and identifiers. Supports recruitment tracking and subject confidentiality.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 9",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (51.31 KB)"
+          },
+          {
+            "title": "SCTO MON tem 9 IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-9_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (53.34 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 9 Download XLSX (51.31 KB) SCTO MON tem 9 IFU Download PDF (53.34 KB)"
+      }
+    },
+    {
+      "title": "Participant AE Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37924",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Logs all reported adverse events experienced by participants. Aids in safety monitoring and regulatory reporting.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 8",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-8.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (50.03 KB)"
+          },
+          {
+            "title": "SCTO MON tem 8 IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-8_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (53.35 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 8 Download XLSX (50.03 KB) SCTO MON tem 8 IFU Download PDF (53.35 KB)"
+      }
+    },
+    {
+      "title": "Participant IMP-IMD Accountability Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37923",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks receipt, dispensing, and return of Investigational Medicinal Product/Device. Ensures accurate accountability at both site and participant levels.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 7b",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-7b.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.29 MB)"
+          },
+          {
+            "title": "SCTO MON tem 7b IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-7b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (54.38 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 7b Download DOCX (1.29 MB) SCTO MON tem 7b IFU Download PDF (54.38 KB)"
+      }
+    },
+    {
+      "title": "Site IMP-IMD Accountability Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37922",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks receipt, dispensing, and return of Investigational Medicinal Product/Device. Ensures accurate accountability at both site and participant levels.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 7a",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-7a.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.29 MB)"
+          },
+          {
+            "title": "SCTO MON tem 7a IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-7a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (53.86 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 7a Download DOCX (1.29 MB) SCTO MON tem 7a IFU Download PDF (53.86 KB)"
+      }
+    },
+    {
+      "title": "Note to File- Deviation Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37921",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Documents protocol deviations and corrective actions. Provides rationale and context for trial irregularities for audit trails.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON TEM 6b",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-6b.xlsx",
+            "fileType": "xlsx",
+            "sizeLabel": "Download XLSX (49.76 KB)"
+          },
+          {
+            "title": "SCTO MON tem 6b IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-6b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (51.93 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON TEM 6b Download XLSX (49.76 KB) SCTO MON tem 6b IFU Download PDF (51.93 KB)"
+      }
+    },
+    {
+      "title": "Note to File-DeviationForm. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37920",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Documents protocol deviations and corrective actions. Provides rationale and context for trial irregularities for audit trails.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 6a",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-6a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.60 KB)"
+          },
+          {
+            "title": "SCTO MON tem 6a IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-6a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.60 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 6a Download PDF (52.60 KB) SCTO MON tem 6a IFU Download PDF (52.60 KB)"
+      }
+    },
+    {
+      "title": "Sponsor Team Training Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37919",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Records training activities and qualifications of trial personnel. Ensures all staff are trained in protocol and regulatory requirements.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 5b",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-5b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.93 KB)"
+          },
+          {
+            "title": "SCTO MON tem 5b IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-5b_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.93 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 5b Download PDF (52.93 KB) SCTO MON tem 5b IFU Download PDF (52.93 KB)"
+      }
+    },
+    {
+      "title": "Site Training Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37918",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Records training activities and qualifications of trial personnel. Ensures all staff are trained in protocol and regulatory requirements.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 5a",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-5a.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          },
+          {
+            "title": "SCTO MON tem 5a IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-5a_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (52.93 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 5a Download DOCX (1.28 MB) SCTO MON tem 5a IFU Download PDF (52.93 KB)"
+      }
+    },
+    {
+      "title": "Monitoring Site Visit Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37917",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Log details of monitoring visits at the study site(s). Supports oversight and documentation of site interactions.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 3 v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-3_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          },
+          {
+            "title": "SCTO MON tem 3 IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-3_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (46.35 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 3 v1 Download DOCX (1.28 MB) SCTO MON tem 3 IFU Download PDF (46.35 KB)"
+      }
+    },
+    {
+      "title": "Sites Log Contact List. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37916",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Templates facilitate organized tracking of essential trial documents and all site-related communications. Support compliance, transparency, and effective site management throughout the study.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 4 v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-4_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.27 MB)"
+          },
+          {
+            "title": "SCTO MON tem 4 IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-4_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (50.56 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 4 v1 Download DOCX (1.27 MB) SCTO MON tem 4 IFU Download PDF (50.56 KB)"
+      }
+    },
+    {
+      "title": "Document Tracking List. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37915",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Document Management",
+        "type": "Quality Documents",
+        "path": [
+          "Document Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Templates facilitate organized tracking of essential trial documents and all site-related communications. Support compliance, transparency, and effective site management throughout the study.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 2 v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-2_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          },
+          {
+            "title": "SCTO MON tem 2 IFU",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-2_IFU.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (48.29 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 2 v1 Download DOCX (1.28 MB) SCTO MON tem 2 IFU Download PDF (48.29 KB)"
+      }
+    },
+    {
+      "title": "Sponsor Delegation Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37914",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks delegation of trial-related duties from the Investigator/Sponsor to authorized staff. Ensures accountability and compliance with GCP.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON tem 1b v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-1b_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          },
+          {
+            "title": "SCTO MON tem 1b IFU v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_tem-1b_IFU_v1.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (49.77 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON tem 1b v1 Download DOCX (1.28 MB) SCTO MON tem 1b IFU v1 Download PDF (49.77 KB)"
+      }
+    },
+    {
+      "title": "Investigator Delegation Log. Logs/Templates and instructions for use",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37913",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "Tracks delegation of trial-related duties from the Investigator/Sponsor to authorized staff. Ensures accountability and compliance with GCP.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON TEM 1a v2",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_TEM-1a_v2.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.30 MB)"
+          },
+          {
+            "title": "SCTO MON TEM 1a IFU v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_TEM-1a_IFU_v1.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (58.38 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON TEM 1a v2 Download DOCX (1.30 MB) SCTO MON TEM 1a IFU v1 Download PDF (58.38 KB)"
+      }
+    },
+    {
+      "title": "Monitoring Close-Out Visit (COV) Report Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37912",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This template includes a step-by-step checklist for monitors and covers all the important aspects of a monitoring close-out visit.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON COV v2",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_COV_v2.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.27 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON COV v2 Download DOCX (1.27 MB)"
+      }
+    },
+    {
+      "title": "Monitoring Site Initiation Visit (SIV) Report Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37911",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This template includes a step-by-step checklist for monitors and covers all the important aspects of a site initiation visit.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON SIV report v3",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_SIV-report_v3.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON SIV report v3 Download DOCX (1.28 MB)"
+      }
+    },
+    {
+      "title": "Routine Monitoring Visit and Close-Out Visit (RMV-COV) Report Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37910",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This up-to-date and user-friendly monitoring template can be used to report a combined routine monitoring visit and monitoring close-out visit.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON RMV COV v1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_RMV-COV_v1.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.29 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON RMV COV v1 Download DOCX (1.29 MB)"
+      }
+    },
+    {
+      "title": "Monitoring Visit Report Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37909",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Quality Documents",
+        "path": [
+          "Human Research Act - HRA",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This template includes a step-by-step checklist for monitors covering all the important aspects of a routine monitoring visit.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON RMV v4",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_RMV_v4.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.28 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON RMV v4 Download DOCX (1.28 MB)"
+      }
+    },
+    {
+      "title": "Monitoring Plan Template",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37908",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Study Management",
+        "type": "Quality Documents",
+        "path": [
+          "Study Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This template helps design monitoring plans aligned with Swiss and international standards, supporting risk-based strategies for clinical research.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON Plan v2",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_Plan_v2.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (1.30 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON Plan v2 Download DOCX (1.30 MB)"
+      }
+    },
+    {
+      "title": "Position paper: Monitoring in Non-Interventional Human Research Projects",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37907",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Publications",
+        "path": [
+          "Human Research Act - HRA",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This position paper offers recommendations for monitoring strategies in non-interventional studies, from new data collection to reuse of clinical data or samples",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON Position paper monitoring",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_Position-paper-monitoring.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (283.20 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON Position paper monitoring Download PDF (283.20 KB)"
+      }
+    },
+    {
+      "title": "Position Paper: Central Data Monitoring in Clinical Trials",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37906",
+      "taxonomy": {
+        "category": "Monitoring",
+        "section": "Human Research Act - HRA",
+        "type": "Publications",
+        "path": [
+          "Human Research Act - HRA",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/monitoring/",
+          "title": "SCTO Monitoring Platform"
+        },
+        "contact": "monitoring@scto.ch"
+      },
+      "excerpt": "This fact sheet explores central data monitoring (CDM), its role in data quality and oversight, and clarifies terminology and guidance for implementation",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON Guideline",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_Guidelines_V3.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (352.22 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON Guideline Download PDF (352.22 KB)"
+      }
+    },
+    {
+      "title": "Risk-Based Monitoring Score Calculator",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37905",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Risk Management",
+        "type": "Risk Score Calculator",
+        "path": [
+          "Risk Management",
+          "Risk Score Calculator"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "This interactive tool helps research teams assess monitoring needs, generate RBM scores, and ensure efficient, high-quality trial oversight.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://ctu-bern.shinyapps.io/rbmc/",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Guideline for Risk-Based Monitoring",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37904",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Risk Management",
+        "type": "Publications",
+        "path": [
+          "Risk Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "These guidelines outline risk-based monitoring for clinical trials and help identify the appropriate monitoring risk category for each study.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO MON Guidelines V3",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_MON_Guidelines_V3.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (352.22 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO MON Guidelines V3 Download PDF (352.22 KB)"
+      }
+    },
+    {
+      "title": "HRA Ordinance Revision 2024/2025: Comparing old and new requirements",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37903",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Human Research Act - HRA",
+        "type": "Education & Training",
+        "path": [
+          "Human Research Act - HRA",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "This document provides a practical overview of key changes introduced in the revised HRA ordinances.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU HRA Comparison V1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_HRA-Comparison_V1.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (414.52 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU HRA Comparison V1 Download PDF (414.52 KB)"
+      }
+    },
+    {
+      "title": "International multicentre HRO projects: Some kind of challenge. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37902",
+      "taxonomy": {
+        "category": "Project Management",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/project-management/",
+          "title": "SCTO Project Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "This session will explore the regulatory and legal considerations involved in planning and conducting multicenter HRO projects internationally, and will share practical insights gained from managing an observational study across multiple sites in the DACH region.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU International multicentre HRO projects presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_International-multicentre-HRO-projects_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.72 MB)"
+          },
+          {
+            "title": "SCTO EDU International multicentre HRO projects Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCOT_EDU_International-multicentre-HRO-projects_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (234.25 KB)"
+          },
+          {
+            "title": "SCTO EDU International multicentre HRO projects video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_International-multicentre-HRO-projects_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (230.53 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU International multicentre HRO projects presentation Download PDF (2.72 MB) SCTO EDU International multicentre HRO projects Q & A Download PDF (234.25 KB) SCTO EDU International multicentre HRO projects video Download MP4 (230.53 MB)"
+      }
+    },
+    {
+      "title": "De-identification: Definition, types, relevance and operational approaches. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37901",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Pseudonymisation is not anonymisation! This seminar will deepen your understanding of de-identification, its role in protecting health data, and its importance in human research. We’ll define key terms, distinguish types, discuss relevance for research planning, and outline practical approaches.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU De identification presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_De-identification_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.21 MB)"
+          },
+          {
+            "title": "SCTO EDU De identification Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_De-identification_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (298.01 KB)"
+          },
+          {
+            "title": "SCTO EDU De identification video",
+            "url": null,
+            "fileType": null,
+            "sizeLabel": "Download FILE ()"
+          },
+          {
+            "title": "SCTO_EDU_De-identification_video.mp4",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_De-identification_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (147.91 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU De identification presentation Download PDF (2.21 MB) SCTO EDU De identification Q & A Download PDF (298.01 KB) SCTO EDU De identification video Download FILE () SCTO_EDU_De-identification_video.mp4 Download MP4 (147.91 MB)"
+      }
+    },
+    {
+      "title": "Registries: Guiding principles before, during and after their creation. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37900",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Registries aim to improve care quality, advance knowledge, and enhance clinical practices. This talk will outline different registry types and motivations, present general rules and recommendations, and share insights from nearly 30 years of experience with the Geneva Arthroplasty Registry.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Registries presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registries_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (5.98 MB)"
+          },
+          {
+            "title": "SCTO EDU Registries Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registries_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (217.75 KB)"
+          },
+          {
+            "title": "SCTO EDU Registries video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registries_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (192.51 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Registries presentation Download PDF (5.98 MB) SCTO EDU Registries Q & A Download PDF (217.75 KB) SCTO EDU Registries video Download MP4 (192.51 MB)"
+      }
+    },
+    {
+      "title": "Sample management and biobanking: Essentials for HRO projects. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37899",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Biobank",
+        "type": "Education & Training",
+        "path": [
+          "Biobank",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Insight into the most important aspects of sample management(preanalytics and documentation ) and biobanking for HRO projects, in collaboration with the Swiss Biobanking Platform (SBP)",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Sample management presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Sample-management_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (5.50 MB)"
+          },
+          {
+            "title": "SCTO EDU Sample management Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Sample-management_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (171.73 KB)"
+          },
+          {
+            "title": "SCTO EDU Sample management video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Sample-management_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (242.33 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Sample management presentation Download PDF (5.50 MB) SCTO EDU Sample management Q & A Download PDF (171.73 KB) SCTO EDU Sample management video Download MP4 (242.33 MB)"
+      }
+    },
+    {
+      "title": "Data sharing and open research data: details for HRO projects. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37898",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Data sharing",
+        "type": "Education & Training",
+        "path": [
+          "Data sharing",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Guidance on possibilities and common practices for data sharing in HRO projects focusing on data storage and data sharing (in coll with SPHN)",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Data sharing presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-sharing_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (4.83 MB)"
+          },
+          {
+            "title": "SCTO EDU Data sharing Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-sharing_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (196.20 KB)"
+          },
+          {
+            "title": "SCTO EDU Data sharing video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-sharing_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (229.76 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Data sharing presentation Download PDF (4.83 MB) SCTO EDU Data sharing Q & A Download PDF (196.20 KB) SCTO EDU Data sharing video Download MP4 (229.76 MB)"
+      }
+    },
+    {
+      "title": "Mastering Consent: Key insights into general and informed consent for HRO projects. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37897",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "Consent",
+        "type": "Education & Training",
+        "path": [
+          "Consent",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Overview of the legal and ethical requirements for the secondary use of data and samples, and how and when general consent can be used",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Mastering Consent presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Mastering-Consent_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.22 MB)"
+          },
+          {
+            "title": "SCTO EDU Mastering Consent Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Mastering-Consent_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (200.12 KB)"
+          },
+          {
+            "title": "SCTO EDU Mastering Consent video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Mastering-Consent_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (219.27 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Mastering Consent presentation Download PDF (2.22 MB) SCTO EDU Mastering Consent Q & A Download PDF (200.12 KB) SCTO EDU Mastering Consent video Download MP4 (219.27 MB)"
+      }
+    },
+    {
+      "title": "BASEC: A practical walk-through for HRO projects. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37896",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Practical guidance on observational study submission through the BASEC portal in line with HRO Chapter 2 and a further use project according to HRO Chapter 3.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU BASEC video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_BASEC_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (343.40 MB)"
+          },
+          {
+            "title": "SCTO EDU BASEC Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_BASEC_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (223.37 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU BASEC video Download MP4 (343.40 MB) SCTO EDU BASEC Q & A Download PDF (223.37 KB)"
+      }
+    },
+    {
+      "title": "Law, practice and common hurdles. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37895",
+      "taxonomy": {
+        "category": "Regulatory Affairs",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/regulatory-affairs/",
+          "title": "SCTO Regulatory Affairs Platform"
+        },
+        "contact": "regulatoryaffairs@scto.ch"
+      },
+      "excerpt": "Legal basis of quality aspects of a research project with examples on how to keep the quality of projects high.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Quality Presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Quality_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.99 MB)"
+          },
+          {
+            "title": "SCTO EDU Quality Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Quality_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (558.34 KB)"
+          },
+          {
+            "title": "SCTO EDU Quality video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU-Quality_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (169.54 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Quality Presentation Download PDF (2.99 MB) SCTO EDU Quality Q & A Download PDF (558.34 KB) SCTO EDU Quality video Download MP4 (169.54 MB)"
+      }
+    },
+    {
+      "title": "Registries and biobanks: Background, obstacles, and practical views. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37894",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Biobank",
+        "type": "Education & Training",
+        "path": [
+          "Biobank",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Insights about common pitfalls when working with large sets of clinical patient data and biological samples. This training includes practical tips for planning projects and research questions, up to regulatory requirements and real-life examples.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Registries & biobanks presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registriesandbiobanks_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (1.85 MB)"
+          },
+          {
+            "title": "SCTO EDU Registries & biobanks Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registriesandbiobanks_QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (170.72 KB)"
+          },
+          {
+            "title": "SCTO EDU Registries & biobanks video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Registriesandbiobanks_video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (198.81 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Registries & biobanks presentation Download PDF (1.85 MB) SCTO EDU Registries & biobanks Q & A Download PDF (170.72 KB) SCTO EDU Registries & biobanks video Download MP4 (198.81 MB)"
+      }
+    },
+    {
+      "title": "Data governance and protection: How to navigate the regulatory jungle. HRO Lunch Session Material",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37893",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Data governance",
+        "type": "Education & Training",
+        "path": [
+          "Data governance",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Essentials of data procurement, governance, and protection. The most important aspects regarding the new data protection law and practical insights into how data are handled at different university hospitals will be presented",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Data governance presentation 1",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-governance-presentation_1.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (415.94 KB)"
+          },
+          {
+            "title": "SCTO EDU Data governance presentation 2",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-governance-presentation_2.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (482.16 KB)"
+          },
+          {
+            "title": "SCTO EDU Data governance Q & A",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-governance-QandA.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (211.04 KB)"
+          },
+          {
+            "title": "SCTO EDU Data governance video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Data-governance-video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (195.98 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Data governance presentation 1 Download PDF (415.94 KB) SCTO EDU Data governance presentation 2 Download PDF (482.16 KB) SCTO EDU Data governance Q & A Download PDF (211.04 KB) SCTO EDU Data governance video Download MP4 (195.98 MB)"
+      }
+    },
+    {
+      "title": "Presentation on Ethics approval: Insights from the ethics committees",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37892",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "HRO",
+        "type": "Education & Training",
+        "path": [
+          "HRO",
+          "Education & Training"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Insights on obtaining mandatory ethics approval for your observational study. This training gives key differences between retrospective and prospective projects, when and how to prepare participant information and consent documents, and explore practical examples that will guide you through the ethics application process step by step.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Ethics presentation",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Ethics_presentation.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (2.17 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Ethics presentation Download PDF (2.17 MB)"
+      }
+    },
+    {
+      "title": "Core Competencies SPCRC",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37891",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Study Management",
+        "type": "core competencies",
+        "path": [
+          "Study Management",
+          "core competencies"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Essential knowledge, skills, and attitudes needed to conduct Clinical trials effectively, ethically, and safely for Clinical Research Coordinators (CRCs)",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Core competencies SPCRC v5 20241024",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU-Core-competencies-SPCRC_v5_20241024.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (135.04 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Core competencies SPCRC v5 20241024 Download PDF (135.04 KB)"
+      }
+    },
+    {
+      "title": "Core Competencies HRO",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37890",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Human Research Ordinance - HRO",
+        "type": "core competencies",
+        "path": [
+          "Human Research Ordinance - HRO",
+          "core competencies"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Essential knowledge, skills, and attitudes needed to conduct HRO project effectively, ethically, and safely.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Core competencies HRO",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Core-competencies-HRO-New-corporate-design-needed.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (853.38 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Core competencies HRO Download DOCX (853.38 KB)"
+      }
+    },
+    {
+      "title": "Clinical Research Core Competencies Framework in Swiss Medical Weekly",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37889",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Study Management",
+        "type": "Publications",
+        "path": [
+          "Study Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Scientific publication describing Clinical Research Core Competencies Framework",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://smw.ch/index.php/smw/announcement/view/55",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "Core competences",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37888",
+      "taxonomy": {
+        "category": "Education & Training",
+        "section": "Study Management",
+        "type": null,
+        "path": [
+          "Study Management"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/education/",
+          "title": "SCTO Education Platform"
+        },
+        "contact": "education@scto.ch"
+      },
+      "excerpt": "Essential knowledge, skills, and attitudes needed to conduct clinical trials effectively, ethically, and safely. These domains are based on the internationally recognized Joint Task Force for Clinical Trial Competency (JTF) framework and adapted to Swiss human research legislation.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO EDU Core competencies",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_EDU_Core-competencies-HRO-New-corporate-design-needed.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (853.38 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO EDU Core competencies Download DOCX (853.38 KB)"
+      }
+    },
+    {
+      "title": "Development of a validated tool for MedDRA coding in secuTrial®",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37887",
+      "taxonomy": {
+        "category": "Safety",
+        "section": "Clinical Data Management System",
+        "type": "Software/Application development",
+        "path": [
+          "Clinical Data Management System",
+          "Software/Application development"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/safety/",
+          "title": "SCTO Safety Platform"
+        },
+        "contact": "safety@scto.ch"
+      },
+      "excerpt": "Our validated tool makes it easy to code Adverse Events and Medical History directly within secuTrial® databases using MedDRA. Instead of searching terms in the MSSO Web-Based Browser and manually copying them into the system, coding can now be performed directly in secuTrial®. This saves time, reduces manual errors, and ensures that all clinical trial data is stored in one place. The tool is freely available across the SCTO CTU network—supporting more efficient, interoperable, and reliable clinical research. If you would like MedDRA coding to be integrated into your database, please contact your CTU Data Managers for support.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO DM MedDRAConverter.",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_DM_MedDRAConverter.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (998.75 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO DM MedDRAConverter. Download PDF (998.75 KB)"
+      }
+    },
+    {
+      "title": "Development of modular R Shiny dashboards for clinical trial, cohort, and registry data visualization.",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37886",
+      "taxonomy": {
+        "category": "Data Management",
+        "section": "Clinical Data Management System",
+        "type": "R package & statistical code",
+        "path": [
+          "Clinical Data Management System",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/data-management/",
+          "title": "SCTO Data Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "shinytemplate is a ready-to-use Shiny app template designed for clinical trials and research. Intermediate R users can customize the app by enabling or disabling modules and replacing example data with their own. Built as an R package, it offers a well-organized framework for easy development, maintenance, and sharing. The app includes modules for recruitment, retention, data quality, study management, and safety monitoring—providing clear visual tools like plots, maps, flow charts, and reports to track study progress and data quality. Contact your CTU data managers for more details.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "Read more",
+            "url": "https://github.com/SwissClinicalTrialOrganisation/template_shiny",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: Read more"
+      }
+    },
+    {
+      "title": "secuTrialR – An R Package for Transforming Raw secuTrial® Exports into Analysis-Ready Datasets.",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37885",
+      "taxonomy": {
+        "category": "Data Management",
+        "section": "Clinical Data Management System",
+        "type": "R package & statistical code",
+        "path": [
+          "Clinical Data Management System",
+          "R package & statistical code"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/data-management/",
+          "title": "SCTO Data Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "secuTrialR is an open-source R statistics software package that makes it easier to work with secuTrial®. In addition to analysing and reading data, secuTrialR performs data transformation for dates, date times, and categorical data in order to reduce data preparation overhead and to allow a swift transition into the analytical phase. Furthermore, secuTrialR includes standard functionalities to show descriptive statistics such as study recruitment or completeness of entered data per case report form for secuTrial® data exports.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [],
+        "links": [
+          {
+            "text": "CRAN",
+            "url": "https://cran.r-project.org/web/packages/secuTrialR/index.html",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          },
+          {
+            "text": "Anaconda Cloud",
+            "url": "https://anaconda.org/conda-forge/r-secutrialr",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          },
+          {
+            "text": "GitHub",
+            "url": "https://github.com/SwissClinicalTrialOrganisation/secuTrialR",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+            "kind": "link"
+          }
+        ],
+        "rawText": "More Info: CRAN Anaconda Cloud GitHub secuTrial Vignette"
+      }
+    },
+    {
+      "title": "secuTrialR: Seamless Interaction with Clinical Trial Databases in R.",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37884",
+      "taxonomy": {
+        "category": "Data Management",
+        "section": "Clinical Data Management System",
+        "type": "Publications",
+        "path": [
+          "Clinical Data Management System",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/data-management/",
+          "title": "SCTO Data Management Platform"
+        },
+        "contact": "datamanagement@scto.ch"
+      },
+      "excerpt": "secuTrialR is an open-source R statistics software package that makes it easier to work with secuTrial®. In addition to analysing and reading data, secuTrialR performs data transformation for dates, date times, and categorical data in order to reduce data preparation overhead and to allow a swift transition into the analytical phase. Furthermore, secuTrialR includes standard functionalities to show descriptive statistics such as study recruitment or completeness of entered data per case report form for secuTrial® data exports.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO DM secuTrial",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_DM_secuTrial.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (202.92 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO DM secuTrial Download PDF (202.92 KB)"
+      }
+    },
+    {
+      "title": "GGOP version 3",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37883",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Study Management",
+        "type": "Publications",
+        "path": [
+          "Study Management",
+          "Publications"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "The GGOP defines common clinical-research standards used across the SCTO CTU Network to ensure participant safety, high-quality operations, and efficient use of academic resources.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD GGOP 2017 v3",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_GGOP_2017_v3.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (586.92 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD GGOP 2017 v3 Download PDF (586.92 KB)"
+      }
+    },
+    {
+      "title": "QMS BP Non-conformances",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37882",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "CAPA",
+        "type": "Best Practice",
+        "path": [
+          "CAPA",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Providing a framework for capturing and analysing non-conformances",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Non conformances",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Non-conformances.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (17.70 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Non conformances Download PDF (17.70 KB)"
+      }
+    },
+    {
+      "title": "QMS BP CAPA classification and documentation",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37881",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "CAPA",
+        "type": "Best Practice",
+        "path": [
+          "CAPA",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Establishing structured control measures for corrective and preventive actions.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD CAPA classification",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_CAPA-Classification.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (20.75 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD CAPA classification Download PDF (20.75 KB)"
+      }
+    },
+    {
+      "title": "QMS BP CAPA Management and non-conformities",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37880",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "CAPA",
+        "type": "Best Practice",
+        "path": [
+          "CAPA",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Defining a formal process for managing issues and preventing recurrence",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD CAPA management",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_CAPA-Management.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (24.03 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD CAPA management Download PDF (24.03 KB)"
+      }
+    },
+    {
+      "title": "QMS BP Period Review and Revision process",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37879",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Document Management",
+        "type": "Best Practice",
+        "path": [
+          "Document Management",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Ensuring document integrity, reliability, and compliance over time",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Periodic Review",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Periodic-Review.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (18.55 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Periodic Review Download PDF (18.55 KB)"
+      }
+    },
+    {
+      "title": "QMS BP QMS Lack of document management process",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37878",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Quality Responsibilities",
+        "type": "Best Practice",
+        "path": [
+          "Quality Responsibilities",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Ensuring accuracy, accessibility, and compliance of records.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Lack",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Lack.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (19.08 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Lack Download PDF (19.08 KB)"
+      }
+    },
+    {
+      "title": "QMS BP QMS Responsibilities",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37877",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Quality Responsibilities",
+        "type": "Best Practice",
+        "path": [
+          "Quality Responsibilities",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Defining responsibilities for implementing and maintaining a risk-based QMS",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Responsibilities",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Responsibilities.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (17.04 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Responsibilities Download PDF (17.04 KB)"
+      }
+    },
+    {
+      "title": "QMS BP Quality Policy",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37876",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Quality Policy",
+        "type": "Best Practice",
+        "path": [
+          "Quality Policy",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Defining overarching objectives for QMS functioning and decision-making",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Policy",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Policy.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (19.05 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Policy Download PDF (19.05 KB)"
+      }
+    },
+    {
+      "title": "QMS BP Quality Management Review",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37875",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Quality Management Review",
+        "type": "Best Practice",
+        "path": [
+          "Quality Management Review",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Assessing the adequacy, suitability, and effectiveness of a QMS.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Review",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Review.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (20.28 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Review Download PDF (20.28 KB)"
+      }
+    },
+    {
+      "title": "QMS BP Quality goals and Objectives",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37874",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Quality Policy",
+        "type": "Best Practice",
+        "path": [
+          "Quality Policy",
+          "Best Practice"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Defining measurable QC methods to guide improvements in line with GGOP requirements.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD Objectives",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_Objectives.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (20.55 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD Objectives Download PDF (20.55 KB)"
+      }
+    },
+    {
+      "title": "Risk Assessement Form Video",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37873",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Risk Management",
+        "type": "Quality Documents",
+        "path": [
+          "Risk Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "A short video explaining how to manage study risks using the Risk Assessment Form.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD RA video",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_RA-video.mp4",
+            "fileType": "mp4",
+            "sizeLabel": "Download MP4 (21.77 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD RA video Download MP4 (21.77 MB)"
+      }
+    },
+    {
+      "title": "Risk Assessement Form User Instructions",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37872",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Risk Management",
+        "type": "Quality Documents",
+        "path": [
+          "Risk Management",
+          "Quality Documents"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Guidance for completing the Risk Assessment Form.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD RA Instructions 2022 v",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_RA-Instructions_2022_v.pdf",
+            "fileType": "pdf",
+            "sizeLabel": "Download PDF (287.31 KB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD RA Instructions 2022 v Download PDF (287.31 KB)"
+      }
+    },
+    {
+      "title": "Risk Assessement Form",
+      "ajaxUrl": "/wp-admin/admin-ajax.php?scto=37871",
+      "taxonomy": {
+        "category": "Quality Management",
+        "section": "Risk Management",
+        "type": "Form",
+        "path": [
+          "Risk Management",
+          "Form"
+        ]
+      },
+      "categoryInfo": {
+        "link": {
+          "url": "https://www.scto.ch/clinical-research-tools/platforms/auditing/",
+          "title": "SCTO Auditing Platform"
+        },
+        "contact": "auditing@scto.ch"
+      },
+      "excerpt": "Risk Assessment Form for sponsor-investigators to ensure potential risks of a clinical research project are addressed in line with current GCP requirements.",
+      "moreInfo": {
+        "toggleText": {
+          "show": "See Links & Downloads",
+          "hide": "Hide Links & Downloads"
+        },
+        "documents": [
+          {
+            "title": "SCTO AUD RA Form 2022 v4",
+            "url": "https://www.scto.ch/wp-content/uploads/2025/12/SCTO_AUD_RA-Form_2022_v4.docx",
+            "fileType": "docx",
+            "sizeLabel": "Download DOCX (6.56 MB)"
+          }
+        ],
+        "links": [],
+        "rawText": "Downloadable Documents: SCTO AUD RA Form 2022 v4 Download DOCX (6.56 MB)"
+      }
+    }
+  ],
+  "pagination": null
+}

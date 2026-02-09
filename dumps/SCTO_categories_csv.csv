@@ -1,0 +1,39 @@
+﻿,,category,service,research
+Categories,Data Management,"project management,monitoring and audit",consulting,
+,Education & Training,,"consulting,training",
+,Monitoring,monitoring and audit,consulting,
+,Patient and public involvement (PPI),PPI,consulting,
+,Project Management,project management,consulting,
+,Quality Management,monitoring and audit,consulting,
+,Regulatory Affairs,regulatory and contracts,consulting,
+,Safety,regulatory and contracts,consulting,
+,Statistic and Methodology,statistics and feasibility,consulting,
+Sections,Biobank,,,"sample collection,sample reuse"
+,CAPA,,,clinical trials
+,Clinical Data Management System,,,data collection
+,Consent,ethics submission,,"data collection,data reuse"
+,Data governance,,,"data collection,data reuse"
+,Data protection,,,"data collection,data reuse"
+,Data sharing,,,data reuse
+,Document Management,,,clinical trials
+,HRO,,,"data collection,data reuse,sample collection,sample reuse"
+,Human Research Act - HRA,,,"clinical trials,data collection,data reuse,sample collection,sample reuse"
+,Human Research Ordinance - HRO,,,"data collection,data reuse,sample collection,sample reuse"
+,Quality Management Review,,,clinical trials
+,Quality Policy,,,clinical trials
+,Quality Responsibilities,,,clinical trials
+,Risk Management,,,"clinical trials,data collection,data reuse,sample collection,sample reuse"
+,Study Management,,,"clinical trials,data collection,data reuse,sample collection,sample reuse"
+Types,Article,,,
+,Best Practice,,standards,
+,core competencies,,training,
+,E-learning,,"IT tool,training",
+,Education & Training,,training,
+,Form,,templates,
+,Guideline,,standards,
+,Online tools,,IT tool,
+,Publications,,,
+,Quality Documents,,"standards,templates",
+,R package & statistical code,,IT tool,
+,Risk Score Calculator,,IT tool,
+,Software/Application development,,"IT infrastructure,IT tool",

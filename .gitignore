@@ -7,3 +7,9 @@ node_modules
 .DS_Store
 backup
 service_ids.js
+*.dump
+*.inetloc
+*.log
+prisma
+*.openssh
+*.ppk
