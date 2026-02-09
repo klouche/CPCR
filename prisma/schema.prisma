@@ -33,6 +33,7 @@ model Service {
   url         String[] @default([])
   docs        String[] @default([])
   contact     String[] @default([])
+  isManagedExternally Boolean @default(false)
 
   links     ServiceLink[]
   documents ServiceDocument[]
@@ -42,6 +43,8 @@ model Service {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   embedding ServiceEmbedding?
+
+  @@index([organizationCode, isManagedExternally])
 }
 
 model ServiceLink {

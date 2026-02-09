@@ -517,7 +517,7 @@ async function logout() {
 
 
 async function loadServices() {
-    fetch("/api/services?t=" + Date.now(), {
+    fetch("/api/manageable-services?t=" + Date.now(), {
         cache: "no-store",
         method: "GET",
         headers: {

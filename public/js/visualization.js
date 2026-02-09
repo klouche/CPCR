@@ -11,6 +11,39 @@ let allServices = []
 let cache = {}
 
 // ---------------------------------------------------------------------------
+// UTM tagging for outbound links (search UI)
+// ---------------------------------------------------------------------------
+// We append UTM params to HTTP(S) links for analytics. Labels shown in the UI
+// remain unchanged (UTMs are never displayed).
+const DEFAULT_UTM = {
+    utm_source: 'cpcr',
+    utm_medium: 'service_finder',
+    utm_campaign: 'cpcr_service_finder'
+};
+
+function withUtm(href, utm = DEFAULT_UTM) {
+    try {
+        if (!href) return href;
+        const raw = String(href).trim();
+        if (!raw) return raw;
+
+        // Only tag http(s)
+        if (!/^https?:\/\//i.test(raw)) return raw;
+
+        const u = new URL(raw);
+        Object.entries(utm || {}).forEach(([k, v]) => {
+            if (!k) return;
+            if (v == null) return;
+            if (!u.searchParams.has(k)) u.searchParams.set(k, String(v));
+        });
+        return u.toString();
+    } catch (e) {
+        // If parsing fails, return original
+        return href;
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Click logging (public search UI)
 // ---------------------------------------------------------------------------
 // Sends best-effort analytics to the backend without blocking navigation.
@@ -398,7 +431,8 @@ function update(results) {
         // NEW: links: [{ label, url, order }]
         appendListBlock(node, (service.links || []), "Links", (row, link) => {
             const label = truncateLabel(link?.label || link?.url || "Link")
-            const href = String(link?.url || "").trim()
+            const rawHref = String(link?.url || "").trim()
+            const href = withUtm(rawHref)
             if (!href) {
                 row.text(label)
                 return
@@ -410,8 +444,8 @@ function update(results) {
                 .attr("href", href)
                 .text(label)
                 .on("click", function () {
-                    const aid = link?.id || href || label;
-                    const lbl = label || href || aid;
+                    const aid = link?.id || rawHref || label;
+                    const lbl = label || rawHref || aid;
                     if (aid) logServiceClick(service.id, "link", aid, lbl);
                 });
         })

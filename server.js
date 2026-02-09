@@ -986,6 +986,76 @@ app.get('/api/services', async (req, res) => {
 
 
 // ============================================================================
+// MANAGEABLE-SERVICES LIST ROUTE
+// ============================================================================
+// GET /api/manageable-services
+// Returns services that the current admin is allowed to manage.
+// - Superadmins: all services
+// - Regular org admins: only services from their org AND not externally managed
+app.get('/api/manageable-services', requireAuth, async (req, res) => {
+  noStore(res);
+  try {
+    const where = {};
+
+    if (!isSuperAdmin(req)) {
+      const org = getSessionOrgCode(req);
+      if (!org) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+      where.organizationCode = org;
+      where.isManagedExternally = false;
+    }
+
+    const services = await prisma.service.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        organizationCode: true,
+        regional: true,
+        hidden: true,
+        description: true,
+        complement: true,
+        aliases: true,
+        research: true,
+        phase: true,
+        category: true,
+        output: true,
+        createdAt: true,
+        updatedAt: true,
+
+        // IMPORTANT: expose this so the admin UI can show why it may be hidden/locked
+        isManagedExternally: true,
+
+        organization: true,
+
+        links: {
+          orderBy: { order: 'asc' },
+          select: { id: true, label: true, url: true, order: true },
+        },
+        documents: {
+          orderBy: { order: 'asc' },
+          select: { id: true, title: true, url: true, order: true },
+        },
+        contacts: {
+          orderBy: { order: 'asc' },
+          select: { id: true, type: true, label: true, value: true, order: true },
+        },
+      },
+    });
+
+    res.json({ services });
+  } catch (err) {
+    console.error('🔥 Failed to fetch manageable services:', err.message);
+    res.status(500).json({ error: 'Could not fetch manageable services', detail: err.message });
+  }
+});
+
+
+
+// ============================================================================
 // ORGANIZATIONS LIST ROUTE
 // ============================================================================
 // GET /api/organizations
