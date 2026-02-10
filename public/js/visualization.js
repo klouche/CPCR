@@ -100,7 +100,7 @@ const logos = {
         "link": "https://www.swisscancerinstitute.ch/"
     },
     "SCTO": {
-        "url": "./images/logo_provider_scto.png",
+        "url": "./images/SCTO.png",
         "link": "https://scto.ch/"
     },
     "SPHN": {
