@@ -1,5 +1,6 @@
 services:
   db:
+    restart: unless-stopped
     image: pgvector/pgvector:pg17
     container_name: cpcr-db
     environment:
@@ -16,6 +17,7 @@ services:
       retries: 20
 
   embeddings:
+    restart: unless-stopped
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.8.1
     platform: linux/amd64
     container_name: cpcr-embeddings
@@ -32,6 +34,7 @@ services:
       - hfdata:/data
 
   app:
+    restart: unless-stopped
     build: .
     container_name: cpcr-app
     depends_on:

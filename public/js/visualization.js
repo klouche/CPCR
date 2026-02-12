@@ -86,7 +86,7 @@ let outputs = ['consulting', 'datasets', 'IT infrastructure', 'IT tool', 'outsou
 let researches = ['clinical trials', 'data collection', 'data reuse', 'sample collection', 'sample reuse']
 const phases = ["conception", "development", "execution", "completion"]
 let categories = ['ethics submission', 'regulatory and contracts', 'statistics and feasibility', 'PPI', 'study design', 'project management', 'quality, monitoring and audit']
-let organizations = ['SBP', 'Swiss Cancer Institute', 'SCTO', 'SPHN', 'swissethics']
+let organizations = []
 
 const rankingDiv = d3.select("#ranking")
 
@@ -144,18 +144,17 @@ function shuffle(array) {
 }
 
 async function loadServices() {
-    fetch("/api/services?t=" + Date.now(), {
+    const response = await fetch("/api/services?t=" + Date.now(), {
         cache: "no-store",
         method: "GET",
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            allServices = shuffle(json.services)
-            //console.log("All services", allServices)
-        });
+    });
+
+    const json = await response.json();
+    allServices = shuffle(json.services || []);
+    return allServices;
 }
 
 function serviceSearch() {
@@ -248,6 +247,7 @@ function clearFilter(filter) {
 }
 
 function enterFilters() {
+    console.log("Enter filters")
     d3.select(".chips").html("")
     addChips("organization", "Infrastructure", organizations)
     addChips("research", "Type of research", researches)
@@ -257,7 +257,7 @@ function enterFilters() {
 }
 
 function addChips(filter, name, options) {
-    //console.log(name, options)
+    console.log(name, options)
     const chipWrapper = d3.select(".chips").append("div").attr("class", "chip-wrapper").attr("filter", filter)
     const chipButton = chipWrapper.append("button").attr("class", "chip").attr("data-default", name)
     chipButton.append("span").attr("class", "chip-label").text(name)
@@ -275,7 +275,7 @@ function addChips(filter, name, options) {
                 const filter = node.attr("filter")
                 const option = node.attr("value")
                 const checked = e.target.checked
-                //console.log(filter + ": " + option, checked)
+                console.log(filter + ": " + option, checked)
                 if (checked && !filters[filter].includes(option)) filters[filter].push(option)
                 if (!checked && filters[filter].includes(option)) {
                     var index = filters[filter].indexOf(option);
@@ -283,8 +283,8 @@ function addChips(filter, name, options) {
                         filters[filter].splice(index, 1);
                     }
                 }
-                //console.log("Filters", filters)
-                //console.log("Query", query)
+                console.log("Filters", filters)
+                console.log("Query", query)
                 if (query && query.length > 0) {
                     n = nMin
                     update(filterAllResults(allResults))
@@ -524,9 +524,27 @@ function update(results) {
 
 }
 
-enterFilters()
-d3.select(".load-more").on("click", (e, d) => { loadMore() })
-loadServices()
+
+// Initialize filters only once we know the organizations present in the dataset.
+async function initSearchUI() {
+    await loadServices();
+    // Derive organization labels from loaded services (avoid extra request).
+    // We filter falsy and dedupe; labels come from service.organization.label.
+    const orgSet = new Set(
+        (allServices || [])
+            .map(s => s?.organization?.label)
+            .filter(Boolean)
+    );
+
+    organizations = Array.from(orgSet).sort((a, b) => String(a).localeCompare(String(b)));
+
+    console.log("orgs", organizations)
+    enterFilters();
+    initChipDropdowns();
+    d3.select(".load-more").on("click", (e, d) => { loadMore(); });
+}
+
+initSearchUI();
 
 
 function stripHtml(html) {
@@ -544,7 +562,7 @@ jQuery(function ($) {
     });
 });
 
-(function () {
+function initChipDropdowns() {
     const MAX_LABEL_CHARS = 36; // tronque l’affichage quand plusieurs items
 
     // met à jour le texte du chip selon les cases cochées
@@ -595,6 +613,10 @@ jQuery(function ($) {
         const clearInChip = wrapper.querySelector('.chip-clear');
         const resetInMenu = wrapper.querySelector('.menu-reset');
 
+        // Avoid double-binding if init is called multiple times
+        if (wrapper.dataset.chipInit === '1') return;
+        wrapper.dataset.chipInit = '1';
+
         // ouverture/fermeture au clic sur le chip
         chipBtn?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -611,15 +633,15 @@ jQuery(function ($) {
             cb.addEventListener('change', () => updateChipLabel(wrapper));
         });
 
-        // bouton "Clear" dans le menu (celui qui ne marche pas chez toi)
+        // bouton "Clear" dans le menu
         resetInMenu?.addEventListener('click', (e) => {
             e.preventDefault();
             // décocher toutes les cases
             menu.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => cb.checked = false);
             // maj label + état
             updateChipLabel(wrapper);
-            const filter = d3.select(wrapper).attr("filter")
-            clearFilter(filter)
+            const filter = d3.select(wrapper).attr("filter");
+            clearFilter(filter);
         });
 
         // croix à droite du chip (reset global de ce filtre)
@@ -627,11 +649,11 @@ jQuery(function ($) {
             e.stopPropagation();
             menu.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => cb.checked = false);
             updateChipLabel(wrapper);
-            const filter = d3.select(wrapper).attr("filter")
-            clearFilter(filter)
+            const filter = d3.select(wrapper).attr("filter");
+            clearFilter(filter);
         });
 
         // init label au chargement
         updateChipLabel(wrapper);
     });
-})();
+}
