@@ -926,6 +926,7 @@ a#feedback-btn {
 
 /* Explain button */
 .explanation-btn {
+  display: none;
   position: absolute;
   top: 12px;
   right: 12px;
